@@ -1,6 +1,6 @@
 title: IETF ONSEN workgroup POC
 description: A POC project for IETF ONSEN workgroup
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs@0.12.0
 
 url: https://CTRI-chenyong.github.io
 
