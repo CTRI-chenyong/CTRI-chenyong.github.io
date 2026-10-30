@@ -1,0 +1,13 @@
+// Re-derived from $content-width: _variables.scss evaluates $media-queries and
+// $search-results-width eagerly at import time, before this file is loaded.
+$content-width: 62rem;
+
+$media-queries: (
+  xs: 20rem,
+  sm: 31.25rem,
+  md: $content-width,
+  lg: $content-width + $nav-width,
+  xl: 87.5rem,
+);
+
+$search-results-width: $content-width - $nav-width;
