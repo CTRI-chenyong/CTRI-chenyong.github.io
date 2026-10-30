@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Language: Chinese (Simplified)
+  All artifacts must be written in Chinese (Simplified).
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Project constraints (read before proposing):
+  - This repo is a Jekyll site published on GitHub Pages (theme: just-the-docs 0.12.0, pinned in Gemfile). Site nav is the theme's left sidebar (nav_order front matter); aux_links are header-right external links.
+  - The POC must run entirely in the browser with zero remote-service calls: no FastAPI orchestrator/controller, no pyang, no yangson, no NETCONF, no containerlab. Pure client-side HTML/CSS/JS served as static assets.
+  - Site-facing copy must be normative English (IETF audience). Planning artifacts in Chinese are fine; user-supplied English strings must be copied verbatim.
+  - Full-system scope reference: "L3SM到L3NM到设备模型无损映射原型系统开发任务说明书.html" at repo root. Change "add-ietf-3tier-network-model-poc" is iteration 1 of that system (L3SM -> L3NM only) and deliberately relaxes that document's "modules must talk over real localhost RESTCONF/NETCONF" and "forms must be pyang-generated" constraints; record this deviation instead of treating it as a violation.
+  - openspec/ and .qoder/ are tooling directories, not site content - keep them out of the Jekyll build via _config.yml exclude.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
