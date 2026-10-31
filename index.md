@@ -1,6 +1,7 @@
 ---
 title: Home
 layout: home
+nav_order: 1
 ---
 
 This site hosts a browser-local prototype of the mapping between the IETF's Layer 3 VPN
