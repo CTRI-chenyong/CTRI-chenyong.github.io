@@ -8,6 +8,12 @@ aux_links:
   POC repository: https://github.com/CTRI-chenyong/CTRI-chenyong.github.io
   IETF ONSEN WG: https://datatracker.ietf.org/wg/onsen/about/
 
+# Search cuts at h3 as well as h2, so each rule on the rule reference page is one
+# result of its own and keeps its #Rxx deep link; the default 2 only groups them
+# by propagation category.
+search:
+  heading_level: 3
+
 # Files without front matter are copied to the site verbatim, so the
 # development-time tooling and the planning directory have to be named here.
 exclude:
