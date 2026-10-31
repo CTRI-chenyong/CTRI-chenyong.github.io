@@ -1,0 +1,94 @@
+---
+title: "RFC 8299 §6.11.1 Handling of Dual Stack"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.1.  Handling of Dual Stack
+
+   All routing protocol types support dual stack by using the "address-
+   family" leaf-list.
+
+   Example of a corresponding XML snippet with dual stack using the same
+   routing protocol:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;routing-protocols&gt;
+              &lt;routing-protocol&gt;
+                &lt;type&gt;static&lt;/type&gt;
+                &lt;static&gt;
+                  &lt;cascaded-lan-prefixes&gt;
+                    &lt;ipv4-lan-prefixes&gt;
+                      &lt;lan&gt;192.0.2.0/24&lt;/lan&gt;
+                      &lt;next-hop&gt;203.0.113.1&lt;/next-hop&gt;
+                    &lt;/ipv4-lan-prefixes&gt;
+                    &lt;ipv6-lan-prefixes&gt;
+                      &lt;lan&gt;2001:db8::1/64&lt;/lan&gt;
+                      &lt;next-hop&gt;2001:db8::2&lt;/next-hop&gt;
+                    &lt;/ipv6-lan-prefixes&gt;
+                  &lt;/cascaded-lan-prefixes&gt;
+                &lt;/static&gt;
+              &lt;/routing-protocol&gt;
+            &lt;/routing-protocols&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 87]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Example of a corresponding XML snippet with dual stack using two
+   different routing protocols:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;routing-protocols&gt;
+              &lt;routing-protocol&gt;
+                &lt;type&gt;rip&lt;/type&gt;
+                &lt;rip&gt;
+                  &lt;address-family&gt;ipv4&lt;/address-family&gt;
+                &lt;/rip&gt;
+              &lt;/routing-protocol&gt;
+              &lt;routing-protocol&gt;
+                &lt;type&gt;ospf&lt;/type&gt;
+                &lt;ospf&gt;
+                  &lt;address-family&gt;ipv6&lt;/address-family&gt;
+                  &lt;area-address&gt;4.4.4.4&lt;/area-address&gt;
+                &lt;/ospf&gt;
+              &lt;/routing-protocol&gt;
+            &lt;/routing-protocols&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+</pre>

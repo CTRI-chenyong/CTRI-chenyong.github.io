@@ -1,0 +1,118 @@
+---
+title: "RFC 8299 §6.5.2.1 Referencing a VPN"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.2.1.  Referencing a VPN
+
+   Referencing a vpn-id provides an easy way to attach a particular
+   logical access to a VPN.  This is the best way in the case of a
+   single VPN attachment or subVPN with a single VPN attachment per
+   logical access.  When referencing a vpn-id, the site-role setting
+   must be added to express the role of the site in the target VPN
+   service topology.
+
+ &lt;?xml version="1.0"?&gt;
+ &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+  &lt;vpn-services&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+  &lt;/vpn-services&gt;
+  &lt;sites&gt;
+   &lt;site&gt;
+    &lt;site-id&gt;SITE1&lt;/site-id&gt;
+    &lt;locations&gt;
+     &lt;location&gt;
+      &lt;location-id&gt;L1&lt;/location-id&gt;
+     &lt;/location&gt;
+    &lt;/locations&gt;
+    &lt;management&gt;
+     &lt;type&gt;customer-managed&lt;/type&gt;
+    &lt;/management&gt;
+    &lt;security&gt;
+     &lt;encryption&gt;
+      &lt;layer&gt;layer3&lt;/layer&gt;
+     &lt;/encryption&gt;
+    &lt;/security&gt;
+    &lt;site-network-accesses&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;LA1&lt;/site-network-access-id&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 42]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;LA2&lt;/site-network-access-id&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+    &lt;/site-network-accesses&gt;
+   &lt;/site&gt;
+  &lt;/sites&gt;
+ &lt;/l3vpn-svc&gt;
+
+   The example of a corresponding XML snippet above describes a subVPN
+   case where a site (SITE1) has two logical accesses (LA1 and LA2),
+   with LA1 attached to VPNA and LA2 attached to VPNB.
+
+
+
+Wu, et al.                   Standards Track                   [Page 43]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

@@ -1,0 +1,148 @@
+---
+title: "RFC 8299 §6.12.3.1 QoS Classification"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.12.3.1.  QoS Classification
+
+   QoS classification rules are handled by the "qos-classification-
+   policy" container.  The qos-classification-policy container is an
+   ordered list of rules that match a flow or application and set the
+   appropriate target class of service (target-class-id).  The user can
+   define the match using an application reference or a flow definition
+   that is more specific (e.g., based on Layer 3 source and destination
+   addresses, Layer 4 ports, and Layer 4 protocol).  When a flow
+   definition is used, the user can employ a "target-sites" leaf-list to
+
+
+
+Wu, et al.                   Standards Track                   [Page 94]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   identify the destination of a flow rather than using destination IP
+   addresses.  In such a case, an association between the site
+   abstraction and the IP addresses used by this site must be done
+   dynamically.  How this association is done is out of scope for this
+   document.  The association of a site to an IP VPN is done through the
+   "vpn-attachment" container.  Therefore, the user can also employ
+   "target-sites" leaf-list and "vpn-attachment" to identify the
+   destination of a flow targeted to a specific VPN service.  A rule
+   that does not have a match statement is considered a match-all rule.
+   An SP may implement a default terminal classification rule if the
+   customer does not provide it.  It will be up to the SP to determine
+   its default target class.  The current model defines some
+   applications, but new application identities may be added through
+   augmentation.  The exact meaning of each application identity is up
+   to the SP, so it will be necessary for the SP to advise the customer
+   on the usage of application matching.
+
+   Where the classification is done depends on the SP's implementation
+   of the service, but classification concerns the flow coming from the
+   customer site and entering the network.
+
+                                           Provider network
+                                      +-----------------------+
+               192.0.2.0/24
+            198.51.100.0/24 ---- CE --------- PE
+
+              Traffic flow
+             ----------&gt;
+
+   In the figure above, the management system should implement the
+   classification rule:
+
+   o  in the ingress direction on the PE interface, if the CE is
+      customer-managed.
+
+   o  in the ingress direction on the CE interface connected to the
+      customer LAN, if the CE is provider-managed.
+
+   The figure below describes a sample service description of QoS
+   classification for a site:
+
+     &lt;?xml version="1.0"?&gt;
+     &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+       &lt;vpn-services&gt;
+         &lt;vpn-service&gt;
+           &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+         &lt;/vpn-service&gt;
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 95]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+       &lt;/vpn-services&gt;
+       &lt;sites&gt;
+         &lt;site&gt;
+           &lt;site-id&gt;SITE1&lt;/site-id&gt;
+           &lt;service&gt;
+             &lt;qos&gt;
+               &lt;qos-classification-policy&gt;
+                 &lt;rule&gt;
+                   &lt;id&gt;SvrA-http&lt;/id&gt;
+                   &lt;match-flow&gt;
+                     &lt;ipv4-src-prefix&gt;192.0.2.0/24&lt;/ipv4-src-prefix&gt;
+                     &lt;ipv4-dst-prefix&gt;203.0.113.1/32&lt;/ipv4-dst-prefix&gt;
+                     &lt;l4-dst-port&gt;80&lt;/l4-dst-port&gt;
+                     &lt;protocol-type&gt;tcp&lt;/protocol-type&gt;
+                   &lt;/match-flow&gt;
+                   &lt;target-class-id&gt;DATA2&lt;/target-class-id&gt;
+                 &lt;/rule&gt;
+                 &lt;rule&gt;
+                   &lt;id&gt;SvrA-ftp&lt;/id&gt;
+                   &lt;match-flow&gt;
+                     &lt;ipv4-src-prefix&gt;192.0.2.0/24&lt;/ipv4-src-prefix&gt;
+                     &lt;ipv4-dst-prefix&gt;203.0.113.1/32&lt;/ipv4-dst-prefix&gt;
+                     &lt;l4-dst-port&gt;21&lt;/l4-dst-port&gt;
+                     &lt;protocol-field&gt;tcp&lt;/protocol-field&gt;
+                   &lt;/match-flow&gt;
+                   &lt;target-class-id&gt;DATA2&lt;/target-class-id&gt;
+                 &lt;/rule&gt;
+                 &lt;rule&gt;
+                   &lt;id&gt;p2p&lt;/id&gt;
+                   &lt;match-application&gt;p2p&lt;/match-application&gt;
+                   &lt;target-class-id&gt;DATA3&lt;/target-class-id&gt;
+                 &lt;/rule&gt;
+                 &lt;rule&gt;
+                   &lt;id&gt;any&lt;/id&gt;
+                   &lt;target-class-id&gt;DATA1&lt;/target-class-id&gt;
+                 &lt;/rule&gt;
+               &lt;/qos-classification-policy&gt;
+             &lt;/qos&gt;
+           &lt;/service&gt;
+         &lt;/site&gt;
+       &lt;/sites&gt;
+     &lt;/l3vpn-svc&gt;
+
+   In the example above:
+
+   o  HTTP traffic from the 192.0.2.0/24 LAN destined for 203.0.113.1/32
+      will be classified in DATA2.
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 96]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  FTP traffic from the 192.0.2.0/24 LAN destined for 203.0.113.1/32
+      will be classified in DATA2.
+
+   o  Peer-to-peer traffic will be classified in DATA3.
+
+   o  All other traffic will be classified in DATA1.
+
+   The order of rule list entries is defined by the user.  The
+   management system responsible for translating those rules in network
+   element configuration MUST keep the same processing order in network
+   element configuration.
+
+</pre>

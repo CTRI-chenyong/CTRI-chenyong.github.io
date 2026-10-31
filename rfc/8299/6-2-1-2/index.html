@@ -1,0 +1,23 @@
+---
+title: "RFC 8299 §6.2.1.2 Any-to-Any"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.1.2.  Any-to-Any
+
+      +------------------------------------------------------------+
+      |  VPN1_Site1 ------ PE1               PE2 ------ VPN1_Site2 |
+      |                                                            |
+      |  VPN1_Site3 ------ PE3               PE4 ------ VPN1_Site4 |
+      +------------------------------------------------------------+
+
+                      Any-to-Any VPN Service Topology
+
+   In the any-to-any VPN service topology, all VPN sites can communicate
+   with each other without any restrictions.  The management system that
+   receives an any-to-any IP VPN service request through this model is
+   expected to assign and then configure the VRF and RTs on the
+   appropriate PEs.  In the any-to-any case, a single RT is generally
+   required, and every VRF imports and exports this RT.
+
+</pre>

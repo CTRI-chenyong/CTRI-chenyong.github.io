@@ -1,0 +1,23 @@
+---
+title: "RFC 8299 §6.3.2.2.2 OAM"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.2.2.2.  OAM
+
+   A customer may require a specific IP connectivity fault detection
+   mechanism on the IP connection.  The model supports BFD as a fault
+   detection mechanism.  This can be extended with other mechanisms via
+   augmentation.  The provider can propose some profiles to the
+   customer, depending on the service level the customer wants to
+   achieve.  Profile names must be communicated to the customer.  This
+   communication is out of scope for this document.  Some fixed values
+   for the holdtime period may also be imposed by the customer if the
+   provider allows the customer this function.
+
+   The "oam" container can easily be augmented by other mechanisms; in
+   particular, work done by the LIME Working Group
+   (https://datatracker.ietf.org/wg/lime/charter/) may be reused in
+   applicable scenarios.
+
+</pre>

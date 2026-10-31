@@ -1,0 +1,100 @@
+---
+title: "RFC 9182 §7.6.1 Connection"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.1.  Connection
+
+   The 'connection' container represents the Layer 2 connectivity to the
+   L3VPN for a particular VPN network access.  As shown in the tree
+   depicted in Figure 9, the 'connection' container defines protocols
+   and parameters to enable such connectivity at Layer 2.
+
+   The traffic can enter the VPN with or without encapsulation (e.g.,
+   VLAN, QinQ).  The 'encapsulation' container specifies the Layer 2
+   encapsulation to use (if any) and allows the configuration of the
+   relevant tags.
+
+   The interface that is attached to the L3VPN is identified by the
+   'interface-id' at the 'vpn-network-access' level.  From a network
+   model perspective, it is expected that the 'interface-id' is
+   sufficient to identify the interface.  However, specific Layer 2 sub-
+   interfaces may be required to be configured in some implementations/
+   deployments.  Such a Layer-2-specific interface can be included in
+   'l2-termination-point'.
+
+   If a Layer 2 tunnel is needed to terminate the service in the CE-PE
+   connection, the 'l2-tunnel-service' container is used to specify the
+   required parameters to set such a tunneling service (e.g., a Virtual
+   Private LAN Service (VPLS) or a Virtual eXtensible Local Area Network
+   (VXLAN)).  An identity called 'l2-tunnel-type' is defined for Layer 2
+   tunnel selection.  The container can also identify the pseudowire
+   (Section 6.1 of [RFC8077]).
+
+   As discussed in Section 7.6, 'l2vpn-id' is used to identify the L2VPN
+   service that is associated with an Integrated Routing and Bridging
+   (IRB) interface.
+
+   To accommodate implementations that require internal bridging, a
+   local bridge reference can be specified in 'local-bridge-reference'.
+   Such a reference may be a local bridge domain.
+
+   A site, as per [RFC4176], represents a VPN customer's location that
+   is connected to the service provider network via a CE-PE link, which
+   can access at least one VPN.  The connection from the site to the
+   service provider network is the bearer.  Every site is associated
+   with a list of bearers.  A bearer is the Layer 2 connection with the
+   site.  In the L3NM, it is assumed that the bearer has been allocated
+   by the service provider at the service orchestration stage.  The
+   bearer is associated with a network element and a port.  Hence, a
+   bearer is just a 'bearer-reference' to allow the association between
+   a service request (e.g., the L3SM) and the L3NM.
+
+   The L3NM can be used to create a Link Aggregation Group (LAG)
+   interface for a given L3VPN service ('lag-interface') [IEEE802.1AX].
+   Such a LAG interface can be referenced under 'interface-id'
+   (Section 7.6).
+
+   ...
+   +--rw connection
+   |  +--rw encapsulation
+   |  |  +--rw type?              identityref
+   |  |  +--rw dot1q
+   |  |  |  +--rw tag-type?   identityref
+   |  |  |  +--rw cvlan-id?   uint16
+   |  |  +--rw priority-tagged
+   |  |  |  +--rw tag-type?   identityref
+   |  |  +--rw qinq
+   |  |     +--rw tag-type?   identityref
+   |  |     +--rw svlan-id    uint16
+   |  |     +--rw cvlan-id    uint16
+   |  +--rw (l2-service)?
+   |  |  +--:(l2-tunnel-service)
+   |  |  |  +--rw l2-tunnel-service
+   |  |  |     +--rw type?         identityref
+   |  |  |     +--rw pseudowire
+   |  |  |     |  +--rw vcid?      uint32
+   |  |  |     |  +--rw far-end?   union
+   |  |  |     +--rw vpls
+   |  |  |     |  +--rw vcid?      uint32
+   |  |  |     |  +--rw far-end*   union
+   |  |  |     +--rw vxlan
+   |  |  |        +--rw vni-id             uint32
+   |  |  |        +--rw peer-mode?         identityref
+   |  |  |        +--rw peer-ip-address*   inet:ip-address
+   |  |  +--:(l2vpn)
+   |  |     +--rw l2vpn-id?            vpn-common:vpn-id
+   |  +--rw l2-termination-point?      string
+   |  +--rw local-bridge-reference?    string
+   |  +--rw bearer-reference?          string
+   |  |       {vpn-common:bearer-reference}?
+   |  +--rw lag-interface {vpn-common:lag-interface}?
+   |     +--rw lag-interface-id?   string
+   |     +--rw member-link-list
+   |        +--rw member-link* [name]
+   |           +--rw name    string
+   ...
+
+                   Figure 9: Connection Subtree Structure
+
+</pre>

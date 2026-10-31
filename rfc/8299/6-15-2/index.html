@@ -1,0 +1,124 @@
+---
+title: "RFC 8299 §6.15.2 Defining an NNI with the Option B Flavor"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.15.2.  Defining an NNI with the Option B Flavor
+
+            AS A                                          AS B
+      -------------------                         -------------------
+     /                   \                       /                   \
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +      +               +      +                 |
+    |                 + ASBR +&lt;---MP-BGP----&gt;+ ASBR +                 |
+    |                 +      +               +      +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +      +               +      +                 |
+    |                 + ASBR +&lt;---MP-BGP----&gt;+ ASBR +                 |
+    |                 +      +               +      +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+     \                   /                       \                   /
+      -------------------                         -------------------
+
+   In option B, the two ASes are connected to each other with physical
+   links on ASBRs.  For resiliency purposes, there may be multiple
+   physical connections between the ASes.  The VPN "connection" between
+   ASes is done by exchanging VPN routes through MP-BGP [RFC4760].
+
+   There are multiple flavors of implementations of such an NNI.  For
+   example:
+
+   1.  The NNI is internal to the provider and is situated between a
+       backbone and a data center.  There is enough trust between the
+       domains to not filter the VPN routes.  So, all the VPN routes are
+       exchanged.  RT filtering may be implemented to save some
+       unnecessary route states.
+
+   2.  The NNI is used between providers that agreed to exchange VPN
+       routes for specific RTs only.  Each provider is authorized to use
+       the RT values from the other provider.
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 111]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   3.  The NNI is used between providers that agreed to exchange VPN
+       routes for specific RTs only.  Each provider has its own RT
+       scheme.  So, a customer spanning the two networks will have
+       different RTs in each network for a particular VPN.
+
+   Case 1 does not require any service modeling, as the protocol enables
+   the dynamic exchange of necessary VPN routes.
+
+   Case 2 requires that an RT-filtering policy on ASBRs be maintained.
+   From a service modeling point of view, it is necessary to agree on
+   the list of RTs to authorize.
+
+   In Case 3, both ASes need to agree on the VPN RT to exchange, as well
+   as how to map a VPN RT from AS A to the corresponding RT in AS B (and
+   vice versa).
+
+   Those modelings are currently out of scope for this document.
+
+          CSP A                               L3VPN SP B
+
+     -----------------                    ------------------
+    /                 \                  /                  \
+   |       |           |                |                    |
+   |  VM --|       ++++++++   NNI    ++++++++                |--- VPN1
+   |       |       +      +__________+      +                |   Site#1
+   |       |-------+      +          +      +                |
+   |       |       + ASBR +&lt;-MP-BGP-&gt;+ ASBR +                |
+   |       |       +      +__________+      +                |
+   |       |       ++++++++          ++++++++                |
+   |  VM --|           |                |                    |--- VPN1
+   |       |Virtual    |                |                    |   Site#2
+   |       |Network    |                |                    |
+   |  VM --|           |                |                    |--- VPN1
+   |       |           |                |                    |   Site#3
+    \                 /                 |                    |
+     -----------------                  |                    |
+                                         \                  /
+                                          ------------------
+                                                   |
+                                                   |
+                                                  VPN1
+                                                 Site#4
+
+   The example above describes an NNI connection between CSP A and SP
+   network B.  Both SPs do not trust themselves and use a different RT
+   allocation policy.  So, in terms of implementation, the customer VPN
+   has a different RT in each network (RT A in CSP A and RT B in SP
+   network B).  In order to connect the customer virtual network in CSP
+
+
+
+Wu, et al.                   Standards Track                  [Page 112]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   A to the customer IP VPN (VPN1) in SP network B, CSP A should request
+   that SP network B open the customer VPN on the NNI (accept the
+   appropriate RT).  Who does the RT translation depends on the
+   agreement between the two SPs: SP B may permit CSP A to request VPN
+   (RT) translation.
+
+</pre>

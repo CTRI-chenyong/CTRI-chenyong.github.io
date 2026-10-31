@@ -1,0 +1,24 @@
+---
+title: "RFC 8299 §6.11.3 LAN Directly Connected to SP Network with Redundancy"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.3.  LAN Directly Connected to SP Network with Redundancy
+
+   The routing protocol type "vrrp" SHOULD be used and advertised in the
+   IP VPN when
+
+   o  the customer LAN is directly connected to the provider network,
+      and
+
+   o  LAN redundancy is expected.
+
+   LAN attached directly to provider network with LAN redundancy:
+
+                          192.0.2.0/24 ------ PE1
+                                         |
+                                         +--- PE2
+
+   In this case, the customer has a default route to the SP network.
+
+</pre>

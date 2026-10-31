@@ -1,0 +1,49 @@
+---
+title: "RFC 8299 §6.6.7 Route Distinguisher and VRF Allocation"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.7.  Route Distinguisher and VRF Allocation
+
+   The route distinguisher (RD) is a critical parameter of PE-based
+   L3VPNs as described in [RFC4364] that provides the ability to
+   distinguish common addressing plans in different VPNs.  As for route
+   targets (RTs), a management system is expected to allocate a VRF on
+   the target PE and an RD for this VRF.
+
+   If a VRF already exists on the target PE and the VRF fulfills the
+   connectivity constraints for the site, there is no need to recreate
+   another VRF, and the site MAY be meshed within this existing VRF.
+   How the management system checks that an existing VRF fulfills the
+   connectivity constraints for a site is out of scope for this
+   document.
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 80]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   If no such VRF exists on the target PE, the management system has to
+   initiate the creation of a new VRF on the target PE and has to
+   allocate a new RD for this new VRF.
+
+   The management system MAY apply a per-VPN or per-VRF allocation
+   policy for the RD, depending on the SP's policy.  In a per-VPN
+   allocation policy, all VRFs (dispatched on multiple PEs) within a VPN
+   will share the same RD value.  In a per-VRF model, all VRFs should
+   always have a unique RD value.  Some other allocation policies are
+   also possible, and this document does not restrict the allocation
+   policies to be used.
+
+   The allocation of RDs MAY be done in the same way as RTs.  The
+   examples provided in Section 6.2.1.1 could be reused in this
+   scenario.
+
+   Note that an SP MAY configure a target PE for an automated allocation
+   of RDs.  In this case, there will be no need for any backend system
+   to allocate an RD value.
+
+</pre>

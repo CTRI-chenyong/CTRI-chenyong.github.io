@@ -1,0 +1,220 @@
+---
+title: "RFC 8299 §6.15.1 Defining an NNI with the Option A Flavor"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.15.1.  Defining an NNI with the Option A Flavor
+
+             AS A                                          AS B
+      -------------------                         -------------------
+     /                   \                       /                   \
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +  (VRF1)---(VPN1)----(VRF1)  +                 |
+    |                 + ASBR +               + ASBR +                 |
+    |                 +  (VRF2)---(VPN2)----(VRF2)  +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +  (VRF1)---(VPN1)----(VRF1)  +                 |
+    |                 + ASBR +               + ASBR +                 |
+    |                 +  (VRF2)---(VPN2)----(VRF2)  +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+     \                   /                       \                   /
+      -------------------                         -------------------
+
+   In option A, the two ASes are connected to each other with physical
+   links on ASBRs.  For resiliency purposes, there may be multiple
+   physical connections between the ASes.  A VPN connection -- physical
+   or logical (on top of physical) -- is created for each VPN that needs
+   to cross the AS boundary, thus providing a back-to-back VRF model.
+
+   From a service model's perspective, this VPN connection can be seen
+   as a site.  Let's say that AS B wants to extend some VPN connections
+   for VPN C on AS A.  The administrator of AS B can use this service
+   model to order a site on AS A.  All connection scenarios could be
+
+
+
+Wu, et al.                   Standards Track                  [Page 107]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   realized using the features of the current model.  As an example, the
+   figure above shows two physical connections that have logical
+   connections per VPN overlaid on them.  This could be seen as a dual-
+   homed subVPN scenario.  Also, the administrator of AS B will be able
+   to choose the appropriate routing protocol (e.g., E-BGP) to
+   dynamically exchange routes between ASes.
+
+   This document assumes that the option A NNI flavor SHOULD reuse the
+   existing VPN site modeling.
+
+   Example: a customer wants its CSP A to attach its virtual network N
+   to an existing IP VPN (VPN1) that he has from L3VPN SP B.
+
+           CSP A                              L3VPN SP B
+
+     -----------------                    -------------------
+    /                 \                  /                   \
+   |       |           |                |                     |
+   |  VM --|       ++++++++  NNI    ++++++++                  |--- VPN1
+   |       |       +      +_________+      +                  |   Site#1
+   |       |--------(VRF1)---(VPN1)--(VRF1)+                  |
+   |       |       + ASBR +         + ASBR +                  |
+   |       |       +      +_________+      +                  |
+   |       |       ++++++++         ++++++++                  |
+   |  VM --|           |                |                     |--- VPN1
+   |       |Virtual    |                |                     |   Site#2
+   |       |Network    |                |                     |
+   |  VM --|           |                |                     |--- VPN1
+   |       |           |                |                     |   Site#3
+    \                 /                  \                   /
+     -----------------                    -------------------
+                                                  |
+                                                  |
+                                                VPN1
+                                               Site#4
+
+   To create the VPN connectivity, the CSP or the customer may use the
+   L3VPN service model that SP B exposes.  We could consider that, as
+   the NNI is shared, the physical connection (bearer) between CSP A and
+   SP B already exists.  CSP A may request through a service model the
+   creation of a new site with a single site-network-access (single-
+   homing is used in the figure).  As a placement constraint, CSP A may
+   use the existing bearer reference it has from SP A to force the
+   placement of the VPN NNI on the existing link.  The XML snippet below
+   illustrates a possible configuration request to SP B:
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 108]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+&lt;?xml version="1.0"?&gt;
+&lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+ &lt;vpn-profiles&gt;
+  &lt;valid-provider-identifiers&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;GOLD&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;PLATINUM&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+  &lt;/valid-provider-identifiers&gt;
+ &lt;/vpn-profiles&gt;
+ &lt;vpn-services&gt;
+  &lt;vpn-service&gt;
+   &lt;vpn-id&gt;VPN1&lt;/vpn-id&gt;
+  &lt;/vpn-service&gt;
+ &lt;/vpn-services&gt;
+ &lt;sites&gt;
+  &lt;site&gt;
+   &lt;site-id&gt;CSP_A_attachment&lt;/site-id&gt;
+   &lt;security&gt;
+    &lt;encryption&gt;
+     &lt;layer&gt;layer3&lt;/layer&gt;
+    &lt;/encryption&gt;
+   &lt;/security&gt;
+   &lt;locations&gt;
+    &lt;location&gt;
+     &lt;location-id&gt;L1&lt;/location-id&gt;
+    &lt;/location&gt;
+   &lt;/locations&gt;
+   &lt;locations&gt;
+    &lt;location&gt;
+     &lt;location-id&gt;1&lt;/location-id&gt;
+     &lt;city&gt;NY&lt;/city&gt;
+     &lt;country-code&gt;US&lt;/country-code&gt;
+    &lt;/location&gt;
+   &lt;/locations&gt;
+   &lt;site-vpn-flavor&gt;site-vpn-flavor-nni&lt;/site-vpn-flavor&gt;
+   &lt;routing-protocols&gt;
+    &lt;routing-protocol&gt;
+     &lt;type&gt;bgp&lt;/type&gt;
+     &lt;bgp&gt;
+      &lt;autonomous-system&gt;500&lt;/autonomous-system&gt;
+      &lt;address-family&gt;ipv4&lt;/address-family&gt;
+     &lt;/bgp&gt;
+    &lt;/routing-protocol&gt;
+   &lt;/routing-protocols&gt;
+   &lt;site-network-accesses&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 109]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+    &lt;site-network-access&gt;
+     &lt;site-network-access-id&gt;CSP_A_VN1&lt;/site-network-access-id&gt;
+     &lt;location-reference&gt;L1&lt;/location-reference&gt;
+     &lt;ip-connection&gt;
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv4&gt;
+      &lt;ipv6&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv6&gt;
+     &lt;/ip-connection&gt;
+     &lt;ip-connection&gt;
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;static-address&lt;/address-allocation-type&gt;
+       &lt;addresses&gt;
+        &lt;provider-address&gt;203.0.113.1&lt;/provider-address&gt;
+        &lt;customer-address&gt;203.0.113.2&lt;/customer-address&gt;
+        &lt;prefix-length&gt;30&lt;/prefix-length&gt;
+       &lt;/addresses&gt;
+      &lt;/ipv4&gt;
+     &lt;/ip-connection&gt;
+     &lt;service&gt;
+      &lt;svc-input-bandwidth&gt;450000000&lt;/svc-input-bandwidth&gt;
+      &lt;svc-output-bandwidth&gt;450000000&lt;/svc-output-bandwidth&gt;
+      &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+     &lt;/service&gt;
+     &lt;security&gt;
+      &lt;encryption&gt;
+       &lt;layer&gt;layer3&lt;/layer&gt;
+      &lt;/encryption&gt;
+     &lt;/security&gt;
+     &lt;vpn-attachment&gt;
+      &lt;vpn-id&gt;VPN1&lt;/vpn-id&gt;
+      &lt;site-role&gt;any-to-any-role&lt;/site-role&gt;
+     &lt;/vpn-attachment&gt;
+    &lt;/site-network-access&gt;
+   &lt;/site-network-accesses&gt;
+   &lt;management&gt;
+    &lt;type&gt;customer-managed&lt;/type&gt;
+   &lt;/management&gt;
+  &lt;/site&gt;
+ &lt;/sites&gt;
+&lt;/l3vpn-svc&gt;
+
+   The case described above is different from a scenario using the
+   cloud-accesses container, as the cloud-access provides a public cloud
+   access while this example enables access to private resources located
+   in a CSP network.
+
+
+
+Wu, et al.                   Standards Track                  [Page 110]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

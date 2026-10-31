@@ -1,0 +1,93 @@
+---
+title: "RFC 8299 §6.9.2 Encryption"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.9.2.  Encryption
+
+   Traffic encryption can be requested on the connection.  It may be
+   performed at Layer 2 or Layer 3 by selecting the appropriate
+   enumeration in the "layer" leaf.  For example, an SP may use IPsec
+   when a customer requests Layer 3 encryption.  The encryption profile
+   can be SP defined or customer specific.
+
+   When an SP profile is used and a key (e.g., a pre-shared key) is
+   allocated by the provider to be used by a customer, the SP should
+   provide a way to communicate the key in a secured way to the
+   customer.
+
+   When a customer profile is used, the model supports only a pre-shared
+   key for authentication of the site connection, with the pre-shared
+   key provided through the NETCONF or RESTCONF request.  A secure
+   channel must be used to ensure that the pre-shared key cannot be
+   intercepted.
+
+   For security reasons, it may be necessary for the customer to change
+   the pre-shared key on a regular basis.  To perform a key change, the
+   user can ask the SP to change the pre-shared key by submitting a new
+   pre-shared key for the site configuration (as shown below with a
+   corresponding XML snippet).  This mechanism might not be hitless.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 84]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;site-network-accesses&gt;
+              &lt;site-network-access&gt;
+                &lt;site-network-access-id&gt;1&lt;/site-network-access-id&gt;
+                &lt;security&gt;
+                  &lt;encryption&gt;
+                    &lt;encryption-profile&gt;
+                      &lt;preshared-key&gt;MY_NEW_KEY&lt;/preshared-key&gt;
+                    &lt;/encryption-profile&gt;
+                  &lt;/encryption&gt;
+                &lt;/security&gt;
+              &lt;/site-network-access&gt;
+            &lt;/site-network-accesses&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+   A hitless key change mechanism may be added through augmentation.
+
+   Other key-management methodologies (e.g., PKI) may be added through
+   augmentation.
+
+</pre>

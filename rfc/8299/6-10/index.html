@@ -1,0 +1,37 @@
+---
+title: "RFC 8299 §6.10 Management"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.10.  Management
+
+   The model defines three types of common management options:
+
+   o  provider-managed: The CE router is managed only by the provider.
+      In this model, the responsibility boundary between the SP and the
+      customer is between the CE and the customer network.
+
+   o  customer-managed: The CE router is managed only by the customer.
+      In this model, the responsibility boundary between the SP and the
+      customer is between the PE and the CE.
+
+   o  co-managed: The CE router is primarily managed by the provider; in
+      addition, the SP allows customers to access the CE for
+      configuration/monitoring purposes.  In the co-managed mode, the
+      responsibility boundary is the same as the responsibility boundary
+      for the provider-managed model.
+
+
+
+Wu, et al.                   Standards Track                   [Page 85]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Based on the management model, different security options MAY be
+   derived.
+
+   In the co-managed case, the model defines options for the management
+   address family (IPv4 or IPv6) and the associated management address.
+
+</pre>

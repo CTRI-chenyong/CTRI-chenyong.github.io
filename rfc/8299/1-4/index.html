@@ -1,0 +1,93 @@
+---
+title: "RFC 8299 §1.4 Summary of Changes from RFC 8049"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>1.4.  Summary of Changes from RFC 8049
+
+   This document revises and obsoletes L3VPN Service Model [RFC8049],
+   drawing on insights gained from L3VPN Service Model deployments and
+   on feedback from the community.  The major changes are as follows:
+
+   o  Change type from 16-bit integer to string for the leaf id under
+      "qos-classification-policy" container.
+
+   o  Stick to using ordered-by user and remove inefficiency to map
+      service model sequence number to device model sequence number.
+
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 5]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  Remove mandating the use of deviations and add "if-feature target-
+      sites" under the leaf-list target-sites in Section 6.12.2.1 of
+      [RFC8049].
+
+   o  Change in keywords from [RFC2119] and [RFC8174] on operation of
+      the management system in the third paragraph of Section 6.6,
+      Section 6.6.5, and Section 7.
+
+   o  Fix incomplete description statements.
+
+   o  Add YANG statement to check that Stateless Address
+      Autoconfiguration (SLAAC) parameters are used only for IPv6.
+
+   o  Fix strange wording in Section 6.11.7.
+
+   o  Change the use of the absolute paths to the use of relative paths
+      in the "must" statement or "path" statement for vpn-policy-id leaf
+      node, management container, location leaf node, devices container,
+      location case, location-reference leaf, device case, device-
+      reference leaf to make configuration is only applicable to the
+      current sites.
+
+   o  Change "must" statement to "when" statement for management
+      container device container.
+
+   o  Fix optional parameter issues by adding a default or description
+      for others or make some of them mandatory.
+
+   o  Define new grouping vpn-profile-cfg for all the identifiers
+      provided by SP to the customer.  The identifiers include cloud-
+      identifier, std-qos-profile, OAM profile-name, and provider-
+      profile for encryption.
+
+   o  Add in the XPATH string representation of identityrefs and remove
+      unqualified name.  Change from YANG 1.0 Support to YANG 1.1
+      Support.
+
+   o  Remove "when" statement from leaf nat44-customer-address.
+
+   o  Fixed broken example and Add mandatory element in the examples.
+
+   o  Remove redundant parameters in the cloud access.
+
+   o  Specify provider address and a list of start-end addresses from
+      provider address for DHCP case.
+
+   o  Add a few text to clarify what the site is in Section 6.3.
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 6]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  Add multi-filter and multiVPN per entry support for VPN policy.
+
+   o  Modify description for svc-input-bandwidth leaf and svc-output-
+      bandwidth leaf to make it consistent with the text in
+      Section 6.12.1.
+
+   o  Clarify the rational of the model in the Section 5.
+
+   o  Add text to clarify the way to achieve Per-VPN QoS policy.
+
+</pre>

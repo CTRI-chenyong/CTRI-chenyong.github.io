@@ -1,0 +1,144 @@
+---
+title: "RFC 9182 §7.5 VPN Nodes"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.5.  VPN Nodes
+
+   The 'vpn-node' is an abstraction that represents a set of common
+   policies applied on a given network node (typically, a PE) and
+   belonging to one L3VPN service.  The 'vpn-node' includes a parameter
+   to indicate the network node on which it is applied.  In the case
+   that the 'ne-id' points to a specific PE, the 'vpn-node' will likely
+   be mapped to a VRF instance in the node.  However, the model also
+   allows pointing to an abstract node.  In this case, the network
+   controller will decide how to split the 'vpn-node' into VRF
+   instances.
+
+   The VPN node subtree structure is shown in Figure 7.
+
+     +--rw l3vpn-ntw
+        +--rw vpn-profiles
+        |  ...
+        +--rw vpn-services
+           +--rw vpn-service* [vpn-id]
+              ...
+              +--rw vpn-nodes
+                 +--rw vpn-node* [vpn-node-id]
+                    +--rw vpn-node-id                vpn-common:vpn-id
+                    +--rw description?               string
+                    +--rw ne-id?                     string
+                    +--rw local-as?                  inet:as-number
+                    |       {vpn-common:rtg-bgp}?
+                    +--rw router-id?                 rt-types:router-id
+                    +--rw active-vpn-instance-profiles
+                    |  +--rw vpn-instance-profile* [profile-id]
+                    |     +--rw profile-id                 leafref
+                    |     +--rw router-id* [address-family]
+                    |     |  +--rw address-family    identityref
+                    |     |  +--rw router-id?        inet:ip-address
+                    |     +--rw local-as?            inet:as-number
+                    |     |     {vpn-common:rtg-bgp}?
+                    |     +--rw (rd-choice)?
+                    |     |  ....
+                    |     +--rw address-family* [address-family]
+                    |     |  +--rw address-family          identityref
+                    |     |  |  ...
+                    |     |  +--rw vpn-targets
+                    |     |  |  ...
+                    |     |  +--rw maximum-routes* [protocol]
+                    |     |     ...
+                    |     +--rw multicast {vpn-common:multicast}?
+                    |        ...
+                    +--rw msdp {msdp}?
+                    |  +--rw peer?            inet:ipv4-address
+                    |  +--rw local-address?   inet:ipv4-address
+                    |  +--rw status
+                    |     +--rw admin-status
+                    |     |  +--rw status?         identityref
+                    |     |  +--rw last-change?   yang:date-and-time
+                    |     +--ro oper-status
+                    |        +--ro status?         identityref
+                    |        +--ro last-change?   yang:date-and-time
+                    +--rw groups
+                    |  +--rw group* [group-id]
+                    |     +--rw group-id    string
+                    +--rw status
+                    |  +--rw admin-status
+                    |  |  +--rw status?         identityref
+                    |  |  +--rw last-change?   yang:date-and-time
+                    |  +--ro oper-status
+                    |     +--ro status?         identityref
+                    |     +--ro last-change?   yang:date-and-time
+                    +--rw vpn-network-accesses
+                       ...
+
+                    Figure 7: VPN Node Subtree Structure
+
+   The descriptions of the 'vpn-node' data nodes (Figure 7) are as
+   follows:
+
+   'vpn-node-id':  An identifier that uniquely identifies a node that
+      enables a VPN network access.
+
+   'description':  Provides a textual description of the VPN node.
+
+   'ne-id':  Includes a unique identifier of the network element where
+      the VPN node is deployed.
+
+   'local-as':  Indicates the ASN that is configured for the VPN node.
+
+   'router-id':  Indicates a 32-bit number that is used to uniquely
+      identify a router within an AS.
+
+   'active-vpn-instance-profiles':  Lists the set of active VPN instance
+      profiles for this VPN node.  Concretely, one or more VPN instance
+      profiles that are defined at the VPN service level can be enabled
+      at the VPN node level; each of these profiles is uniquely
+      identified by means of 'profile-id'.  The structure of 'active-
+      vpn-instance-profiles' is the same as the structure discussed in
+      Section 7.4, except that the structure of 'active-vpn-instance-
+      profiles' includes 'router-id' but does not include the 'role'
+      leaf.  The value of 'router-id' indicated under 'active-vpn-
+      instance-profiles' takes precedence over the 'router-id' under the
+      'vpn-node' for the indicated address family.  For example, Router
+      IDs can be configured per address family.  This capability can be
+      used, for example, to configure an IPv6 address as a Router ID
+      when such a capability is supported by involved routers.
+
+      Values defined in 'active-vpn-instance-profiles' override the
+      values defined at the VPN service level.  An example is shown in
+      Appendix A.3.
+
+   'msdp':  For redundancy purposes, the Multicast Source Discovery
+      Protocol (MSDP) [RFC3618] may be enabled and used to share state
+      information about sources between multiple Rendezvous Points
+      (RPs).  The purpose of MSDP in this context is to enhance the
+      robustness of the multicast service.  MSDP may be configured on
+      non-RP routers; this is useful in a domain that does not support
+      multicast sources but does support multicast transit.
+
+   'groups':  Lists the groups to which a VPN node belongs [RFC9181].
+      For example, the 'group-id' is used to associate redundancy or
+      protection constraints with VPN nodes.
+
+   'status':  Tracks the status of a node involved in a VPN service.
+      Both operational status and administrative status are maintained.
+      A mismatch between the administrative status vs. the operational
+      status can be used as a trigger to detect anomalies.
+
+   'vpn-network-accesses':  Represents the point to which sites are
+      connected.
+
+      Note that unlike the L3SM, the L3NM does not need to model the
+      customer site -- only the points that receive traffic from the
+      site (i.e., the PE side of Provider Edge to Customer Edge (PE-CE)
+      connections).  Hence, the VPN network access contains the
+      connectivity information between the provider's network and the
+      customer premises.  The VPN profiles ('vpn-profiles') have a set
+      of routing policies that can be applied during the service
+      creation.
+
+      See Section 7.6 for more details.
+
+</pre>

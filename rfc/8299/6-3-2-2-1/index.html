@@ -1,0 +1,52 @@
+---
+title: "RFC 8299 §6.3.2.2.1 IP Addressing"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.2.2.1.  IP Addressing
+
+   An IP subnet can be configured for either IPv4 or IPv6 Layer 3
+   protocols.  For a dual-stack connection, two subnets will be
+   provided, one for each address family.
+
+   The "address-allocation-type" determines how the address allocation
+   needs to be done.  The current model defines five ways to perform IP
+   address allocation:
+
+   o  provider-dhcp: The provider will provide DHCP service for customer
+      equipment; this is applicable to either the "IPv4" container or
+      the "IPv6" container.
+
+   o  provider-dhcp-relay: The provider will provide DHCP relay service
+      for customer equipment; this is applicable to both IPv4 and IPv6
+      addressing.  The customer needs to populate the DHCP server list
+      to be used.
+
+   o  static-address: Addresses will be assigned manually; this is
+      applicable to both IPv4 and IPv6 addressing.
+
+   o  slaac: This parameter enables stateless address autoconfiguration
+      [RFC4862].  This is applicable to IPv6 only.
+
+   o  provider-dhcp-slaac: The provider will provide DHCP service for
+      customer equipment, as well as stateless address
+      autoconfiguration.  This is applicable to IPv6 only.
+
+   In the dynamic addressing mechanism, the SP is expected to provide at
+   least the IP address, prefix length, and default gateway information.
+   In the case of multiple site-network-access points belonging to the
+   same VPN, address space allocated for one site-network-access should
+   not conflict with one allocated for other site-network-accesses.
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 35]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

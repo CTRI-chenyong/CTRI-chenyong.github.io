@@ -1,0 +1,82 @@
+---
+title: "RFC 9182 §5 Relationship to Other YANG Data Models"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>5.  Relationship to Other YANG Data Models
+
+   The "ietf-vpn-common" module [RFC9181] includes a set of identities,
+   types, and groupings that are meant to be reused by VPN-related YANG
+   modules independently of the layer (e.g., Layer 2, Layer 3) and the
+   type of the module (e.g., network model, service model), including
+   future revisions of existing models (e.g., [RFC8299] or [RFC8466]).
+   The L3NM reuses these common types and groupings.
+
+   In order to avoid data duplication and to ease passing data between
+   layers when required (service layer to network layer and vice versa),
+   early versions of the L3NM reused many of the data nodes that are
+   defined in [RFC8299].  Nevertheless, that approach was abandoned in
+   favor of the "ietf-vpn-common" module because that initial design was
+   interpreted as if the deployment of the L3NM depends on the L3SM,
+   while this is not the case.  For example, a service provider may
+   decide to use the L3NM to build its L3VPN services without exposing
+   the L3SM.
+
+   As discussed in Section 4, the L3NM is meant to manage L3VPN services
+   within a service provider network.  The module provides a network
+   view of the service.  Such a view is only visible within the service
+   provider and is not exposed outside (to customers, for example).  The
+   items below discuss how the L3NM interfaces with other YANG modules:
+
+   L3SM:  The L3NM is not a customer service model.
+
+      The internal view of the service (i.e., the L3NM) may be mapped to
+      an external view that is visible to customers: the L3VPN Service
+      Model (L3SM) [RFC8299].
+
+      The L3NM can be fed with inputs that are requested by customers.
+      Such requests typically rely upon an L3SM template.  Concretely,
+      some parts of the L3SM module can be directly mapped to the L3NM,
+      while other parts are generated as a function of the requested
+      service and local guidelines.  Some other parts are local to the
+      service provider and do not map directly to the L3SM.
+
+      Note that using the L3NM within a service provider does not
+      assume, nor does it preclude, exposing the VPN service via the
+      L3SM.  This is deployment specific.  Nevertheless, the design of
+      the L3NM tries to align as much as possible with the features
+      supported by the L3SM to ease the grafting of both the L3NM and
+      the L3SM for the sake of highly automated VPN service provisioning
+      and delivery.
+
+   Network Topology Modules:  An L3VPN involves nodes that are part of a
+      topology managed by the service provider network.  The topology
+      can be represented using the network topology YANG module defined
+      in [RFC8345] or its extension, such as a network YANG module for
+      Service Attachment Points (SAPs) [YANG-SAPs].
+
+   Device Modules:  The L3NM is not a device model.
+
+      Once a global VPN service is captured by means of the L3NM, the
+      actual activation and provisioning of the VPN service will involve
+      a variety of device modules to tweak the required functions for
+      the delivery of the service.  These functions are supported by the
+      VPN nodes and can be managed using device YANG modules.  A non-
+      comprehensive list of such device YANG modules is provided below:
+
+      *  Routing management [RFC8349].
+
+      *  BGP [BGP-YANG].
+
+      *  PIM [PIM-YANG].
+
+      *  NAT management [RFC8512].
+
+      *  QoS management [QoS-YANG].
+
+      *  ACLs [RFC8519].
+
+      How the L3NM is used to derive device-specific actions is
+      implementation specific.
+
+</pre>

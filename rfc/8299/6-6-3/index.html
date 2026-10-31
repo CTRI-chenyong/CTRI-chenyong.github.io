@@ -1,0 +1,53 @@
+---
+title: "RFC 8299 §6.6.3 Constraint/Parameter: Access Type"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.3.  Constraint/Parameter: Access Type
+
+   The management system needs to elect the access media to connect the
+   site to the customer (for example, xDSL, leased line, Ethernet
+   backhaul).  The customer may provide some parameters/constraints that
+   will provide hints to the management system.
+
+
+
+Wu, et al.                   Standards Track                   [Page 49]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The bearer container information SHOULD be the first piece of
+   information considered when making this decision:
+
+   o  The "requested-type" parameter provides information about the
+      media type that the customer would like to use.  If the "strict"
+      leaf is equal to "true", this MUST be considered a strict
+      constraint so that the management system cannot connect the site
+      with another media type.  If the "strict" leaf is equal to "false"
+      (default) and if the requested media type cannot be fulfilled, the
+      management system can select another media type.  The supported
+      media types SHOULD be communicated by the SP to the customer via a
+      mechanism that is out of scope for this document.
+
+   o  The "always-on" leaf defines a strict constraint: if set to true,
+      the management system MUST elect a media type that is "always-on"
+      (e.g., this means no dial access type).
+
+   o  The "bearer-reference" parameter is used in cases where the
+      customer has already ordered a network connection to the SP apart
+      from the IP VPN site and wants to reuse this connection.  The
+      string used is an internal reference from the SP and describes the
+      already-available connection.  This is also a strict requirement
+      that cannot be relaxed.  How the reference is given to the
+      customer is out of scope for this document, but as a pure example,
+      when the customer ordered the bearer (through a process that is
+      out of scope for this model), the SP may have provided the bearer
+      reference that can be used for provisioning services on top.
+
+   Any other internal parameters from the SP can also be used.  The
+   management system MAY use other parameters, such as the requested
+   "svc-input-bandwidth" and "svc-output-bandwidth", to help decide
+   which access type to use.
+
+</pre>

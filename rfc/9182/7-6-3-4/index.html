@@ -1,0 +1,67 @@
+---
+title: "RFC 9182 §7.6.3.4 IS-IS"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.4.  IS-IS
+
+   The model allows the user to configure IS-IS [ISO10589] [RFC1195]
+   [RFC5308] to run on the 'vpn-network-access' interface.  See
+   Figure 18.
+
+   ...
+   +--rw routing-protocols
+   |  +--rw routing-protocol* [id]
+   |     ...
+   |     +--rw isis
+   |     |  +--rw address-family?   identityref
+   |     |  +--rw area-address      area-address
+   |     |  +--rw level?            identityref
+   |     |  +--rw metric?           uint16
+   |     |  +--rw mode?             enumeration
+   |     |  +--rw authentication
+   |     |  |  +--rw enable?            boolean
+   |     |  |  +--rw keying-material
+   |     |  |     +--rw (option)?
+   |     |  |        +--:(auth-key-chain)
+   |     |  |        |  +--rw key-chain?
+   |     |  |        |          key-chain:key-chain-ref
+   |     |  |        +--:(auth-key-explicit)
+   |     |  |           +--rw key-id?             uint32
+   |     |  |           +--rw key?                string
+   |     |  |           +--rw crypto-algorithm?   identityref
+   |     |  +--rw status
+   |     |     +--rw admin-status
+   |     |     |  +--rw status?        identityref
+   |     |     |  +--rw last-change?  yang:date-and-time
+   |     |     +--ro oper-status
+   |     |        +--ro status?        identityref
+   |     |        +--ro last-change?  yang:date-and-time
+   ...
+
+                 Figure 18: IS-IS Routing Subtree Structure
+
+   The following IS-IS data nodes are supported:
+
+   'address-family':  Indicates whether IPv4, IPv6, or both address
+      families are to be activated.
+
+   'area-address':  Indicates the IS-IS area address.
+
+   'level':  Indicates the IS-IS level: Level 1, Level 2, or both.
+
+   'metric':  Associates a metric with IS-IS routes.
+
+   'mode':  Indicates the IS-IS interface mode type.  It can be set to
+      'active' (that is, send or receive IS-IS protocol control packets)
+      or 'passive' (that is, suppress the sending of IS-IS updates
+      through the interface).
+
+   'authentication':  Controls the authentication schemes to be enabled
+      for the IS-IS instance.  Both the specification of a key chain
+      [RFC8177] and the direct specification of key and authentication
+      algorithms are supported.
+
+   'status':  Indicates the status of the IS-IS routing instance.
+
+</pre>

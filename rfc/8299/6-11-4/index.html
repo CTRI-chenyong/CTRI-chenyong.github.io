@@ -1,0 +1,20 @@
+---
+title: "RFC 8299 §6.11.4 Static Routing"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.4.  Static Routing
+
+   The routing protocol type "static" MAY be used when a customer LAN is
+   connected to the provider network through a CE router and must be
+   advertised in the IP VPN.  In this case, the static routes give next
+   hops (nh) to the CE and to the PE.  The customer has a default route
+   to the SP network.
+
+                                 Static rtg
+        192.0.2.0/24 ------ CE -------------- PE
+                             |                |
+                             |      Static route 192.0.2.0/24 nh CE
+             Static route 0.0.0.0/0 nh PE
+
+</pre>

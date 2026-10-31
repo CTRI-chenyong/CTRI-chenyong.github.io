@@ -1,0 +1,40 @@
+---
+title: "RFC 9182 §7.6.5 Security"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.5.  Security
+
+   The 'security' container specifies the authentication and the
+   encryption to be applied to traffic for a given VPN network access.
+   As depicted in the subtree shown in Figure 22, the L3NM can be used
+   to directly control the encryption to be applied (e.g., Layer 2 or
+   Layer 3 encryption) or invoke a local encryption profile.
+
+        ...
+        +--rw vpn-services
+           +--rw vpn-service* [vpn-id]
+              ...
+              +--rw vpn-nodes
+                 +--rw vpn-node* [vpn-node-id]
+                    ...
+                    +--rw vpn-network-accesses
+                       +--rw vpn-network-access* [id]
+                          ...
+                          +--rw security
+                          |  +--rw encryption {vpn-common:encryption}?
+                          |  |  +--rw enabled?   boolean
+                          |  |  +--rw layer?     enumeration
+                          |  +--rw encryption-profile
+                          |     +--rw (profile)?
+                          |        +--:(provider-profile)
+                          |        |  +--rw profile-name?        leafref
+                          |        +--:(customer-profile)
+                          |           +--rw customer-key-chain?
+                          |                   key-chain:key-chain-ref
+                          +--rw service
+                              ...
+
+                   Figure 22: Security Subtree Structure
+
+</pre>

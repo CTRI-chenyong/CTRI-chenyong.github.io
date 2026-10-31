@@ -1,0 +1,73 @@
+---
+title: "RFC 9182 §7.6.3.5 RIP"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.5.  RIP
+
+   The model allows the user to configure RIP to run on the 'vpn-
+   network-access' interface.  See Figure 19.
+
+   ...
+   +--rw routing-protocols
+   |  +--rw routing-protocol* [id]
+   |     ...
+   |     +--rw rip
+   |     |  +--rw address-family?   identityref
+   |     |  +--rw timers
+   |     |  |  +--rw update-interval?     uint16
+   |     |  |  +--rw invalid-interval?    uint16
+   |     |  |  +--rw holddown-interval?   uint16
+   |     |  |  +--rw flush-interval?      uint16
+   |     |  +--rw default-metric?   uint8
+   |     |  +--rw authentication
+   |     |  |  +--rw enable?            boolean
+   |     |  |  +--rw keying-material
+   |     |  |     +--rw (option)?
+   |     |  |        +--:(auth-key-chain)
+   |     |  |        |  +--rw key-chain?
+   |     |  |        |          key-chain:key-chain-ref
+   |     |  |        +--:(auth-key-explicit)
+   |     |  |           +--rw key?                string
+   |     |  |           +--rw crypto-algorithm?   identityref
+   |     |  +--rw status
+   |     |     +--rw admin-status
+   |     |     |  +--rw status?        identityref
+   |     |     |  +--rw last-change?  yang:date-and-time
+   |     |     +--ro oper-status
+   |     |        +--ro status?        identityref
+   |     |        +--ro last-change?  yang:date-and-time
+   ...
+
+                      Figure 19: RIP Subtree Structure
+
+   As shown in Figure 19, the following RIP data nodes are supported:
+
+   'address-family':  Indicates whether IPv4, IPv6, or both address
+      families are to be activated.  This parameter is used to determine
+      whether RIPv2 [RFC2453], RIP Next Generation (RIPng), or both are
+      to be enabled [RFC2080].
+
+   'timers':  Indicates the following timers:
+
+      'update-interval':  The interval at which RIP updates are sent.
+
+      'invalid-interval':  The interval before a RIP route is declared
+         invalid.
+
+      'holddown-interval':  The interval before better RIP routes are
+         released.
+
+      'flush-interval':  The interval before a route is removed from the
+         routing table.
+
+      These timers are expressed in seconds.
+
+   'default-metric':  Sets the default RIP metric.
+
+   'authentication':  Controls the authentication schemes to be enabled
+      for the RIP instance.
+
+   'status':  Indicates the status of the RIP routing instance.
+
+</pre>

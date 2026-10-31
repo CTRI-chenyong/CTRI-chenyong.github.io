@@ -12,7 +12,10 @@
  *   4. the node names the page says do NOT exist really are absent.
  *
  * Run: node tools/check-rfc-citations.mjs
- * Env: RFC_CACHE_DIR (default os.tmpdir()), RFC_OFFLINE=1 to forbid downloading.
+ * Env: RFC_CACHE_DIR (default os.tmpdir()) for the RFCs that are not published
+ *      on the site; RFC_OFFLINE=1 to forbid downloading those. RFC 8299 and
+ *      RFC 9182 are read from the verbatim copies in rfc/source/ and are never
+ *      downloaded, so this check and the published pages use the same bytes.
  */
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -22,16 +25,19 @@ import { loadApp } from './load-classic.mjs';
 
 const CACHE_DIR = process.env.RFC_CACHE_DIR || tmpdir();
 const OFFLINE = process.env.RFC_OFFLINE === '1';
+const PUBLISHED_DIR = join(import.meta.dirname, '..', 'rfc', 'source');
 
 const SOURCES = {
   8299: {
     url: 'https://www.rfc-editor.org/rfc/rfc8299.txt',
-    file: join(CACHE_DIR, 'rfc8299.txt'),
+    file: join(PUBLISHED_DIR, 'rfc8299.txt'),
+    published: true,
     module: 'ietf-l3vpn-svc'
   },
   9182: {
     url: 'https://www.rfc-editor.org/rfc/rfc9182.txt',
-    file: join(CACHE_DIR, 'rfc9182.txt'),
+    file: join(PUBLISHED_DIR, 'rfc9182.txt'),
+    published: true,
     module: 'ietf-l3vpn-ntw'
   },
   /* RFC 9182 pulls most of its structure in through "uses vpn-common:...", so
@@ -47,6 +53,9 @@ const SOURCES = {
 async function loadRfc(number) {
   const source = SOURCES[number];
   if (!existsSync(source.file)) {
+    if (source.published) {
+      throw new Error(`${source.file} is missing; it is the verbatim copy the site publishes — fetch it from ${source.url} or run node tools/build-rfc-pages.mjs`);
+    }
     if (OFFLINE) {
       throw new Error(`${source.file} is missing and RFC_OFFLINE=1 forbids downloading it`);
     }

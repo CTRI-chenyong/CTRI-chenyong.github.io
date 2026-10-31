@@ -1,0 +1,37 @@
+---
+title: "RFC 9182 A.2 Loopback Interface"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>A.2.  Loopback Interface
+
+   An example of a loopback interface is depicted in Figure 35.
+
+   {
+     "ietf-l3vpn-ntw:vpn-network-accesses": {
+       "vpn-network-access": [
+         {
+           "id": "vpn-access-loopback",
+           "interface-id": "Loopback1",
+           "description": "An example of a loopback interface.",
+           "vpn-network-access-type": "ietf-vpn-common:loopback",
+           "status": {
+             "admin-status": {
+               "status": "ietf-vpn-common:admin-up"
+             }
+           },
+           "ip-connection": {
+             "ipv6": {
+               "local-address": "2001:db8::4",
+               "prefix-length": 128
+             }
+           }
+         }
+       ]
+     }
+   }
+
+      Figure 35: VPN Network Access with a Loopback Interface (Message
+                                   Body)
+
+</pre>

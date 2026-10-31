@@ -1,0 +1,62 @@
+---
+title: "RFC 8299 §5 Service Data Model Usage"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>5.  Service Data Model Usage
+
+                   l3vpn-svc |
+                     Model   |
+                             |
+                      +------------------+         +-----+
+                      |   Orchestration  | &lt; --- &gt; | OSS |
+                      +------------------+         +-----+
+                         |            |
+                 +----------------+   |
+                 | Config manager |   |
+                 +----------------+   |
+                         |            |
+                         | NETCONF/CLI ...
+                         |            |
+           +------------------------------------------------+
+                                Network
+
+                              +++++++
+                              + AAA +
+                              +++++++
+
+      ++++++++   Bearer    ++++++++           ++++++++      ++++++++
+      + CE A + ----------- + PE A +           + PE B + ---- + CE B +
+      ++++++++  Connection ++++++++           ++++++++      ++++++++
+
+                 Site A                               Site B
+
+   The idea of the L3 IP VPN service model is to propose an abstracted
+   interface between customers and network operators to manage
+   configuration of components of an L3VPN service.  The model is
+   intended to be used in a mode where the network operator's system is
+   the server and the customer's system is the client.  A typical
+   scenario would be to use this model as an input for an orchestration
+   layer that will be responsible for translating it to an orchestrated
+   configuration of network elements that will be part of the service.
+   The network elements can be routers but can also be servers (like
+   AAA); the network's configuration is not limited to these examples.
+   The configuration of network elements can be done via the CLI,
+   NETCONF/RESTCONF [RFC6241] [RFC8040] coupled with YANG data models of
+   a specific configuration (BGP, VRF, BFD, etc.), or some other
+   technique, as preferred by the operator.
+
+   The usage of this service model is not limited to this example; it
+   can be used by any component of the management system but not
+   directly by network elements.
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 11]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

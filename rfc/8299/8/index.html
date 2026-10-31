@@ -1,0 +1,264 @@
+---
+title: "RFC 8299 §8 Interaction with Other YANG Models"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>8.  Interaction with Other YANG Models
+
+   As expressed in Section 5, this service model is intended to be
+   instantiated in a management system and not directly on network
+   elements.
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 120]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The management system's role will be to configure the network
+   elements.  The management system may be modular, so the component
+   instantiating the service model (let's call it "service component")
+   and the component responsible for network element configuration
+   (let's call it "configuration component") may be different.
+
+             l3vpn-svc         |
+               Model           |
+                               |
+                    +---------------------+
+                    |  Service component  | Service datastore
+                    +---------------------+
+                               |
+                               |
+                    +---------------------+
+               +----|  Config component   |------+
+              /     +---------------------+       \   Network
+             /            /            \           \  Configuration
+            /            /              \           \ models
+           /            /                \           \
+   ++++++++         ++++++++           ++++++++       ++++++++
+   + CE A + ------- + PE A +           + PE B + ----- + CE B + Config
+   ++++++++         ++++++++           ++++++++       ++++++++ datastore
+
+            Site A                              Site B
+
+   In the previous sections, we provided some examples of the
+   translation of service provisioning requests to router configuration
+   lines.  In the NETCONF/YANG ecosystem, we expect NETCONF/YANG to be
+   used between the configuration component and network elements to
+   configure the requested services on those elements.
+
+   In this framework, specifications are expected to provide specific
+   YANG modeling of service components on network elements.  There will
+   be a strong relationship between the abstracted view provided by this
+   service model and the detailed configuration view that will be
+   provided by specific configuration models for network elements.
+
+   The authors of this document anticipate definitions of YANG modules
+   for the network elements listed below.  Note that this list is not
+   exhaustive:
+
+   o  VRF definition, including VPN policy expression.
+
+   o  Physical interface.
+
+   o  IP layer (IPv4, IPv6).
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 121]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  QoS: classification, profiles, etc.
+
+   o  Routing protocols: support of configuration of all protocols
+      listed in the document, as well as routing policies associated
+      with those protocols.
+
+   o  Multicast VPN.
+
+   o  Network address translation.
+
+   Example of a corresponding XML snippet with a VPN site request at the
+   service level, using this model:
+
+&lt;?xml version="1.0"?&gt;
+&lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+ &lt;vpn-profiles&gt;
+  &lt;valid-provider-identifiers&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;GOLD&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;PLATINUM&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+  &lt;/valid-provider-identifiers&gt;
+ &lt;/vpn-profiles&gt;
+ &lt;vpn-services&gt;
+  &lt;vpn-service&gt;
+   &lt;vpn-id&gt;VPN1&lt;/vpn-id&gt;
+   &lt;vpn-service-topology&gt;hub-spoke&lt;/vpn-service-topology&gt;
+  &lt;/vpn-service&gt;
+ &lt;/vpn-services&gt;
+ &lt;sites&gt;
+  &lt;site&gt;
+   &lt;site-id&gt;Site A&lt;/site-id&gt;
+   &lt;security&gt;
+    &lt;encryption&gt;
+     &lt;layer&gt;layer3&lt;/layer&gt;
+    &lt;/encryption&gt;
+   &lt;/security&gt;
+   &lt;locations&gt;
+    &lt;location&gt;
+     &lt;location-id&gt;L1&lt;/location-id&gt;
+    &lt;/location&gt;
+   &lt;/locations&gt;
+   &lt;site-network-accesses&gt;
+    &lt;site-network-access&gt;
+     &lt;site-network-access-id&gt;1&lt;/site-network-access-id&gt;
+     &lt;ip-connection&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 122]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;static-address&lt;/address-allocation-type&gt;
+       &lt;addresses&gt;
+        &lt;provider-address&gt;203.0.113.254&lt;/provider-address&gt;
+        &lt;customer-address&gt;203.0.113.2&lt;/customer-address&gt;
+        &lt;prefix-length&gt;24&lt;/prefix-length&gt;
+       &lt;/addresses&gt;
+      &lt;/ipv4&gt;
+      &lt;ipv6&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv6&gt;
+     &lt;/ip-connection&gt;
+     &lt;service&gt;
+      &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+      &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+      &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+     &lt;/service&gt;
+     &lt;location-reference&gt;L1&lt;/location-reference&gt;
+     &lt;vpn-attachment&gt;
+      &lt;vpn-policy-id&gt;VPNPOL1&lt;/vpn-policy-id&gt;
+     &lt;/vpn-attachment&gt;
+    &lt;/site-network-access&gt;
+   &lt;/site-network-accesses&gt;
+   &lt;routing-protocols&gt;
+    &lt;routing-protocol&gt;
+     &lt;type&gt;static&lt;/type&gt;
+     &lt;static&gt;
+      &lt;cascaded-lan-prefixes&gt;
+       &lt;ipv4-lan-prefixes&gt;
+        &lt;lan&gt;198.51.100.0/30&lt;/lan&gt;
+        &lt;next-hop&gt;203.0.113.2&lt;/next-hop&gt;
+       &lt;/ipv4-lan-prefixes&gt;
+      &lt;/cascaded-lan-prefixes&gt;
+     &lt;/static&gt;
+    &lt;/routing-protocol&gt;
+   &lt;/routing-protocols&gt;
+   &lt;management&gt;
+    &lt;type&gt;customer-managed&lt;/type&gt;
+   &lt;/management&gt;
+   &lt;vpn-policies&gt;
+    &lt;vpn-policy&gt;
+     &lt;vpn-policy-id&gt;VPNPOL1&lt;/vpn-policy-id&gt;
+     &lt;entries&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;vpn&gt;
+       &lt;vpn-id&gt;VPN1&lt;/vpn-id&gt;
+       &lt;site-role&gt;any-to-any-role&lt;/site-role&gt;
+      &lt;/vpn&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 123]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+     &lt;/entries&gt;
+    &lt;/vpn-policy&gt;
+   &lt;/vpn-policies&gt;
+  &lt;/site&gt;
+ &lt;/sites&gt;
+&lt;/l3vpn-svc&gt;
+
+   In the service example above, the service component is expected to
+   request that the configuration component of the management system
+   provide the configuration of the service elements.  If we consider
+   that the service component selected a PE (PE A) as the target PE for
+   the site, the configuration component will need to push the
+   configuration to PE A.  The configuration component will use several
+   YANG data models to define the configuration to be applied to PE A.
+   The XML snippet configuration of PE A might look like this:
+
+&lt;if:interfaces&gt;
+ &lt;if:interface&gt;
+  &lt;if:name&gt;eth0&lt;/if:name&gt;
+  &lt;if:type&gt;ianaift:ethernetCsmacd&lt;/if:type&gt;
+  &lt;if:description&gt;
+   Link to CE A.
+  &lt;/if:description&gt;
+  &lt;ip:ipv4&gt;
+   &lt;ip:address&gt;
+    &lt;ip:ip&gt;203.0.113.254&lt;/ip:ip&gt;
+    &lt;ip:prefix-length&gt;24&lt;/ip:prefix-length&gt;
+   &lt;/ip:address&gt;
+   &lt;ip:forwarding&gt;true&lt;/ip:forwarding&gt;
+  &lt;/ip:ipv4&gt;
+ &lt;/if:interface&gt;
+&lt;/if:interfaces&gt;
+&lt;rt:routing&gt;
+ &lt;rt:routing-instance&gt;
+  &lt;rt:name&gt;VRF_CustA&lt;/rt:name&gt;
+  &lt;rt:type&gt;l3vpn-network:vrf&lt;/rt:type&gt;
+  &lt;rt:description&gt;VRF for Customer A&lt;/rt:description&gt;
+  &lt;l3vpn-network:rd&gt;100:1546542343&lt;/l3vpn-network:rd&gt;
+  &lt;l3vpn-network:import-rt&gt;100:1&lt;/l3vpn-network:import-rt&gt;
+  &lt;l3vpn-network:export-rt&gt;100:1&lt;/l3vpn-network:export-rt&gt;
+  &lt;rt:interfaces&gt;
+   &lt;rt:interface&gt;
+    &lt;rt:name&gt;eth0&lt;/rt:name&gt;
+   &lt;/rt:interface&gt;
+  &lt;/rt:interfaces&gt;
+  &lt;rt:routing-protocols&gt;
+   &lt;rt:routing-protocol&gt;
+    &lt;rt:type&gt;rt:static&lt;/rt:type&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 124]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+    &lt;rt:name&gt;st0&lt;/rt:name&gt;
+    &lt;rt:static-routes&gt;
+     &lt;v4ur:ipv4&gt;
+      &lt;v4ur:route&gt;
+      &lt;v4ur:destination-prefix&gt;198.51.100.0/30&lt;/v4ur:destination-prefix&gt;
+       &lt;v4ur:next-hop&gt;
+        &lt;v4ur:next-hop-address&gt;203.0.113.2&lt;/v4ur:next-hop-address&gt;
+       &lt;/v4ur:next-hop&gt;
+      &lt;/v4ur:route&gt;
+     &lt;/v4ur:ipv4&gt;
+    &lt;/rt:static-routes&gt;
+   &lt;/rt:routing-protocol&gt;
+  &lt;/rt:routing-protocols&gt;
+ &lt;/rt:routing-instance&gt;
+&lt;/rt:routing&gt;
+
+</pre>

@@ -1,0 +1,174 @@
+---
+title: "RFC 9182 §7.6.3.2 BGP"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.2.  BGP
+
+   The L3NM allows the configuration of a BGP neighbor, including a set
+   of parameters that are pertinent to be tweaked at the network level
+   for service customization purposes.  The 'bgp' container does not aim
+   to include every BGP parameter; a comprehensive set of parameters
+   belongs more to the BGP device model.
+
+   The BGP routing subtree structure is shown in Figure 16.
+
+   ...
+   +--rw routing-protocols
+   |  +--rw routing-protocol* [id]
+   |     ...
+   |     +--rw bgp
+   |     |  +--rw description?               string
+   |     |  +--rw local-as?                  inet:as-number
+   |     |  +--rw peer-as                    inet:as-number
+   |     |  +--rw address-family?            identityref
+   |     |  +--rw local-address?             union
+   |     |  +--rw neighbor*                  inet:ip-address
+   |     |  +--rw multihop?                  uint8
+   |     |  +--rw as-override?               boolean
+   |     |  +--rw allow-own-as?              uint8
+   |     |  +--rw prepend-global-as?         boolean
+   |     |  +--rw send-default-route?        boolean
+   |     |  +--rw site-of-origin?            rt-types:route-origin
+   |     |  +--rw ipv6-site-of-origin?       rt-types:ipv6-route-origin
+   |     |  +--rw redistribute-connected* [address-family]
+   |     |  |  +--rw address-family    identityref
+   |     |  |  +--rw enable?           boolean
+   |     |  +--rw bgp-max-prefix
+   |     |  |  +--rw max-prefix?          uint32
+   |     |  |  +--rw warning-threshold?   decimal64
+   |     |  |  +--rw violate-action?      enumeration
+   |     |  |  +--rw restart-timer?       uint32
+   |     |  +--rw bgp-timers
+   |     |  |  +--rw keepalive?   uint16
+   |     |  |  +--rw hold-time?   uint16
+   |     |  +--rw authentication
+   |     |  |  +--rw enable?            boolean
+   |     |  |  +--rw keying-material
+   |     |  |     +--rw (option)?
+   |     |  |        +--:(ao)
+   |     |  |        |  +--rw enable-ao?         boolean
+   |     |  |        |  +--rw ao-keychain?       key-chain:key-chain-ref
+   |     |  |        +--:(md5)
+   |     |  |        |  +--rw md5-keychain?      key-chain:key-chain-ref
+   |     |  |        +--:(explicit)
+   |     |  |        |  +--rw key-id?            uint32
+   |     |  |        |  +--rw key?               string
+   |     |  |        |  +--rw crypto-algorithm?  identityref
+   |     |  |        +--:(ipsec)
+   |     |  |           +--rw sa?             string
+   |     |  +--rw status
+   |     |     +--rw admin-status
+   |     |     |  +--rw status?         identityref
+   |     |     |  +--rw last-change?   yang:date-and-time
+   |     |     +--ro oper-status
+   |     |        +--ro status?         identityref
+   |     |        +--ro last-change?   yang:date-and-time
+   ...
+
+                  Figure 16: BGP Routing Subtree Structure
+
+   The following data nodes are captured in Figure 16.  It is up to the
+   implementation (e.g., network orchestrator) to derive the
+   corresponding BGP device configuration:
+
+   'description':  Includes a description of the BGP session.
+
+   'local-as':  Indicates a local AS Number (ASN), if a distinct ASN is
+      required other than the ASN configured at the VPN node level.
+
+   'peer-as':  Conveys the customer's ASN.
+
+   'address-family':  Indicates the address family of the peer.  It can
+      be set to 'ipv4', 'ipv6', or 'dual-stack'.
+
+      This address family will be used together with the 'vpn-type' to
+      derive the appropriate Address Family Identifiers (AFIs) /
+      Subsequent Address Family Identifiers (SAFIs) that will be part of
+      the derived device configurations (e.g., unicast IPv4 MPLS L3VPN
+      (AFI,SAFI = 1,128) as defined in Section 4.3.4 of [RFC4364]).
+
+   'local-address':  Specifies an address or a reference to an interface
+      to use when establishing the BGP transport session.
+
+   'neighbor':  Can indicate two neighbors (each for a given address
+      family) or one neighbor (if the 'address-family' attribute is set
+      to 'dual-stack').  A list of IP address(es) of the BGP neighbor(s)
+      can then be conveyed in this data node.
+
+   'multihop':  Indicates the number of allowed IP hops between a PE and
+      its BGP peer.
+
+   'as-override':  If set, this parameter indicates whether ASN override
+      is enabled, i.e., replacing the ASN of the customer specified in
+      the AS_PATH BGP attribute with the ASN identified in the 'local-
+      as' attribute.
+
+   'allow-own-as':  Used in some topologies (e.g., hub-and-spoke) to
+      allow the provider's ASN to be included in the AS_PATH BGP
+      attribute received from a CE.  Loops are prevented by setting
+      'allow-own-as' to a maximum number of the provider's ASN
+      occurrences.  By default, this parameter is set to '0' (that is,
+      reject any AS_PATH attribute that includes the provider's ASN).
+
+   'prepend-global-as':  When distinct ASNs are configured at the VPN
+      node and network access levels, this parameter controls whether
+      the ASN provided at the VPN node level is prepended to the AS_PATH
+      attribute.
+
+   'send-default-route':  Controls whether default routes can be
+      advertised to the peer.
+
+   'site-of-origin':  Meant to uniquely identify the set of routes
+      learned from a site via a particular CE-PE connection.  It is used
+      to prevent routing loops (Section 7 of [RFC4364]).  The Site of
+      Origin attribute is encoded as a Route Origin Extended Community.
+
+   'ipv6-site-of-origin':  Carries an IPv6 Address Specific BGP Extended
+      Community that is used to indicate the Site of Origin for VRF
+      information [RFC5701].  It is used to prevent routing loops.
+
+   'redistribute-connected':  Controls whether the PE-CE link is
+      advertised to other PEs.
+
+   'bgp-max-prefix':  Controls the behavior when a prefix maximum is
+      reached.
+
+      'max-prefix':  Indicates the maximum number of BGP prefixes
+         allowed in the BGP session.  If the limit is reached, the
+         action indicated in 'violate-action' will be followed.
+
+      'warning-threshold':  A warning notification is triggered when
+         this limit is reached.
+
+      'violate-action':  Indicates which action to execute when the
+         maximum number of BGP prefixes is reached.  Examples of such
+         actions include sending a warning message, discarding extra
+         paths from the peer, or restarting the session.
+
+      'restart-timer':  Indicates, in seconds, the time interval after
+         which the BGP session will be reestablished.
+
+   'bgp-timers':  Two timers can be captured in this container: (1)
+      'hold-time', which is the time interval that will be used for the
+      Hold Timer (Section 4.2 of [RFC4271]) when establishing a BGP
+      session and (2) 'keepalive', which is the time interval for the
+      KeepaliveTimer between a PE and a BGP peer (Section 4.4 of
+      [RFC4271]).  Both timers are expressed in seconds.
+
+   'authentication':  The module adheres to the recommendations in
+      Section 13.2 of [RFC4364], as it allows enabling the TCP
+      Authentication Option (TCP-AO) [RFC5925] and accommodates the
+      installed base that makes use of MD5.  In addition, the module
+      includes a provision for using IPsec.
+
+      This version of the L3NM assumes that parameters specific to the
+      TCP-AO are preconfigured as part of the key chain that is
+      referenced in the L3NM.  No assumption is made about how such a
+      key chain is preconfigured.  However, the structure of the key
+      chain should cover data nodes beyond those in [RFC8177], mainly
+      SendID and RecvID (Section 3.1 of [RFC5925]).
+
+   'status':  Indicates the status of the BGP routing instance.
+
+</pre>

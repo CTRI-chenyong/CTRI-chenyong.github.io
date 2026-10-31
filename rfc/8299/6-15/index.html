@@ -1,0 +1,98 @@
+---
+title: "RFC 8299 §6.15 Defining NNIs"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.15.  Defining NNIs
+
+   An autonomous system (AS) is a single network or group of networks
+   that is controlled by a common system administration group and that
+   uses a single, clearly defined routing protocol.  In some cases, VPNs
+   need to span different ASes in different geographic areas or span
+   different SPs.  The connection between ASes is established by the SPs
+   and is seamless to the customer.  Examples include
+
+   o  a partnership between SPs (e.g., carrier, cloud) to extend their
+      VPN service seamlessly.
+
+   o  an internal administrative boundary within a single SP (e.g.,
+      backhaul versus core versus data center).
+
+   NNIs (network-to-network interfaces) have to be defined to extend the
+   VPNs across multiple ASes.
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 105]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   [RFC4364] defines multiple flavors of VPN NNI implementations.  Each
+   implementation has pros and cons; this topic is outside the scope of
+   this document.  For example, in an Inter-AS option A, autonomous
+   system border router (ASBR) peers are connected by multiple
+   interfaces with at least one of those interfaces spanning the two
+   ASes while being present in the same VPN.  In order for these ASBRs
+   to signal unlabeled IP prefixes, they associate each interface with a
+   VPN routing and forwarding (VRF) instance and a Border Gateway
+   Protocol (BGP) session.  As a result, traffic between the back-to-
+   back VRFs is IP.  In this scenario, the VPNs are isolated from each
+   other, and because the traffic is IP, QoS mechanisms that operate on
+   IP traffic can be applied to achieve customer service level
+   agreements (SLAs).
+
+     --------                 --------------              -----------
+    /        \               /              \            /           \
+   | Cloud    |             |                |          |             |
+   | Provider |-----NNI-----|                |----NNI---| Data Center |
+   |  #1      |             |                |          |             |
+    \        /              |                |           \           /
+     --------               |                |            -----------
+                            |                |
+     --------               |   My network   |           -----------
+    /        \              |                |          /           \
+   | Cloud    |             |                |         |             |
+   | Provider |-----NNI-----|                |---NNI---|  L3VPN      |
+   |  #2      |             |                |         |  Partner    |
+    \        /              |                |         |             |
+     --------               |                |         |             |
+                             \              /          |             |
+                              --------------            \           /
+                                    |                    -----------
+                                    |
+                                   NNI
+                                    |
+                                    |
+                            -------------------
+                           /                   \
+                          |                     |
+                          |                     |
+                          |                     |
+                          |     L3VPN Partner   |
+                          |                     |
+                           \                   /
+                            -------------------
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 106]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The figure above describes an SP network called "My network" that has
+   several NNIs.  This network uses NNIs to:
+
+   o  increase its footprint by relying on L3VPN partners.
+
+   o  connect its own data center services to the customer IP VPN.
+
+   o  enable the customer to access its private resources located in a
+      private cloud owned by some CSPs.
+
+</pre>

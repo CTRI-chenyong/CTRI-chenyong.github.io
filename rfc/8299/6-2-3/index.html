@@ -1,0 +1,78 @@
+---
+title: "RFC 8299 §6.2.3 Multicast Service"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.3.  Multicast Service
+
+   Multicast in IP VPNs is described in [RFC6513].
+
+   If multicast support is required for an IP VPN, some global multicast
+   parameters are required as input for the service request.
+
+   Users of this model will need to provide the flavors of trees that
+   will be used by customers within the IP VPN (customer tree).  The
+   proposed model supports bidirectional, shared, and source-based trees
+   (and can be augmented).  Multiple flavors of trees can be supported
+   simultaneously.
+
+                                  Operator network
+                                  ______________
+                                 /               \
+                                |                 |
+                         (SSM tree)               |
+   Recv (IGMPv3) -- Site2 ------- PE2             |
+                                |             PE1 --- Site1 --- Source1
+                                |                 |        \
+                                |                 |         -- Source2
+                                |                 |
+                          (ASM tree)              |
+   Recv (IGMPv2) -- Site3 ------- PE3             |
+                                |                 |
+                          (SSM tree)              |
+   Recv (IGMPv3) -- Site4 ------- PE4             |
+                                | /               |
+   Recv (IGMPv2) -- Site5 --------                |
+                          (ASM tree)              |
+                                |                 |
+                                 \_______________/
+
+   When an ASM flavor is requested, this model requires that the "rp"
+   and "rp-discovery" parameters be filled.  Multiple RP-to-group
+   mappings can be created using the "rp-group-mappings" container.  For
+   each mapping, the SP can manage the RP service by setting the
+   "provider-managed/enabled" leaf to true.  In the case of a provider-
+   managed RP, the user can request RP redundancy and/or optimal traffic
+   delivery.  Those parameters will help the SP select the appropriate
+   technology or architecture to fulfill the customer service
+   requirement: for instance, in the case of a request for optimal
+   traffic delivery, an SP may use Anycast-RP or RP-tree-to-SPT
+   switchover architectures.
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 29]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   In the case of a customer-managed RP, the RP address must be filled
+   in the RP-to-group mappings using the "rp-address" leaf.  This leaf
+   is not needed for a provider-managed RP.
+
+   Users can define a specific mechanism for RP discovery, such as the
+   "auto-rp", "static-rp", or "bsr-rp" modes.  By default, the model
+   uses "static-rp" if ASM is requested.  A single rp-discovery
+   mechanism is allowed for the VPN.  The "rp-discovery" container can
+   be used for both provider-managed and customer-managed RPs.  In the
+   case of a provider-managed RP, if the user wants to use "bsr-rp" as a
+   discovery protocol, an SP should consider the provider-managed
+   "rp-group-mappings" for the "bsr-rp" configuration.  The SP will then
+   configure its selected RPs to be "bsr-rp-candidates".  In the case of
+   a customer-managed RP and a "bsr-rp" discovery mechanism, the
+   "rp-address" provided will be the bsr-rp candidate.
+
+</pre>

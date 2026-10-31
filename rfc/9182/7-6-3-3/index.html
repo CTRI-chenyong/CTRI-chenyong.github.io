@@ -1,0 +1,80 @@
+---
+title: "RFC 9182 §7.6.3.3 OSPF"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.3.  OSPF
+
+   OSPF can be configured to run as a routing protocol on the 'vpn-
+   network-access'.
+
+   The OSPF routing subtree structure is shown in Figure 17.
+
+   ...
+   +--rw routing-protocols
+   |  +--rw routing-protocol* [id]
+   |     ...
+   |     +--rw ospf
+   |     |  +--rw address-family?   identityref
+   |     |  +--rw area-id           yang:dotted-quad
+   |     |  +--rw metric?           uint16
+   |     |  +--rw sham-links  {vpn-common:rtg-ospf-sham-link}?
+   |     |  |  +--rw sham-link* [target-site]
+   |     |  |     +--rw target-site    string
+   |     |  |     +--rw metric?        uint16
+   |     |  +--rw max-lsa?          uint32
+   |     |  +--rw authentication
+   |     |  |  +--rw enable?            boolean
+   |     |  |  +--rw keying-material
+   |     |  |     +--rw (option)?
+   |     |  |        +--:(auth-key-chain)
+   |     |  |        |  +--rw key-chain?
+   |     |  |        |          key-chain:key-chain-ref
+   |     |  |        +--:(auth-key-explicit)
+   |     |  |        |  +--rw key-id?      uint32
+   |     |  |        |  +--rw key?         string
+   |     |  |        |  +--rw crypto-algorithm?
+   |     |  |        |          identityref
+   |     |  |        +--:(ipsec)
+   |     |  |           +--rw sa?    string
+   |     |  +--rw status
+   |     |     +--rw admin-status
+   |     |     |  +--rw status?        identityref
+   |     |     |  +--rw last-change?  yang:date-and-time
+   |     |     +--ro oper-status
+   |     |        +--ro status?        identityref
+   |     |        +--ro last-change?  yang:date-and-time
+   ...
+
+                 Figure 17: OSPF Routing Subtree Structure
+
+   The following data nodes are captured in Figure 17:
+
+   'address-family':  Indicates whether IPv4, IPv6, or both address
+      families are to be activated.
+
+      When the IPv4 or dual-stack address family is requested, it is up
+      to the implementation (e.g., network orchestrator) to decide
+      whether OSPFv2 [RFC4577] or OSPFv3 [RFC6565] is used to announce
+      IPv4 routes.  Such a decision will typically be reflected in the
+      device configurations that will be derived to implement the L3VPN.
+
+   'area-id':  Indicates the OSPF Area ID.
+
+   'metric':  Associates a metric with OSPF routes.
+
+   'sham-links':  Used to create OSPF sham links between two VPN network
+      accesses sharing the same area and having a backdoor link
+      (Section 4.2.7 of [RFC4577] and Section 5 of [RFC6565]).
+
+   'max-lsa':  Sets the maximum number of Link State Advertisements
+      (LSAs) that the OSPF instance will accept.
+
+   'authentication':  Controls the authentication schemes to be enabled
+      for the OSPF instance.  The following options are supported: IPsec
+      for OSPFv3 authentication [RFC4552], and the Authentication
+      Trailer for OSPFv2 [RFC5709] [RFC7474] and OSPFv3 [RFC7166].
+
+   'status':  Indicates the status of the OSPF routing instance.
+
+</pre>

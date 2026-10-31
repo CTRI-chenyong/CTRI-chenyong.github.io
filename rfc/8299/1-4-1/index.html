@@ -1,0 +1,38 @@
+---
+title: "RFC 8299 §1.4.1 Implementation Issues with RFC 8049"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>1.4.1.  Implementation Issues with RFC 8049
+
+   [RFC8049] made an initial attempt to define a YANG data model
+   forL3VPN services.  After it was published it was discovered that,
+   while the YANG compiled it was broken from an implementation
+   perspective.  That is, it was impossible to build a functional
+   implementation of the module.
+
+   Section 1.4 provides a full list of the changes since [RFC8049].
+   Some of these changes remove ambiguities from the documented YANG,
+   while other changes fix the implementation issues.
+
+   1.  Several uses of 'must' expressions in the module were broken
+       badly enough that the module was not usable in the form it was
+       published.  While some compilers and YANG checkers found no
+       issues (most YANG tools do not attempt to parse these
+       expressions), other tools that really understand the XPATH in the
+       expressions refused to compile them.
+
+       The changes needed to fix these expressions were small and local.
+
+   2.  The second issue relates to how Access Control List (ACL) rules
+       were sorted.  In [RFC8049] the English language text and the text
+       in the YANG definition contradicted each other.  Furthermore, the
+       model used classic ACL rule numbering notation for something that
+       was semantically very different (ordered-by user) in the YANG
+       thus creating the potential for misunderstanding.
+
+   3.  Further to point 2, the ACL modeling in [RFC8049] was
+       incompatible with work going on in other IETF documents such as
+       [ACL-YANG].
+
+</pre>

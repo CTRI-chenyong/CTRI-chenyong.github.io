@@ -1,0 +1,105 @@
+---
+title: "RFC 8299 §6.11.7 BGP Routing"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.7.  BGP Routing
+
+   The routing protocol type "bgp" MAY be used when a customer LAN is
+   connected to the provider network through a CE router and must be
+   advertised in the IP VPN.
+
+                                           BGP rtg
+                 192.0.2.0/24 ------ CE -------------- PE
+
+   The session addressing will be derived from connection parameters as
+   well as the SP's knowledge of the addressing plan that is in use.
+
+   In the case of dual-stack access, the user MAY request BGP routing
+   for both IPv4 and IPv6 by specifying both address families.  It will
+   be up to the SP and management system to determine how to describe
+   the configuration (two BGP sessions, single, multi-session, etc.).
+   This, along with other BGP parameters such as timers, is communicated
+   to the customer outside the scope of this model.
+
+   The service configuration below activates BGP on the PE-CE link for
+   both IPv4 and IPv6.
+
+   BGP activation requires the SP to know the address of the customer
+   peer.  If the site-network-access connection addresses are used for
+   BGP peering, the "static-address" allocation type for the IP
+   connection MUST be used.  Other peering mechanisms are outside the
+   scope of this model.  An example of a corresponding XML snippet is
+   described as follows:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;routing-protocols&gt;
+              &lt;routing-protocol&gt;
+                &lt;type&gt;bgp&lt;/type&gt;
+                &lt;bgp&gt;
+                  &lt;autonomous-system&gt;65000&lt;/autonomous-system&gt;
+                  &lt;address-family&gt;ipv4&lt;/address-family&gt;
+                  &lt;address-family&gt;ipv6&lt;/address-family&gt;
+                &lt;/bgp&gt;
+              &lt;/routing-protocol&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 92]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+            &lt;/routing-protocols&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+   Depending on the SP flavor, a management system can divide this
+   service configuration into different flavors, as shown by the
+   following examples.
+
+   Example of PE configuration done by the management system (single
+   IPv4 transport session):
+
+            router bgp 100
+             neighbor 203.0.113.2 remote-as 65000
+             address-family ipv4 vrf Cust1
+                neighbor 203.0.113.2 activate
+             address-family ipv6 vrf Cust1
+                neighbor 203.0.113.2 activate
+                neighbor 203.0.113.2 route-map SET-NH-IPV6 out
+
+   Example of PE configuration done by the management system (two
+   sessions):
+
+                   router bgp 100
+                    neighbor 203.0.113.2 remote-as 65000
+                    neighbor 2001::2 remote-as 65000
+                    address-family ipv4 vrf Cust1
+                       neighbor 203.0.113.2 activate
+                    address-family ipv6 vrf Cust1
+                       neighbor 2001::2 activate
+
+   Example of PE configuration done by the management system (multi-
+   session):
+
+            router bgp 100
+             neighbor 203.0.113.2 remote-as 65000
+             neighbor 203.0.113.2 multisession per-af
+             address-family ipv4 vrf Cust1
+                neighbor 203.0.113.2 activate
+             address-family ipv6 vrf Cust1
+                neighbor 203.0.113.2 activate
+                neighbor 203.0.113.2 route-map SET-NH-IPV6 out
+
+</pre>

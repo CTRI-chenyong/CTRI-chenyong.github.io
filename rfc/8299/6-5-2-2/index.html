@@ -1,0 +1,201 @@
+---
+title: "RFC 8299 §6.5.2.2 VPN Policy"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.2.2.  VPN Policy
+
+   The "vpn-policy" list helps express a multiVPN scenario where a
+   logical access belongs to multiple VPNs.  Multiple VPN policies can
+   be created to handle the subVPN case where each logical access is
+   part of a different set of VPNs.
+
+   As a site can belong to multiple VPNs, the vpn-policy list may be
+   composed of multiple entries.  A filter can be applied to specify
+   that only some LANs of the site should be part of a particular VPN.
+   Each time a site (or LAN) is attached to a VPN, the user must
+   precisely describe its role (site-role) within the target VPN service
+   topology.
+
+     +--------------------------------------------------------------+
+     |       Site1 ------ PE7                                       |
+     +-------------------------+                 (VPN2)             |
+                               |                                    |
+     +-------------------------+                                    |
+     |       Site2 ------ PE3               PE4 ------ Site3        |
+     +----------------------------------+                           |
+                                        |                           |
+     +------------------------------------------------------------+ |
+     |       Site4 ------ PE5           |   PE6 ------ Site5      | |
+     |                                                            | |
+     |                      (VPN3)                                | |
+     +------------------------------------------------------------+ |
+                                        |                           |
+                                        +---------------------------+
+
+   In the example above, Site5 is part of two VPNs: VPN3 and VPN2.  It
+   will play a Hub role in VPN2 and an any-to-any role in VPN3.  We can
+   express such a multiVPN scenario with the following XML snippet:
+
+ &lt;?xml version="1.0"?&gt;
+ &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+  &lt;vpn-services&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPN2&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPN3&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+  &lt;/vpn-services&gt;
+  &lt;sites&gt;
+   &lt;site&gt;
+    &lt;site-id&gt;Site5&lt;/site-id&gt;
+    &lt;devices&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 44]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+     &lt;device&gt;
+      &lt;device-id&gt;D1&lt;/device-id&gt;
+     &lt;/device&gt;
+    &lt;/devices&gt;
+    &lt;management&gt;
+     &lt;type&gt;provider-managed&lt;/type&gt;
+    &lt;/management&gt;
+    &lt;security&gt;
+     &lt;encryption&gt;
+      &lt;layer&gt;layer3&lt;/layer&gt;
+     &lt;/encryption&gt;
+    &lt;/security&gt;
+    &lt;vpn-policies&gt;
+     &lt;vpn-policy&gt;
+      &lt;vpn-policy-id&gt;POLICY1&lt;/vpn-policy-id&gt;
+      &lt;entries&gt;
+       &lt;id&gt;ENTRY1&lt;/id&gt;
+       &lt;vpn&gt;
+        &lt;vpn-id&gt;VPN2&lt;/vpn-id&gt;
+        &lt;site-role&gt;hub-role&lt;/site-role&gt;
+       &lt;/vpn&gt;
+      &lt;/entries&gt;
+      &lt;entries&gt;
+       &lt;id&gt;ENTRY2&lt;/id&gt;
+       &lt;vpn&gt;
+        &lt;vpn-id&gt;VPN3&lt;/vpn-id&gt;
+        &lt;site-role&gt;any-to-any-role&lt;/site-role&gt;
+       &lt;/vpn&gt;
+      &lt;/entries&gt;
+     &lt;/vpn-policy&gt;
+    &lt;/vpn-policies&gt;
+    &lt;site-network-accesses&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;LA1&lt;/site-network-access-id&gt;
+      &lt;device-reference&gt;D1&lt;/device-reference&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 45]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-policy-id&gt;POLICY1&lt;/vpn-policy-id&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+    &lt;/site-network-accesses&gt;
+   &lt;/site&gt;
+  &lt;/sites&gt;
+ &lt;/l3vpn-svc&gt;
+
+   Now, if a more-granular VPN attachment is necessary, filtering can be
+   used.  For example, if only LAN1 from Site5 must be attached to VPN2
+   as a Hub and only LAN2 must be attached to VPN3, the following XML
+   snippet can be used:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPN2&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPN3&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;Site5&lt;/site-id&gt;
+            &lt;vpn-policies&gt;
+              &lt;vpn-policy&gt;
+                &lt;vpn-policy-id&gt;POLICY1&lt;/vpn-policy-id&gt;
+                &lt;entries&gt;
+                  &lt;id&gt;ENTRY1&lt;/id&gt;
+                  &lt;filters&gt;
+                    &lt;filter&gt;
+                      &lt;type&gt;lan&lt;/type&gt;
+                      &lt;lan-tag&gt;LAN1&lt;/lan-tag&gt;
+                    &lt;/filter&gt;
+                  &lt;/filters&gt;
+                  &lt;vpn&gt;
+                    &lt;vpn-id&gt;VPN2&lt;/vpn-id&gt;
+                    &lt;site-role&gt;hub-role&lt;/site-role&gt;
+                  &lt;/vpn&gt;
+                &lt;/entries&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 46]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+                &lt;entries&gt;
+                  &lt;id&gt;ENTRY2&lt;/id&gt;
+                  &lt;filters&gt;
+                    &lt;filter&gt;
+                      &lt;type&gt;lan&lt;/type&gt;
+                      &lt;lan-tag&gt;LAN2&lt;/lan-tag&gt;
+                    &lt;/filter&gt;
+                  &lt;/filters&gt;
+                  &lt;vpn&gt;
+                    &lt;vpn-id&gt;VPN3&lt;/vpn-id&gt;
+                    &lt;site-role&gt;any-to-any-role&lt;/site-role&gt;
+                  &lt;/vpn&gt;
+                &lt;/entries&gt;
+              &lt;/vpn-policy&gt;
+            &lt;/vpn-policies&gt;
+            &lt;site-network-accesses&gt;
+              &lt;site-network-access&gt;
+                &lt;site-network-access-id&gt;LA1&lt;/site-network-access-id&gt;
+                &lt;vpn-attachment&gt;
+                  &lt;vpn-policy-id&gt;POLICY1&lt;/vpn-policy-id&gt;
+                &lt;/vpn-attachment&gt;
+              &lt;/site-network-access&gt;
+            &lt;/site-network-accesses&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+</pre>

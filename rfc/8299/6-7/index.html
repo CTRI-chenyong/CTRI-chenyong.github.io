@@ -1,0 +1,84 @@
+---
+title: "RFC 8299 §6.7 Site Network Access Availability"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.7.  Site Network Access Availability
+
+   A site may be multihomed, meaning that it has multiple site-network-
+   access points.  Placement constraints defined in previous sections
+   will help ensure physical diversity.
+
+   When the site-network-accesses are placed on the network, a customer
+   may want to use a particular routing policy on those accesses.
+
+   The "site-network-access/availability" container defines parameters
+   for site redundancy.  The "access-priority" leaf defines a preference
+   for a particular access.  This preference is used to model load-
+   balancing or primary/backup scenarios.  The higher the access-
+   priority value, the higher the preference will be.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 81]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The figure below describes how the access-priority attribute can be
+   used.
+
+       Hub#1 LAN (Primary/backup)          Hub#2 LAN (Load-sharing)
+         |                                                     |
+         |    access-priority 1          access-priority 1     |
+         |--- CE1 ------- PE1            PE3 --------- CE3 --- |
+         |                                                     |
+         |                                                     |
+         |--- CE2 ------- PE2            PE4 --------- CE4 --- |
+         |    access-priority 2          access-priority 1     |
+
+                                 PE5
+                                  |
+                                  |
+                                  |
+                                 CE5
+                                  |
+                             Spoke#1 site (Single-homed)
+
+   In the figure above, Hub#2 requires load-sharing, so all the site-
+   network-accesses must use the same access-priority value.  On the
+   other hand, as Hub#1 requires a primary site-network-access and a
+   backup site-network-access, a higher access-priority setting will be
+   configured on the primary site-network-access.
+
+   Scenarios that are more complex can be modeled.  Let's consider a Hub
+   site with five accesses to the network (A1,A2,A3,A4,A5).  The
+   customer wants to load-share its traffic on A1,A2 in the nominal
+   situation.  If A1 and A2 fail, the customer wants to load-share its
+   traffic on A3 and A4; finally, if A1 to A4 are down, he wants to use
+   A5.  We can model this easily by configuring the following access-
+   priority values: A1=100, A2=100, A3=50, A4=50, A5=10.
+
+   The access-priority scenario has some limitations.  An access-
+   priority scenario like the previous one with five accesses but with
+   the constraint of having traffic load-shared between A3 and A4 in the
+   case where A1 OR A2 is down is not achievable.  But the authors
+   believe that using the access-priority attribute will cover most of
+   the deployment use cases and that the model can still be extended via
+   augmentation to support additional use cases.
+
+</pre>

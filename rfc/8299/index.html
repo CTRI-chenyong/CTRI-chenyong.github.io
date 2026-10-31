@@ -1,0 +1,180 @@
+---
+title: "RFC 8299: YANG Data Model for L3VPN Service Delivery"
+layout: rfc-landing
+nav_order: 3
+---
+<pre>
+
+
+
+
+
+Internet Engineering Task Force (IETF)                        Q. Wu, Ed.
+Request for Comments: 8299                                        Huawei
+Obsoletes: 8049                                             S. Litkowski
+Category: Standards Track                                         Orange
+ISSN: 2070-1721                                              L. Tomotaki
+                                                                 Verizon
+                                                                K. Ogaki
+                                                        KDDI Corporation
+                                                            January 2018
+
+
+               YANG Data Model for L3VPN Service Delivery
+
+Abstract
+
+   This document defines a YANG data model that can be used for
+   communication between customers and network operators and to deliver
+   a Layer 3 provider-provisioned VPN service.  This document is limited
+   to BGP PE-based VPNs as described in RFCs 4026, 4110, and 4364.  This
+   model is intended to be instantiated at the management system to
+   deliver the overall service.  It is not a configuration model to be
+   used directly on network elements.  This model provides an abstracted
+   view of the Layer 3 IP VPN service configuration components.  It will
+   be up to the management system to take this model as input and use
+   specific configuration models to configure the different network
+   elements to deliver the service.  How the configuration of network
+   elements is done is out of scope for this document.
+
+   This document obsoletes RFC 8049; it replaces the unimplementable
+   module in that RFC with a new module with the same name that is not
+   backward compatible.  The changes are a series of small fixes to the
+   YANG module and some clarifications to the text.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 7841.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   https://www.rfc-editor.org/info/rfc8299.
+
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 1]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1. Introduction ....................................................4
+      1.1. Terminology ................................................4
+      1.2. Requirements Language ......................................5
+      1.3. Tree Diagrams ..............................................5
+      1.4. Summary of Changes from RFC 8049 ...........................5
+           1.4.1. Implementation Issues with RFC 8049 .................7
+           1.4.2. Impact Assessment ...................................7
+   2. Acronyms ........................................................8
+   3. Definitions ....................................................10
+   4. Layer 3 IP VPN Service Model ...................................10
+   5. Service Data Model Usage .......................................11
+   6. Design of the Data Model .......................................12
+      6.1. Features and Augmentation .................................22
+      6.2. VPN Service Overview ......................................22
+           6.2.1. VPN Service Topology ...............................23
+           6.2.2. Cloud Access .......................................26
+           6.2.3. Multicast Service ..................................29
+           6.2.4. Extranet VPNs ......................................30
+      6.3. Site Overview .............................................32
+           6.3.1. Devices and Locations ..............................33
+           6.3.2. Site Network Accesses ..............................34
+      6.4. Site Role .................................................36
+      6.5. Site Belonging to Multiple VPNs ...........................37
+           6.5.1. Site VPN Flavor ....................................37
+           6.5.2. Attaching a Site to a VPN ..........................41
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 2]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+      6.6. Deciding Where to Connect the Site ........................47
+           6.6.1. Constraint: Device .................................48
+           6.6.2. Constraint/Parameter: Site Location ................48
+           6.6.3. Constraint/Parameter: Access Type ..................49
+           6.6.4. Constraint: Access Diversity .......................50
+           6.6.5. Infeasible Access Placement ........................59
+           6.6.6. Examples of Access Placement .......................60
+           6.6.7. Route Distinguisher and VRF Allocation .............80
+      6.7. Site Network Access Availability ..........................81
+      6.8. Traffic Protection ........................................82
+      6.9. Security ..................................................83
+           6.9.1. Authentication .....................................83
+           6.9.2. Encryption .........................................84
+      6.10. Management ...............................................85
+      6.11. Routing Protocols ........................................86
+           6.11.1. Handling of Dual Stack ............................87
+           6.11.2. LAN Directly Connected to SP Network ..............88
+           6.11.3. LAN Directly Connected to SP Network with
+                   Redundancy ........................................89
+           6.11.4. Static Routing ....................................89
+           6.11.5. RIP Routing .......................................89
+           6.11.6. OSPF Routing ......................................90
+           6.11.7. BGP Routing .......................................92
+      6.12. Service ..................................................93
+           6.12.1. Bandwidth .........................................94
+           6.12.2. MTU ...............................................94
+           6.12.3. QoS ...............................................94
+           6.12.4. Multicast ........................................103
+      6.13. Enhanced VPN Features ...................................104
+           6.13.1. Carriers' Carriers ...............................104
+      6.14. External ID References ..................................105
+      6.15. Defining NNIs ...........................................105
+           6.15.1. Defining an NNI with the Option A Flavor .........107
+           6.15.2. Defining an NNI with the Option B Flavor .........111
+           6.15.3. Defining an NNI with the Option C Flavor .........113
+   7. Service Model Usage Example ...................................114
+   8. Interaction with Other YANG Models ............................120
+   9. YANG Module ...................................................125
+   10. Security Considerations ......................................184
+   11. IANA Considerations ..........................................185
+   12. References ...................................................185
+      12.1. Normative References ....................................185
+      12.2. Informative References ..................................187
+   Acknowledgements .................................................188
+   Contributors .....................................................188
+   Authors' Addresses ...............................................188
+
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 3]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

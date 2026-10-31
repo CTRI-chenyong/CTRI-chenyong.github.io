@@ -1,0 +1,84 @@
+---
+title: "RFC 9182 §9 Security Considerations"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>9.  Security Considerations
+
+   The YANG module specified in this document defines a schema for data
+   that is designed to be accessed via network management protocols such
+   as NETCONF [RFC6241] or RESTCONF [RFC8040].  The lowest NETCONF layer
+   is the secure transport layer, and the mandatory-to-implement secure
+   transport is Secure Shell (SSH) [RFC6242].  The lowest RESTCONF layer
+   is HTTPS, and the mandatory-to-implement secure transport is TLS
+   [RFC8446].
+
+   The Network Configuration Access Control Model (NACM) [RFC8341]
+   provides the means to restrict access for particular NETCONF or
+   RESTCONF users to a preconfigured subset of all available NETCONF or
+   RESTCONF protocol operations and content.
+
+   There are a number of data nodes defined in this YANG module that are
+   writable/creatable/deletable (i.e., config true, which is the
+   default).  These data nodes may be considered sensitive or vulnerable
+   in some network environments.  Write operations (e.g., edit-config)
+   and delete operations to these data nodes without proper protection
+   or authentication can have a negative effect on network operations.
+   These are the subtrees and data nodes and their sensitivity/
+   vulnerability in the "ietf-l3vpn-ntw" module:
+
+   'vpn-profiles':  This container includes a set of sensitive data that
+      influence how the L3VPN service is delivered.  For example, an
+      attacker who has access to these data nodes may be able to
+      manipulate routing policies, QoS policies, or encryption
+      properties.  These data nodes are defined with "nacm:default-deny-
+      write" tagging [RFC9181].
+
+   'vpn-services':  An attacker who is able to access network nodes can
+      undertake various attacks, such as deleting a running L3VPN
+      service, interrupting all the traffic of a client.  In addition,
+      an attacker may modify the attributes of a running service (e.g.,
+      QoS, bandwidth, routing protocols, keying material), leading to
+      malfunctioning of the service and therefore to Service Level
+      Agreement (SLA) violations.  In addition, an attacker could
+      attempt to create an L3VPN service or add a new network access.
+      In addition to using NACM to prevent unauthorized access, such
+      activity can be detected by adequately monitoring and tracking
+      network configuration changes.
+
+   Some of the readable data nodes in this YANG module may be considered
+   sensitive or vulnerable in some network environments.  It is thus
+   important to control read access (e.g., via get, get-config, or
+   notification) to these data nodes.  These are the subtrees and data
+   nodes and their sensitivity/vulnerability:
+
+   'customer-name' and 'ip-connection':  An attacker can retrieve
+      privacy-related information, which can be used to track a
+      customer.  Disclosing such information may be considered a
+      violation of the customer-provider trust relationship.
+
+   'keying-material':  An attacker can retrieve the cryptographic keys
+      protecting the underlying VPN service (CE-PE routing, in
+      particular).  These keys could be used to inject spoofed routing
+      advertisements.
+
+   Several data nodes ('bgp', 'ospf', 'isis', 'rip', and 'bfd') rely
+   upon [RFC8177] for authentication purposes.  Therefore, this module
+   inherits the security considerations discussed in Section 5 of
+   [RFC8177].  Also, these data nodes support supplying explicit keys as
+   strings in ASCII format.  The use of keys in hexadecimal string
+   format would afford greater key entropy with the same number of key-
+   string octets.  However, such a format is not included in this
+   version of the L3NM, because it is not supported by the underlying
+   device modules (e.g., [RFC8695]).
+
+   As discussed in Section 7.6.3, the module supports MD5 to basically
+   accommodate the installed BGP base.  MD5 suffers from the security
+   weaknesses discussed in Section 2 of [RFC6151] and Section 2.1 of
+   [RFC6952].
+
+   [RFC8633] describes best current practices to be considered in VPNs
+   making use of NTP.  Moreover, a mechanism to provide cryptographic
+   security for NTP is specified in [RFC8915].
+
+</pre>

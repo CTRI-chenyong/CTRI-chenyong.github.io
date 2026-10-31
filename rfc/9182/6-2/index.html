@@ -1,0 +1,26 @@
+---
+title: "RFC 9182 §6.2 Multi-Domain Resource Management"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.  Multi-Domain Resource Management
+
+   The implementation of L3VPN services that span administratively
+   separated domains (i.e., that are under the administration of
+   different management systems or controllers) requires some network
+   resources to be synchronized between systems.  Particularly,
+   resources must be adequately managed in each domain to avoid broken
+   configurations.
+
+   For example, route targets (RTs) shall be synchronized between PEs.
+   When all PEs are controlled by the same management system, RT
+   allocation can be performed by that management system.  In cases
+   where the service spans multiple management systems, the task of
+   allocating RTs has to be aligned across the domains; therefore, the
+   network model must provide a way to specify RTs.  In addition, route
+   distinguishers (RDs) must also be synchronized to avoid collisions of
+   RD allocations between separate management systems.  An incorrect
+   allocation might lead to the same RD and IP prefixes being exported
+   by different PEs.
+
+</pre>

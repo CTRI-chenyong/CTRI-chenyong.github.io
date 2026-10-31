@@ -1,0 +1,36 @@
+---
+title: "RFC 8299 §1.4.2 Impact Assessment"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>1.4.2.  Impact Assessment
+
+   When changing the content of a YANG module, care must be taken to
+   ensure that there are no interoperability issues caused by a failure
+   to enable backward compatibility.
+
+
+
+
+Wu, et al.                   Standards Track                    [Page 7]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Section 11 of [RFC7950] clearly describes the circumstances under
+   which it is not acceptable to maintain a module name.
+
+      ...changes to published modules are not allowed if they have any
+      potential to cause interoperability problems between a client
+      using an original specification and a server using an updated
+      specification.
+
+   The module defined in this document is not backward compatible with
+   that defined in [RFC8049], but it is important to understand that
+   there is no possibility of an interoperability issue between the
+   module defined in this document and that presented in [RFC8049]
+   because that module could not be implemented for the reasons
+   described in Section 1.4.1.  Thus, noting the rules set out in
+   [RFC7950], it was decided to retain the module name in this document.
+
+</pre>

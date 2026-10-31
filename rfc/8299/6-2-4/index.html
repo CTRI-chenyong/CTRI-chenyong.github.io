@@ -1,0 +1,102 @@
+---
+title: "RFC 8299 §6.2.4 Extranet VPNs"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.4.  Extranet VPNs
+
+   There are some cases where a particular VPN needs access to resources
+   (servers, hosts, etc.) that are external.  Those resources may be
+   located in another VPN.
+
+                  +-----------+           +-----------+
+                 /             \         /             \
+      Site A -- |    VPN A      |  ---  |    VPN B      | --- Site B
+                 \             /         \             / (Shared
+                  +-----------+           +-----------+   resources)
+
+
+   In the figure above, VPN B has some resources on Site B that need to
+   be available to some customers/partners.  VPN A must be able to
+   access those VPN B resources.
+
+   Such a VPN connection scenario can be achieved via a VPN policy as
+   defined in Section 6.5.2.2.  But there are some simple cases where a
+   particular VPN (VPN A) needs access to all resources in another VPN
+   (VPN B).  The model provides an easy way to set up this connection
+   using the "extranet-vpns" container.
+
+   The extranet-vpns container defines a list of VPNs a particular VPN
+   wants to access.  The extranet-vpns container must be used on
+   customer VPNs accessing extranet resources in another VPN.  In the
+   figure above, in order to provide VPN A with access to VPN B, the
+   extranet-vpns container needs to be configured under VPN A with an
+   entry corresponding to VPN B.  There is no service configuration
+   requirement on VPN B.
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 30]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Readers should note that even if there is no configuration
+   requirement on VPN B, if VPN A lists VPN B as an extranet, all sites
+   in VPN B will gain access to all sites in VPN A.
+
+   The "site-role" leaf defines the role of the local VPN sites in the
+   target extranet VPN service topology.  Site roles are defined in
+   Section 6.4.  Based on this, the requirements described in
+   Section 6.4 regarding the site-role leaf are also applicable here.
+
+   In the example below, VPN A accesses VPN B resources through an
+   extranet connection.  A Spoke role is required for VPN A sites, as
+   sites from VPN A must not be able to communicate with each other
+   through the extranet VPN connection.
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+            &lt;vpn-service-topology&gt;hub-spoke&lt;/vpn-service-topology&gt;
+          &lt;/vpn-service&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+            &lt;vpn-service-topology&gt;any-to-any&lt;/vpn-service-topology&gt;
+            &lt;extranet-vpns&gt;
+              &lt;extranet-vpn&gt;
+                &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+                &lt;local-sites-role&gt;spoke-role&lt;/local-sites-role&gt;
+              &lt;/extranet-vpn&gt;
+            &lt;/extranet-vpns&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+      &lt;/l3vpn-svc&gt;
+
+   This model does not define how the extranet configuration will be
+   achieved.
+
+   Any VPN interconnection scenario that is more complex (e.g., only
+   certain parts of sites on VPN A accessing only certain parts of sites
+   on VPN B) needs to be achieved using a VPN attachment as defined in
+   Section 6.5.2, and especially a VPN policy as defined in
+   Section 6.5.2.2.
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 31]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

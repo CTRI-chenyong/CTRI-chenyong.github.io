@@ -1,0 +1,68 @@
+---
+title: "RFC 9182 §7.6.4 OAM"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.4.  OAM
+
+   This container (Figure 21) defines the Operations, Administration,
+   and Maintenance (OAM) mechanisms used for a VPN network access.  In
+   the current version of the L3NM, only BFD is supported.
+
+   ...
+   +--rw oam
+   |  +--rw bfd {vpn-common:bfd}?
+   |     +--rw session-type?               identityref
+   |     +--rw desired-min-tx-interval?    uint32
+   |     +--rw required-min-rx-interval?   uint32
+   |     +--rw local-multiplier?           uint8
+   |     +--rw holdtime?                   uint32
+   |     +--rw profile?                    leafref
+   |     +--rw authentication!
+   |     |  +--rw key-chain?    key-chain:key-chain-ref
+   |     |  +--rw meticulous?   boolean
+   |     +--rw status
+   |        +--rw admin-status
+   |           |  +--rw status?         identityref
+   |           |  +--rw last-change?   yang:date-and-time
+   |           +--ro oper-status
+   |              +--ro status?         identityref
+   |              +--ro last-change?   yang:date-and-time
+   ...
+
+              Figure 21: IP Connection Subtree Structure (OAM)
+
+   The following OAM data nodes can be specified:
+
+   'session-type':  Indicates which BFD flavor is used to set up the
+      session (e.g., classic BFD [RFC5880], Seamless BFD [RFC7880]).  By
+      default, it is assumed that the BFD session will follow the
+      behavior specified in [RFC5880].
+
+   'desired-min-tx-interval':  The minimum interval, in microseconds,
+      that a PE would like to use when transmitting BFD Control packets,
+      less any jitter applied.
+
+   'required-min-rx-interval':  The minimum interval, in microseconds,
+      between received BFD Control packets that a PE is capable of
+      supporting, less any jitter applied by the sender.
+
+   'local-multiplier':  The negotiated transmit interval, multiplied by
+      this value, provides the detection time for the peer.
+
+   'holdtime':  Used to indicate the expected BFD holddown time, in
+      milliseconds.  This value may be inherited from the service
+      request (see Section 6.3.2.2.2 of [RFC8299]).
+
+   'profile':  Refers to a BFD profile (Section 7.2).  Such a profile
+      can be set by the provider or inherited from the service request
+      (see Section 6.3.2.2.2 of [RFC8299]).
+
+   'authentication':  Includes the required information to enable the
+      BFD authentication modes discussed in Section 6.7 of [RFC5880].
+      In particular, 'meticulous' controls the activation of meticulous
+      mode as discussed in Sections 6.7.3 and 6.7.4 of [RFC5880].
+
+   'status':  Indicates the status of BFD.
+
+</pre>

@@ -1,0 +1,23 @@
+---
+title: "RFC 8299 §6.5.1 Site VPN Flavor"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.1.  Site VPN Flavor
+
+   A site may be part of one or multiple VPNs.  The "site-vpn-flavor"
+   defines the way the VPN multiplexing is done.  The current version of
+   the model supports four flavors:
+
+   o  site-vpn-flavor-single: The site belongs to only one VPN.
+
+   o  site-vpn-flavor-multi: The site belongs to multiple VPNs, and all
+      the logical accesses of the sites belong to the same set of VPNs.
+
+   o  site-vpn-flavor-sub: The site belongs to multiple VPNs with
+      multiple logical accesses.  Each logical access may map to
+      different VPNs (one or many).
+
+   o  site-vpn-flavor-nni: The site represents an option A NNI.
+
+</pre>

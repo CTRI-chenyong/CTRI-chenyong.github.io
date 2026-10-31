@@ -1,0 +1,30 @@
+---
+title: "RFC 8299 §6.11.5 RIP Routing"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.5.  RIP Routing
+
+   The routing protocol type "rip" MAY be used when a customer LAN is
+   connected to the provider network through a CE router and must be
+   advertised in the IP VPN.  For IPv4, the model assumes that RIP
+   version 2 is used.
+
+   In the case of dual-stack routing requested through this model, the
+   management system will be responsible for configuring RIP (including
+   the correct version number) and associated address families on
+   network elements.
+
+                                         RIP rtg
+                 192.0.2.0/24 ------ CE -------------- PE
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 89]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

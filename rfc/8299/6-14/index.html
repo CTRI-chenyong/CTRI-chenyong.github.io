@@ -1,0 +1,22 @@
+---
+title: "RFC 8299 §6.14 External ID References"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.14.  External ID References
+
+   The service model sometimes refers to external information through
+   identifiers.  As an example, to order a cloud-access to a particular
+   cloud service provider (CSP), the model uses an identifier to refer
+   to the targeted CSP.  If a customer is directly using this service
+   model as an API (through REST or NETCONF, for example) to order a
+   particular service, the SP should provide a list of authorized
+   identifiers.  In the case of cloud-access, the SP will provide the
+   associated identifiers for each available CSP.  The same applies to
+   other identifiers, such as std-qos-profile, OAM profile-name, and
+   provider-profile for encryption.
+
+   How an SP provides the meanings of those identifiers to the customer
+   is out of scope for this document.
+
+</pre>

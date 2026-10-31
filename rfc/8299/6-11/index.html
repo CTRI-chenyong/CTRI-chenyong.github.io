@@ -1,0 +1,56 @@
+---
+title: "RFC 8299 §6.11 Routing Protocols"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.  Routing Protocols
+
+   "routing-protocol" defines which routing protocol must be activated
+   between the provider and the customer router.  The current model
+   supports the following settings: bgp, rip, ospf, static, direct, and
+   vrrp.
+
+   The routing protocol defined applies at the provider-to-customer
+   boundary.  Depending on how the management model is administered, it
+   may apply to the PE-CE boundary or the CE-to-customer boundary.  In
+   the case of a customer-managed site, the routing protocol defined
+   will be activated between the PE and the CE router managed by the
+   customer.  In the case of a provider-managed site, the routing
+   protocol defined will be activated between the CE managed by the SP
+   and the router or LAN belonging to the customer.  In this case, we
+   expect the PE-CE routing to be configured based on the SP's rules, as
+   both are managed by the same entity.
+
+                                      Rtg protocol
+              192.0.2.0/24 ----- CE ----------------- PE1
+
+                           Customer-managed site
+
+                    Rtg protocol
+              Customer router ----- CE ----------------- PE1
+
+                           Provider-managed site
+
+   All the examples below will refer to a scenario for a customer-
+   managed site.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 86]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

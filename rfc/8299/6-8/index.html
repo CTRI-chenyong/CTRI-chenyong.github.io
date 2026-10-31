@@ -1,0 +1,54 @@
+---
+title: "RFC 8299 §6.8 Traffic Protection"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.8.  Traffic Protection
+
+   The service model supports the ability to protect the traffic for a
+   site.  Such protection provides a better level of availability in
+   multihoming scenarios by, for example, using local-repair techniques
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 82]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   in case of failures.  The associated level of service guarantee would
+   be based on an agreement between the customer and the SP and is out
+   of scope for this document.
+
+                 Site#1                            Site#2
+             CE1 ----- PE1 -- P1            P3 -- PE3 ---- CE3
+              |                              |             |
+              |                              |             |
+             CE2 ----- PE2 -- P2            P4 -- PE4 ---- CE4
+                       /
+                      /
+             CE5 ----+
+                Site#3
+
+   In the figure above, we consider an IP VPN service with three sites,
+   including two dual-homed sites (Site#1 and Site#2).  For dual-homed
+   sites, we consider PE1-CE1 and PE3-CE3 as primary and PE2-CE2,PE4-CE4
+   as backup for the example (even if protection also applies to load-
+   sharing scenarios).
+
+   In order to protect Site#2 against a failure, a user may set the
+   "traffic-protection/enabled" leaf to true for Site#2.  How the
+   traffic protection will be implemented is out of scope for this
+   document.  However, in such a case, we could consider traffic coming
+   from a remote site (Site#1 or Site#3), where the primary path would
+   use PE3 as the egress PE.  PE3 may have preprogrammed a backup
+   forwarding entry pointing to the backup path (through PE4-CE4) for
+   all prefixes going through the PE3-CE3 link.  How the backup path is
+   computed is out of scope for this document.  When the PE3-CE3 link
+   fails, traffic is still received by PE3, but PE3 automatically
+   switches traffic to the backup entry; the path will therefore be
+   PE1-P1-(...)-P3-PE3-PE4-CE4 until the remote PEs reconverge and use
+   PE4 as the egress PE.
+
+</pre>

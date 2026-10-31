@@ -1,0 +1,111 @@
+---
+title: "RFC 9182 §7.6 VPN Network Accesses"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.  VPN Network Accesses
+
+   The 'vpn-network-access' includes a set of data nodes that describe
+   the access information for the traffic that belongs to a particular
+   L3VPN (Figure 8).
+
+   ...
+   +--rw vpn-nodes
+      +--rw vpn-node* [vpn-node-id]
+         ...
+         +--rw vpn-network-accesses
+            +--rw vpn-network-access* [id]
+               +--rw id                         vpn-common:vpn-id
+               +--rw interface-id?              string
+               +--rw description?               string
+               +--rw vpn-network-access-type?   identityref
+               +--rw vpn-instance-profile?      leafref
+               +--rw status
+               |  +--rw admin-status
+               |  |  +--rw status?         identityref
+               |  |  +--rw last-change?   yang:date-and-time
+               |  +--ro oper-status
+               |     +--ro status?         identityref
+               |     +--ro last-change?   yang:date-and-time
+               +--rw connection
+               |  ...
+               +--rw ip-connection
+               |  ...
+               +--rw routing-protocols
+               |  ...
+               +--rw oam
+               |  ...
+               +--rw security
+               |  ...
+               +--rw service
+                  ...
+
+               Figure 8: VPN Network Access Subtree Structure
+
+   A 'vpn-network-access' (Figure 8) includes the following data nodes:
+
+   'id':  An identifier of the VPN network access.
+
+   'interface-id':  Indicates the physical or logical interface on which
+      the VPN network access is bound.
+
+   'description':  Includes a textual description of the VPN network
+      access.
+
+   'vpn-network-access-type':  Used to select the type of network
+      interface to be deployed in the devices.  The available defined
+      values are as follows:
+
+      'point-to-point':  Represents a direct connection between the
+         endpoints.  The controller must keep the association between a
+         logical or physical interface on the device with the 'id' of
+         the 'vpn-network-access'.
+
+      'multipoint':  Represents a multipoint connection between the
+         customer site and the PEs.  The controller must keep the
+         association between a logical or physical interface on the
+         device with the 'id' of the 'vpn-network-access'.
+
+      'irb':  Represents a connection coming from an L2VPN service.  An
+         identifier of such a service ('l2vpn-id') may be included in
+         the 'connection' container, as depicted in Figure 9
+         (Section 7.6.1).  The controller must keep the relationship
+         between the logical tunnels or bridges on the devices with the
+         'id' of the 'vpn-network-access'.
+
+      'loopback':  Represents the creation of a logical interface on a
+         device.  An example that illustrates how a loopback interface
+         can be used in the L3NM is provided in Appendix A.2.
+
+   'vpn-instance-profile':  Provides a pointer to an active VPN instance
+      profile at the VPN node level.  Referencing an active VPN instance
+      profile implies that all associated data nodes will be inherited
+      by the VPN network access.  However, some inherited data nodes
+      (e.g., multicast) can be overridden at the VPN network access
+      level.  In such a case, adjusted values take precedence over
+      inherited values.
+
+   'status':  Indicates both operational status and administrative
+      status of a VPN network access.
+
+   'connection':  Represents and groups the set of Layer 2 connectivity
+      from where the traffic of the L3VPN in a particular VPN network
+      access is coming.  See Section 7.6.1.
+
+   'ip-connection':  Contains Layer 3 connectivity information on a VPN
+      network access (e.g., IP addressing).  See Section 7.6.2.
+
+   'routing-protocols':  Includes the CE-PE routing configuration
+      information.  See Section 7.6.3.
+
+   'oam':  Specifies the Operations, Administration, and Maintenance
+      (OAM) mechanisms used for a VPN network access.  See
+      Section 7.6.4.
+
+   'security':  Specifies the authentication and the encryption to be
+      applied for a given VPN network access.  See Section 7.6.5.
+
+   'service':  Specifies the service parameters (e.g., QoS, multicast)
+      to apply for a given VPN network access.  See Section 7.6.6.
+
+</pre>

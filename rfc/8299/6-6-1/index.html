@@ -1,0 +1,31 @@
+---
+title: "RFC 8299 §6.6.1 Constraint: Device"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.1.  Constraint: Device
+
+   In the case of provider management or co-management, one or more
+   devices have been ordered by the customer to a particular already-
+   configured location.  The customer may force a particular site-
+   network-access to be connected on a particular device that he
+   ordered.
+
+           New York Site
+
+         +------------------+             Site
+         | +--------------+ |-----------------------------------
+         | | Manhattan    | |
+         | |           CE1********* (site-network-access#1) ******
+         | +--------------+ |
+         | +--------------+ |
+         | | Brooklyn  CE2********* (site-network-access#2) ******
+         | +--------------+ |
+         |                  |-----------------------------------
+         +------------------+
+
+   In the figure above, site-network-access#1 is associated with CE1 in
+   the service request.  The SP must ensure the provisioning of this
+   connection.
+
+</pre>

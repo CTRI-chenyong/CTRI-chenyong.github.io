@@ -1,0 +1,81 @@
+---
+title: "RFC 8299 §6.3 Site Overview"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.  Site Overview
+
+   A site represents a connection of a customer office to one or more
+   VPN services.  Each site is associated with one or more locations.
+
+                                                    +-------------+
+                                                   /               \
+     +------------------+                   +-----|      VPN1       |
+     |                  |                   |      \               /
+     |  New York Office |------ (site) -----+       +-------------+
+     |                  |                   |       +-------------+
+     +------------------+                   |      /               \
+                                            +-----|      VPN2       |
+                                                   \               /
+                                                    +-------------+
+
+   A site has several characteristics:
+
+   o  Unique identifier (site-id): uniquely identifies the site within
+      the overall network infrastructure.  The identifier is a string
+      that allows any encoding for the local administration of the VPN
+      service.
+
+   o  Locations (locations): site location information that allows easy
+      retrieval of information from the nearest available resources.  A
+      site may be composed of multiple locations.  Alternatively, two or
+      more sites can be associated with the same location, by
+      referencing the same location ID.
+
+   o  Devices (devices): allows the customer to request one or more
+      customer premises equipment entities from the SP for a particular
+      site.
+
+   o  Management (management): defines the type of management for the
+      site -- for example, co-managed, customer-managed, or provider-
+      managed.  See Section 6.10.
+
+   o  Site network accesses (site-network-accesses): defines the list of
+      network accesses associated with the sites, and their properties
+      -- especially bearer, connection, and service parameters.
+
+   A site-network-access represents an IP logical connection of a site.
+   A site may have multiple site-network-accesses.
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 32]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+         +------------------+             Site
+         |                  |-----------------------------------
+         |                  |****** (site-network-access#1) ******
+         |  New York Office |
+         |                  |****** (site-network-access#2) ******
+         |                  |-----------------------------------
+         +------------------+
+
+   Multiple site-network-accesses are used, for instance, in the case of
+   multihoming.  Some other meshing cases may also include multiple
+   site-network-accesses.
+
+   The site configuration is viewed as a global entity; we assume that
+   it is mostly the management system's role to split the parameters
+   between the different elements within the network.  For example, in
+   the case of the site-network-access configuration, the management
+   system needs to split the overall parameters between the PE
+   configuration and the CE configuration.
+
+</pre>

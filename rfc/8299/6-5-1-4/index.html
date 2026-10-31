@@ -1,0 +1,76 @@
+---
+title: "RFC 8299 §6.5.1.4 NNI: site-vpn-flavor-nni"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.1.4.  NNI: site-vpn-flavor-nni
+
+   A Network-to-Network Interface (NNI) scenario may be modeled using
+   the sites container (see Section 6.15.1).  Using the sites container
+   to model an NNI is only one possible option for NNIs (see
+   Section 6.15).  This option is called "option A" by reference to the
+   option A NNI defined in [RFC4364].  It is helpful for the SP to
+   indicate that the requested VPN connection is not a regular site but
+   rather is an NNI, as specific default device configuration parameters
+   may be applied in the case of NNIs (e.g., ACLs, routing policies).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 40]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+           SP A                                             SP B
+      -------------------                         -------------------
+     /                   \                       /                   \
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +  (VRF1)---(VPN1)----(VRF1)  +                 |
+    |                 + ASBR +               + ASBR +                 |
+    |                 +  (VRF2)---(VPN2)----(VRF2)  +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                     |                     |                     |
+    |                 ++++++++ Inter-AS link ++++++++                 |
+    |                 +      +_______________+      +                 |
+    |                 +  (VRF1)---(VPN1)----(VRF1)  +                 |
+    |                 + ASBR +               + ASBR +                 |
+    |                 +  (VRF2)---(VPN2)----(VRF2)  +                 |
+    |                 +      +_______________+      +                 |
+    |                 ++++++++               ++++++++                 |
+    |                     |                     |                     |
+    |                     |                     |                     |
+     \                   /                       \                   /
+      -------------------                         -------------------
+
+   The figure above describes an option A NNI scenario that can be
+   modeled using the sites container.  In order to connect its customer
+   VPNs (VPN1 and VPN2) in SP B, SP A may request the creation of some
+   site-network-accesses to SP B.  The site-vpn-flavor-nni will be used
+   to inform SP B that this is an NNI and not a regular customer site.
+   The site-vpn-flavor-nni may be multihomed and multiVPN as well.
+
+</pre>

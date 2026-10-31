@@ -1,0 +1,38 @@
+---
+title: "RFC 8299 §6.3.2 Site Network Accesses"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.2.  Site Network Accesses
+
+   As mentioned earlier, a site may be multihomed.  Each IP network
+   access for a site is defined in the "site-network-accesses"
+   container.  The site-network-access parameter defines how the site is
+   connected on the network and is split into three main classes of
+   parameters:
+
+   o  bearer: defines requirements of the attachment (below Layer 3).
+
+   o  connection: defines Layer 3 protocol parameters of the attachment.
+
+   o  availability: defines the site's availability policy.  The
+      availability parameters are defined in Section 6.7.
+
+   The site-network-access has a specific type (site-network-access-
+   type).  This document defines two types:
+
+   o  point-to-point: describes a point-to-point connection between the
+      SP and the customer.
+
+   o  multipoint: describes a multipoint connection between the SP and
+      the customer.
+
+   The type of site-network-access may have an impact on the parameters
+   offered to the customer, e.g., an SP may not offer encryption for
+   multipoint accesses.  It is up to the provider to decide what
+   parameter is supported for point-to-point and/or multipoint accesses;
+   this topic is out of scope for this document.  Some containers
+   proposed in the model may require extensions in order to work
+   properly for multipoint accesses.
+
+</pre>

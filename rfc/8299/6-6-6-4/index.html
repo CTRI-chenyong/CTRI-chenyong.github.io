@@ -1,0 +1,301 @@
+---
+title: "RFC 8299 §6.6.6.4 SubVPN with Multihoming"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.6.4.  SubVPN with Multihoming
+
+   A customer has a site that is dual-homed.  The dual-homing must be
+   done on two different PEs.  The customer also wants to implement two
+   subVPNs on those multihomed accesses.
+
+   +-----------------+         Site                     +------+
+   |                 |---------------------------------/       +-----+
+   |                 |****(site-network-access#1)*****| VPN B /       \
+   | New York Office |****(site-network-access#2)************| VPN C   |
+   |                 |                                  +-----\       /
+   |                 |                                         +-----+
+   |                 |
+   |                 |                                  +------+
+   |                 |                                 /       +-----+
+   |                 |****(site-network-access#3)*****| VPN B /       \
+   |                 |****(site-network-access#4)************| VPN C   |
+   |                 |                                  +-----\       /
+   |                 |-----------------------------------      +-----+
+   +-----------------+
+
+   This scenario can be expressed as follows:
+
+   o  The site will have four site network accesses (two subVPNs coupled
+      via dual-homing).
+
+   o  Site-network-access#1 and site-network-access#3 will correspond to
+      the multihoming of subVPN B.  A PE-diverse constraint is required
+      between them.
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 75]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  Site-network-access#2 and site-network-access#4 will correspond to
+      the multihoming of subVPN C.  A PE-diverse constraint is required
+      between them.
+
+   o  To ensure proper usage of the same bearer for the subVPN, site-
+      network-access#1 and site-network-access#2 must share the same
+      bearer as site-network-access#3 and site-network-access#4.
+
+ &lt;?xml version="1.0"?&gt;
+ &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+  &lt;vpn-services&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPNC&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+  &lt;/vpn-services&gt;
+  &lt;sites&gt;
+   &lt;site&gt;
+    &lt;site-id&gt;SITE1&lt;/site-id&gt;
+    &lt;locations&gt;
+     &lt;location&gt;
+      &lt;location-id&gt;L1&lt;/location-id&gt;
+     &lt;/location&gt;
+    &lt;/locations&gt;
+    &lt;management&gt;
+     &lt;type&gt;customer-managed&lt;/type&gt;
+    &lt;/management&gt;
+    &lt;security&gt;
+     &lt;encryption&gt;
+      &lt;layer&gt;layer3&lt;/layer&gt;
+     &lt;/encryption&gt;
+    &lt;/security&gt;
+    &lt;site-network-accesses&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;1&lt;/site-network-access-id&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 76]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;access-diversity&gt;
+       &lt;groups&gt;
+        &lt;group&gt;
+         &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+        &lt;/group&gt;
+       &lt;/groups&gt;
+       &lt;constraints&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;pe-diverse&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;same-bearer&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+       &lt;/constraints&gt;
+      &lt;/access-diversity&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;2&lt;/site-network-access-id&gt;
+      &lt;access-diversity&gt;
+       &lt;groups&gt;
+        &lt;group&gt;
+         &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+        &lt;/group&gt;
+       &lt;/groups&gt;
+       &lt;constraints&gt;
+        &lt;constraint&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 77]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+         &lt;constraint-type&gt;pe-diverse&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;same-bearer&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+       &lt;/constraints&gt;
+      &lt;/access-diversity&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNC&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;3&lt;/site-network-access-id&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;access-diversity&gt;
+       &lt;groups&gt;
+        &lt;group&gt;
+         &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+        &lt;/group&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 78]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+       &lt;/groups&gt;
+       &lt;constraints&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;pe-diverse&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;same-bearer&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+       &lt;/constraints&gt;
+      &lt;/access-diversity&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;4&lt;/site-network-access-id&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;access-diversity&gt;
+       &lt;groups&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 79]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+        &lt;group&gt;
+         &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+        &lt;/group&gt;
+       &lt;/groups&gt;
+       &lt;constraints&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;pe-diverse&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-1&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+        &lt;constraint&gt;
+         &lt;constraint-type&gt;same-bearer&lt;/constraint-type&gt;
+         &lt;target&gt;
+          &lt;group&gt;
+           &lt;group-id&gt;dualhomed-2&lt;/group-id&gt;
+          &lt;/group&gt;
+         &lt;/target&gt;
+        &lt;/constraint&gt;
+       &lt;/constraints&gt;
+      &lt;/access-diversity&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNC&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+     &lt;/site-network-access&gt;
+    &lt;/site-network-accesses&gt;
+   &lt;/site&gt;
+  &lt;/sites&gt;
+ &lt;/l3vpn-svc&gt;
+
+</pre>

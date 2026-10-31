@@ -1,0 +1,57 @@
+---
+title: "RFC 8299 §6.2.1.1 Route Target Allocation"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.1.1.  Route Target Allocation
+
+   A Layer 3 PE-based VPN is built using route targets (RTs) as
+   described in [RFC4364].  The management system is expected to
+   automatically allocate a set of RTs upon receiving a VPN service
+   creation request.  How the management system allocates RTs is out of
+   scope for this document, but multiple ways could be envisaged, as
+   described below.
+
+                                    Management system
+                     &lt;-------------------------------------------------&gt;
+                                                 Request RT
+                      +-----------------------+  Topo a2a   +----------+
+           RESTCONF   |                       |  -----&gt;     |          |
+   User ------------- | Service Orchestration |             | Network  |
+           l3vpn-svc  |                       |  &lt;-----     |   OSS    |
+             Model    +-----------------------+   Response  +----------+
+                                                  RT1, RT2
+
+   In the example above, a service orchestration, owning the
+   instantiation of this service model, requests RTs to the network OSS.
+   Based on the requested VPN service topology, the network OSS replies
+   with one or multiple RTs.  The interface between this service
+   orchestration and the network OSS is out of scope for this document.
+
+                                +---------------------------+
+                     RESTCONF   |                           |
+             User ------------- |   Service Orchestration   |
+                     l3vpn-svc  |                           |
+                       Model    |                           |
+                                |  RT pool: 10:1-&gt;10:10000  |
+                                |  RT pool: 20:50-&gt;20:5000  |
+                                +---------------------------+
+
+   In the example above, a service orchestration, owning the
+   instantiation of this service model, owns one or more pools of RTs
+   (specified by the SP) that can be allocated.  Based on the requested
+   VPN service topology, it will allocate one or multiple RTs from the
+   pool.
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 23]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The mechanisms shown above are just examples and should not be
+   considered an exhaustive list of solutions.
+
+</pre>

@@ -1,0 +1,74 @@
+---
+title: "RFC 8299 §6.13.1 Carriers' Carriers"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.13.1.  Carriers' Carriers
+
+   In the case of CsC [RFC4364], a customer may want to build an MPLS
+   service using an IP VPN to carry its traffic.
+
+                  LAN customer1
+                      |
+                      |
+                     CE1
+                      |
+                      | -------------
+                   (vrf_cust1)
+                    CE1_ISP1
+                      |                 ISP1 POP
+                      | MPLS link
+                      | -------------
+                      |
+                   (vrf ISP1)
+                     PE1
+
+                    (...)               Provider backbone
+
+                     PE2
+                    (vrf ISP1)
+                      |
+                      | ------------
+                      |
+                      | MPLS link
+                      |                 ISP1 POP
+                     CE2_ISP1
+                     (vrf_cust1)
+                      | ------------
+                      |
+                     CE2
+                      |
+                   LAN customer1
+
+   In the figure above, ISP1 resells an IP VPN service but has no core
+   network infrastructure between its POPs.  ISP1 uses an IP VPN as the
+   core network infrastructure (belonging to another provider) between
+   its POPs.
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 104]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   In order to support CsC, the VPN service must indicate MPLS support
+   by setting the "carrierscarrier" leaf to true in the vpn-service
+   list.  The link between CE1_ISP1/PE1 and CE2_ISP1/PE2 must also run
+   an MPLS signalling protocol.  This configuration is done at the site
+   level.
+
+   In the proposed model, LDP or BGP can be used as the MPLS signalling
+   protocol.  In the case of LDP, an IGP routing protocol MUST also be
+   activated.  In the case of BGP signalling, BGP MUST also be
+   configured as the routing protocol.
+
+   If CsC is enabled, the requested "svc-mtu" leaf will refer to the
+   MPLS MTU and not to the IP MTU.
+
+</pre>

@@ -1,0 +1,23 @@
+---
+title: "RFC 8299 §6.1 Features and Augmentation"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.1.  Features and Augmentation
+
+   The model defined in this document implements many features that
+   allow implementations to be modular.  As an example, an
+   implementation may support only IPv4 VPNs (IPv4 feature), IPv6 VPNs
+   (IPv6 feature), or both (by advertising both features).  The routing
+   protocols proposed to the customer may also be enabled through
+   features.  This model also defines some features for options that are
+   more advanced, such as support for extranet VPNs (Section 6.2.4),
+   site diversity (Section 6.6), and QoS (Section 6.12.3).
+
+   In addition, as for any YANG data model, this service model can be
+   augmented to implement new behaviors or specific features.  For
+   example, this model uses different options for IP address
+   assignments; if those options do not fulfill all requirements, new
+   options can be added through augmentation.
+
+</pre>

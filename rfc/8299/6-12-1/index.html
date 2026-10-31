@@ -1,0 +1,28 @@
+---
+title: "RFC 8299 §6.12.1 Bandwidth"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.12.1.  Bandwidth
+
+   The service bandwidth refers to the bandwidth requirement between the
+   PE and the CE (WAN link bandwidth).  The requested bandwidth is
+   expressed as svc-input-bandwidth and svc-output-bandwidth in bits per
+   second.  The input/output direction uses the customer site as a
+   reference: "input bandwidth" means download bandwidth for the site,
+   and "output bandwidth" means upload bandwidth for the site.
+
+   The service bandwidth is only configurable at the site-network-access
+   level.
+
+   Using a different input and output bandwidth will allow the SP to
+   determine if the customer allows for asymmetric bandwidth access,
+   such as ADSL.  It can also be used to set rate-limiting in a
+   different way for uploading and downloading on a symmetric bandwidth
+   access.
+
+   The bandwidth is a service bandwidth expressed primarily as IP
+   bandwidth, but if the customer enables MPLS for Carriers' Carriers
+   (CsC), this becomes MPLS bandwidth.
+
+</pre>

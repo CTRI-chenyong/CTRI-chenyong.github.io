@@ -1,0 +1,65 @@
+---
+title: "RFC 8299 §6.15.3 Defining an NNI with the Option C Flavor"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.15.3.  Defining an NNI with the Option C Flavor
+
+            AS A                                           AS B
+     -------------------                          -------------------
+    /                   \                        /                   \
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                 ++++++++ Multihop E-BGP ++++++++                 |
+   |                 +      +                +      +                 |
+   |                 +      +                +      +                 |
+   |                 + RGW  +&lt;----MP-BGP----&gt;+ RGW  +                 |
+   |                 +      +                +      +                 |
+   |                 +      +                +      +                 |
+   |                 ++++++++                ++++++++                 |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                 ++++++++ Inter-AS link ++++++++                  |
+   |                 +      +_______________+      +                  |
+   |                 +      +               +      +                  |
+   |                 + ASBR +               + ASBR +                  |
+   |                 +      +               +      +                  |
+   |                 +      +_______________+      +                  |
+   |                 ++++++++               ++++++++                  |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                     |                      |                     |
+   |                 ++++++++ Inter-AS link ++++++++                  |
+   |                 +      +_______________+      +                  |
+   |                 +      +               +      +                  |
+   |                 + ASBR +               + ASBR +                  |
+   |                 +      +               +      +                  |
+   |                 +      +_______________+      +                  |
+   |                 ++++++++               ++++++++                  |
+   |                     |                      |                     |
+   |                     |                      |                     |
+    \                   /                        \                   /
+     -------------------                          -------------------
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 113]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   From a VPN service's perspective, the option C NNI is very similar to
+   option B, as an MP-BGP session is used to exchange VPN routes between
+   the ASes.  The difference is that the forwarding plane and the
+   control plane are on different nodes, so the MP-BGP session is
+   multihop between routing gateway (RGW) nodes.
+
+   From a VPN service's point of view, modeling options B and C will be
+   identical.
+
+</pre>

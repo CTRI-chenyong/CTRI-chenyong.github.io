@@ -1,0 +1,30 @@
+---
+title: "RFC 8299 §6.6.5 Infeasible Access Placement"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.5.  Infeasible Access Placement
+
+   Some infeasible access placement scenarios could be created via the
+   proposed configuration framework.  Such infeasible access placement
+   scenarios could result from constraints that are too restrictive,
+   leading to infeasible access placement in the network or conflicting
+   constraints that would also lead to infeasible access placement.  An
+   example of conflicting rules would be to request that site-network-
+   access#1 be pe-diverse from site-network-access#2 and to request at
+   the same time that site-network-access#2 be on the same PE as site-
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 59]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   network-access#1.  When the management system cannot determine the
+   placement of a site-network-access, it MUST return an error message
+   indicating that placement was not possible.
+
+</pre>

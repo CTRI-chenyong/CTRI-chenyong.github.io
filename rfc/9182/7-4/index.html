@@ -1,0 +1,130 @@
+---
+title: "RFC 9182 §7.4 VPN Instance Profiles"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.4.  VPN Instance Profiles
+
+   VPN instance profiles are meant to factorize data nodes that are used
+   at many levels of the model.  Generic VPN instance profiles are
+   defined at the VPN service level and then called at the VPN node and
+   VPN network access levels.  Each VPN instance profile is identified
+   by 'profile-id'.  This identifier is then referenced for one or
+   multiple VPN nodes (Section 7.5) so that the controller can identify
+   generic resources (e.g., RTs and RDs) to be configured for a given
+   VRF instance.
+
+   The subtree of the 'vpn-instance-profiles' is shown in Figure 6.
+
+     +--rw l3vpn-ntw
+        +--rw vpn-profiles
+        |  ...
+        +--rw vpn-services
+           +--rw vpn-service* [vpn-id]
+              +--rw vpn-id                   vpn-common:vpn-id
+              ...
+              +--rw vpn-instance-profiles
+              |  +--rw vpn-instance-profile* [profile-id]
+              |     +--rw profile-id                 string
+              |     +--rw role?                      identityref
+              |     +--rw local-as?                  inet:as-number
+              |     |      {vpn-common:rtg-bgp}?
+              |     +--rw (rd-choice)?
+              |     |  +--:(directly-assigned)
+              |     |  |  +--rw rd?
+              |     |  |         rt-types:route-distinguisher
+              |     |  +--:(directly-assigned-suffix)
+              |     |  |  +--rw rd-suffix?           uint16
+              |     |  +--:(auto-assigned)
+              |     |  |  +--rw rd-auto
+              |     |  |     +--rw (auto-mode)?
+              |     |  |     |  +--:(from-pool)
+              |     |  |     |  |  +--rw rd-pool-name?   string
+              |     |  |     |  +--:(full-auto)
+              |     |  |     |     +--rw auto?           empty
+              |     |  |     +--ro auto-assigned-rd?
+              |     |  |          rt-types:route-distinguisher
+              |     |  +--:(auto-assigned-suffix)
+              |     |  |  +--rw rd-auto-suffix
+              |     |  |     +--rw (auto-mode)?
+              |     |  |     |  +--:(from-pool)
+              |     |  |     |  |  +--rw rd-pool-name?        string
+              |     |  |     |  +--:(full-auto)
+              |     |  |     |     +--rw auto?                empty
+              |     |  |     +--ro auto-assigned-rd-suffix?   uint16
+              |     |  +--:(no-rd)
+              |     |     +--rw no-rd?               empty
+              |     +--rw address-family* [address-family]
+              |     |  +--rw address-family          identityref
+              |     |  +--rw vpn-targets
+              |     |  |  +--rw vpn-target* [id]
+              |     |  |  |  +--rw id                  uint8
+              |     |  |  |  +--rw route-targets* [route-target]
+              |     |  |  |  |  +--rw route-target
+              |     |  |  |  |       rt-types:route-target
+              |     |  |  |  +--rw route-target-type
+              |     |  |  |          rt-types:route-target-type
+              |     |  |  +--rw vpn-policies
+              |     |  |     +--rw import-policy?   string
+              |     |  |     +--rw export-policy?   string
+              |     |  +--rw maximum-routes* [protocol]
+              |     |     +--rw protocol          identityref
+              |     |     +--rw maximum-routes?   uint32
+              |     +--rw multicast {vpn-common:multicast}?
+              |        ...
+
+            Figure 6: Subtree Structure of VPN Instance Profiles
+
+   The descriptions of the listed data nodes are as follows:
+
+   'profile-id':  Used to uniquely identify a VPN instance profile.
+
+   'role':  Indicates the role of the VPN instance profile in the VPN.
+      Role values are defined in [RFC9181] (e.g., 'any-to-any-role',
+      'spoke-role', 'hub-role').
+
+   'local-as':  Indicates the Autonomous System Number (ASN) that is
+      configured for the VPN node.
+
+   'rd':  As defined in [RFC9181], the following RD assignment modes are
+      supported: direct assignment, full automatic assignment, automatic
+      assignment from a given pool, and no assignment.  For illustration
+      purposes, the following modes can be used in the deployment cases:
+
+      'directly-assigned':  The VPN service provider (service
+         orchestrator) assigns RDs explicitly.  This case will fit with
+         a brownfield scenario where some existing services need to be
+         updated by the VPN service provider.
+
+      'full-auto':  The network controller auto-assigns RDs.  This can
+         apply for the deployment of new services.
+
+      'no-rd':  The VPN service provider (service orchestrator)
+         explicitly wants no RD to be assigned.  This case can be used
+         for CE testing within the network or for troubleshooting
+         proposes.
+
+      Also, the module accommodates deployments where only the Assigned
+      Number subfield of RDs (Section 4.2 of [RFC4364]) is assigned from
+      a pool while the Administrator subfield is set to, for example,
+      the Router ID that is assigned to a VPN node.  The module supports
+      these modes for managing the Assigned Number subfield: explicit
+      assignment, auto-assignment from a pool, and full auto-assignment.
+
+   'address-family':  Includes a set of data nodes per address family:
+
+      'address-family':  Identifies the address family.  It can be set
+         to 'ipv4', 'ipv6', or 'dual-stack'.
+
+      'vpn-targets':  Specifies RT import/export rules for the VPN
+         service (Section 4.3 of [RFC4364]).
+
+      'maximum-routes':  Indicates the maximum number of prefixes that
+         the VPN node can accept for a given routing protocol.  If
+         'protocol' is set to 'any', this means that the maximum value
+         applies to each active routing protocol.
+
+   'multicast':  Enables multicast traffic in the VPN service.  Refer to
+      Section 7.7.
+
+</pre>

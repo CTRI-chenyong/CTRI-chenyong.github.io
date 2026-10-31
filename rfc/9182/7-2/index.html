@@ -1,0 +1,67 @@
+---
+title: "RFC 9182 §7.2 VPN Profiles"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.2.  VPN Profiles
+
+   The 'vpn-profiles' container (Figure 4) allows the VPN service
+   provider to define and maintain a set of VPN profiles [RFC9181] that
+   apply to one or several VPN services.
+
+     +--rw l3vpn-ntw
+        +--rw vpn-profiles
+        |  +--rw valid-provider-identifiers
+        |     +--rw external-connectivity-identifier* [id]
+        |     |       {external-connectivity}?
+        |     |  +--rw id    string
+        |     +--rw encryption-profile-identifier* [id]
+        |     |  +--rw id    string
+        |     +--rw qos-profile-identifier* [id]
+        |     |  +--rw id    string
+        |     +--rw bfd-profile-identifier* [id]
+        |     |  +--rw id    string
+        |     +--rw forwarding-profile-identifier* [id]
+        |     |  +--rw id    string
+        |     +--rw routing-profile-identifier* [id]
+        |        +--rw id    string
+        +--rw vpn-services
+           ...
+
+                  Figure 4: VPN Profiles Subtree Structure
+
+   This document does not make any assumption about the exact definition
+   of these profiles.  The exact definition of the profiles is local to
+   each VPN service provider.  The model only includes an identifier for
+   these profiles in order to facilitate identifying and binding local
+   policies when building a VPN service.  As shown in Figure 4, the
+   following identifiers can be included:
+
+   'external-connectivity-identifier':  This identifier refers to a
+      profile that defines the external connectivity provided to a VPN
+      service (or a subset of VPN sites).  External connectivity may be
+      access to the Internet or restricted connectivity, such as access
+      to a public/private cloud.
+
+   'encryption-profile-identifier':  An encryption profile refers to a
+      set of policies related to the encryption schemes and setup that
+      can be applied when building and offering a VPN service.
+
+   'qos-profile-identifier':  A Quality of Service (QoS) profile refers
+      to a set of policies, such as classification, marking, and actions
+      (e.g., [RFC3644]).
+
+   'bfd-profile-identifier':  A Bidirectional Forwarding Detection (BFD)
+      profile refers to a set of BFD policies [RFC5880] that can be
+      invoked when building a VPN service.
+
+   'forwarding-profile-identifier':  A forwarding profile refers to the
+      policies that apply to the forwarding of packets conveyed within a
+      VPN.  Such policies may consist, for example, of applying Access
+      Control Lists (ACLs).
+
+   'routing-profile-identifier':  A routing profile refers to a set of
+      routing policies that will be invoked (e.g., BGP policies) when
+      delivering the VPN service.
+
+</pre>

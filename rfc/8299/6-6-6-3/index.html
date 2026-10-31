@@ -1,0 +1,102 @@
+---
+title: "RFC 8299 §6.6.6.3 Parallel Links"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.6.3.  Parallel Links
+
+   To increase its site bandwidth at lower cost, a customer wants to
+   order two parallel site-network-accesses that will be connected to
+   the same PE.
+
+                    *******site-network-access#1**********
+             Site 1 *******site-network-access#2********** PE1
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 73]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   This scenario can be expressed with the following XML snippet:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;site-network-accesses&gt;
+              &lt;site-network-access&gt;
+                &lt;site-network-access-id&gt;1&lt;/site-network-access-id&gt;
+                &lt;access-diversity&gt;
+                  &lt;groups&gt;
+                    &lt;group&gt;
+                      &lt;group-id&gt;PE-linkgrp-1&lt;/group-id&gt;
+                    &lt;/group&gt;
+                  &lt;/groups&gt;
+                  &lt;constraints&gt;
+                    &lt;constraint&gt;
+                      &lt;constraint-type&gt;same-pe&lt;/constraint-type&gt;
+                      &lt;target&gt;
+                        &lt;group&gt;
+                          &lt;group-id&gt;PE-linkgrp-1&lt;/group-id&gt;
+                        &lt;/group&gt;
+                      &lt;/target&gt;
+                    &lt;/constraint&gt;
+                  &lt;/constraints&gt;
+                &lt;/access-diversity&gt;
+                &lt;vpn-attachment&gt;
+                  &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+                  &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+                &lt;/vpn-attachment&gt;
+              &lt;/site-network-access&gt;
+              &lt;site-network-access&gt;
+                &lt;site-network-access-id&gt;2&lt;/site-network-access-id&gt;
+                &lt;access-diversity&gt;
+                  &lt;groups&gt;
+                    &lt;group&gt;
+                      &lt;group-id&gt;PE-linkgrp-1&lt;/group-id&gt;
+                    &lt;/group&gt;
+                  &lt;/groups&gt;
+                  &lt;constraints&gt;
+                    &lt;constraint&gt;
+                      &lt;constraint-type&gt;same-pe&lt;/constraint-type&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 74]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+                      &lt;target&gt;
+                        &lt;group&gt;
+                          &lt;group-id&gt;PE-linkgrp-1&lt;/group-id&gt;
+                        &lt;/group&gt;
+                      &lt;/target&gt;
+                    &lt;/constraint&gt;
+                  &lt;/constraints&gt;
+                &lt;/access-diversity&gt;
+                &lt;vpn-attachment&gt;
+                  &lt;vpn-id&gt;VPNB&lt;/vpn-id&gt;
+                  &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+                &lt;/vpn-attachment&gt;
+              &lt;/site-network-access&gt;
+            &lt;/site-network-accesses&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+</pre>

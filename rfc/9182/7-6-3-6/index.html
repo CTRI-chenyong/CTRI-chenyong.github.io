@@ -1,0 +1,58 @@
+---
+title: "RFC 9182 §7.6.3.6 VRRP"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.6.  VRRP
+
+   The model allows enabling the Virtual Router Redundancy Protocol
+   (VRRP) on the 'vpn-network-access' interface.  See Figure 20.
+
+   ...
+   +--rw routing-protocols
+   |  +--rw routing-protocol* [id]
+   |     ...
+   |     +--rw vrrp
+   |        +--rw address-family*   identityref
+   |        +--rw vrrp-group?       uint8
+   |        +--rw backup-peer?      inet:ip-address
+   |        +--rw virtual-ip-address*   inet:ip-address
+   |        +--rw priority?         uint8
+   |        +--rw ping-reply?       boolean
+   |        +--rw status
+   |           +--rw admin-status
+   |           |  +--rw status?        identityref
+   |           |  +--rw last-change?  yang:date-and-time
+   |           +--ro oper-status
+   |              +--ro status?        identityref
+   |              +--ro last-change?  yang:date-and-time
+   ...
+
+                     Figure 20: VRRP Subtree Structure
+
+   The following data nodes are supported:
+
+   'address-family':  Indicates whether IPv4, IPv6, or both address
+      families are to be activated.  Note that VRRP version 3 [RFC5798]
+      supports both IPv4 and IPv6.
+
+   'vrrp-group':  Used to identify the VRRP group.
+
+   'backup-peer':  Carries the IP address of the peer.
+
+   'virtual-ip-address':  Includes virtual IP addresses for a single
+      VRRP group.
+
+   'priority':  Assigns the VRRP election priority for the backup
+      virtual router.
+
+   'ping-reply':  Controls whether the VRRP speaker should reply to ping
+      requests.
+
+   'status':  Indicates the status of the VRRP instance.
+
+   Note that no authentication data node is included for VRRP, as there
+   isn't any type of VRRP authentication at this time (see Section 9 of
+   [RFC5798]).
+
+</pre>

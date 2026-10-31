@@ -1,0 +1,371 @@
+---
+title: "RFC 8299 §7 Service Model Usage Example"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.  Service Model Usage Example
+
+   As explained in Section 5, this service model is intended to be
+   instantiated at a management layer and is not intended to be used
+   directly on network elements.  The management system serves as a
+   central point of configuration of the overall service.
+
+   This section provides an example of how a management system can use
+   this model to configure an IP VPN service on network elements.
+
+   In this example, we want to achieve the provisioning of a VPN service
+   for three sites using a Hub-and-Spoke VPN service topology.  One of
+   the sites will be dual-homed, and load-sharing is expected.
+
+      +-------------------------------------------------------------+
+      |   Hub_Site  ------ PE1               PE2 ------ Spoke_Site1 |
+      |      |                   +----------------------------------+
+      |      |                   |
+      |      |                   +----------------------------------+
+      |   Hub_Site  ------ PE3               PE4 ------ Spoke_Site2 |
+      +-------------------------------------------------------------+
+
+   The following XML snippet describes the overall simplified service
+   configuration of this VPN.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 114]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-profiles&gt;
+          &lt;valid-provider-identifiers&gt;
+            &lt;qos-profile-identifier&gt;
+              &lt;id&gt;GOLD&lt;/id&gt;
+            &lt;/qos-profile-identifier&gt;
+            &lt;qos-profile-identifier&gt;
+              &lt;id&gt;PLATINUM&lt;/id&gt;
+            &lt;/qos-profile-identifier&gt;
+          &lt;/valid-provider-identifiers&gt;
+        &lt;/vpn-profiles&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;12456487&lt;/vpn-id&gt;
+            &lt;vpn-service-topology&gt;hub-spoke&lt;/vpn-service-topology&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+      &lt;/l3vpn-svc&gt;
+
+   When receiving the request for provisioning the VPN service, the
+   management system will internally (or through communication with
+   another OSS component) allocate VPN RTs.  In this specific case, two
+   RTs will be allocated (100:1 for Hub and 100:2 for Spoke).  The
+   output of corresponding XML snippet below describes the configuration
+   of Spoke_Site1.
+
+&lt;?xml version="1.0"?&gt;
+&lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+ &lt;vpn-profiles&gt;
+  &lt;valid-provider-identifiers&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;GOLD&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;PLATINUM&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+  &lt;/valid-provider-identifiers&gt;
+ &lt;/vpn-profiles&gt;
+ &lt;vpn-services&gt;
+  &lt;vpn-service&gt;
+   &lt;vpn-id&gt;12456487&lt;/vpn-id&gt;
+   &lt;vpn-service-topology&gt;hub-spoke&lt;/vpn-service-topology&gt;
+  &lt;/vpn-service&gt;
+ &lt;/vpn-services&gt;
+ &lt;sites&gt;
+  &lt;site&gt;
+   &lt;site-id&gt;Spoke_Site1&lt;/site-id&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 115]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   &lt;devices&gt;
+    &lt;device&gt;
+     &lt;device-id&gt;D1&lt;/device-id&gt;
+    &lt;/device&gt;
+   &lt;/devices&gt;
+   &lt;locations&gt;
+    &lt;location&gt;
+     &lt;location-id&gt;1&lt;/location-id&gt;
+     &lt;city&gt;NY&lt;/city&gt;
+     &lt;country-code&gt;US&lt;/country-code&gt;
+    &lt;/location&gt;
+   &lt;/locations&gt;
+   &lt;security&gt;
+    &lt;encryption&gt;
+     &lt;layer&gt;layer3&lt;/layer&gt;
+    &lt;/encryption&gt;
+   &lt;/security&gt;
+   &lt;routing-protocols&gt;
+    &lt;routing-protocol&gt;
+     &lt;type&gt;bgp&lt;/type&gt;
+     &lt;bgp&gt;
+      &lt;autonomous-system&gt;500&lt;/autonomous-system&gt;
+      &lt;address-family&gt;ipv4&lt;/address-family&gt;
+      &lt;address-family&gt;ipv6&lt;/address-family&gt;
+     &lt;/bgp&gt;
+    &lt;/routing-protocol&gt;
+   &lt;/routing-protocols&gt;
+   &lt;site-network-accesses&gt;
+    &lt;site-network-access&gt;
+     &lt;site-network-access-id&gt;Spoke_Site1&lt;/site-network-access-id&gt;
+     &lt;device-reference&gt;D1&lt;/device-reference&gt;
+     &lt;access-diversity&gt;
+      &lt;groups&gt;
+       &lt;group&gt;
+        &lt;group-id&gt;20&lt;/group-id&gt;
+       &lt;/group&gt;
+      &lt;/groups&gt;
+      &lt;constraints&gt;
+       &lt;constraint&gt;
+        &lt;constraint-type&gt;pe-diverse&lt;/constraint-type&gt;
+        &lt;target&gt;
+         &lt;group&gt;
+          &lt;group-id&gt;10&lt;/group-id&gt;
+         &lt;/group&gt;
+        &lt;/target&gt;
+       &lt;/constraint&gt;
+      &lt;/constraints&gt;
+     &lt;/access-diversity&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 116]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+     &lt;ip-connection&gt;
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;static-address&lt;/address-allocation-type&gt;
+       &lt;addresses&gt;
+        &lt;provider-address&gt;203.0.113.254&lt;/provider-address&gt;
+        &lt;customer-address&gt;203.0.113.2&lt;/customer-address&gt;
+        &lt;prefix-length&gt;24&lt;/prefix-length&gt;
+       &lt;/addresses&gt;
+      &lt;/ipv4&gt;
+      &lt;ipv6&gt;
+       &lt;address-allocation-type&gt;static-address&lt;/address-allocation-type&gt;
+       &lt;addresses&gt;
+        &lt;provider-address&gt;2001:db8::1&lt;/provider-address&gt;
+        &lt;customer-address&gt;2001:db8::2&lt;/customer-address&gt;
+        &lt;prefix-length&gt;64&lt;/prefix-length&gt;
+       &lt;/addresses&gt;
+      &lt;/ipv6&gt;
+     &lt;/ip-connection&gt;
+     &lt;service&gt;
+      &lt;svc-input-bandwidth&gt;450000000&lt;/svc-input-bandwidth&gt;
+      &lt;svc-output-bandwidth&gt;450000000&lt;/svc-output-bandwidth&gt;
+      &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+     &lt;/service&gt;
+     &lt;security&gt;
+      &lt;encryption&gt;
+       &lt;layer&gt;layer3&lt;/layer&gt;
+      &lt;/encryption&gt;
+     &lt;/security&gt;
+     &lt;vpn-attachment&gt;
+      &lt;vpn-id&gt;12456487&lt;/vpn-id&gt;
+      &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+     &lt;/vpn-attachment&gt;
+    &lt;/site-network-access&gt;
+   &lt;/site-network-accesses&gt;
+   &lt;management&gt;
+    &lt;type&gt;provider-managed&lt;/type&gt;
+   &lt;/management&gt;
+  &lt;/site&gt;
+ &lt;/sites&gt;
+&lt;/l3vpn-svc&gt;
+
+   When receiving the request for provisioning Spoke_Site1, the
+   management system MUST allocate network resources for this site.  It
+   MUST first determine the target network elements to provision the
+   access, particularly the PE router (and perhaps also an aggregation
+   switch).  As described in Section 6.6, the management system SHOULD
+   use the location information and MUST use the access-diversity
+   constraint to find the appropriate PE.  In this case, we consider
+
+
+
+Wu, et al.                   Standards Track                  [Page 117]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   that Spoke_Site1 requires PE diversity with the Hub and that the
+   management system allocates PEs based on the least distance.  Based
+   on the location information, the management system finds the
+   available PEs in the area nearest the customer and picks one that
+   fits the access-diversity constraint.
+
+   When the PE is chosen, the management system needs to allocate
+   interface resources on the node.  One interface is selected from the
+   pool of available PEs.  The management system can start provisioning
+   the chosen PE node via whatever means the management system prefers
+   (e.g., NETCONF, CLI).  The management system will check to see if a
+   VRF that fits its needs is already present.  If not, it will
+   provision the VRF: the RD will be derived from the internal
+   allocation policy model, and the RTs will be derived from the VPN
+   policy configuration of the site (the management system allocated
+   some RTs for the VPN).  As the site is a Spoke site (site-role), the
+   management system knows which RTs must be imported and exported.  As
+   the site is provider-managed, some management RTs may also be added
+   (100:5000).  Standard provider VPN policies MAY also be added in the
+   configuration.
+
+   Example of generated PE configuration:
+
+   ip vrf Customer1
+    export-map STD-CUSTOMER-EXPORT      &lt;---- Standard SP configuration
+    route-distinguisher 100:3123234324
+    route-target import 100:1
+    route-target import 100:5000        &lt;---- Standard SP configuration
+    route-target export 100:2                    for provider-managed CE
+   !
+
+   When the VRF has been provisioned, the management system can start
+   configuring the access on the PE using the allocated interface
+   information.  IP addressing is chosen by the management system.  One
+   address will be picked from an allocated subnet for the PE, and
+   another will be used for the CE configuration.  Routing protocols
+   will also be configured between the PE and CE; because this model is
+   provider-managed, the choices are left to the SP.  BGP was chosen for
+   this example.  This choice is independent of the routing protocol
+   chosen by the customer.  BGP will be used to configure the CE-to-LAN
+   connection as requested in the service model.  Peering addresses will
+   be derived from those of the connection.  As the CE is provider-
+   managed, the CE's AS number can be automatically allocated by the
+   management system.  Standard configuration templates provided by the
+   SP may also be added.
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 118]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Example of generated PE configuration:
+
+   interface Ethernet1/1/0.10
+    encapsulation dot1q 10
+    ip vrf forwarding Customer1
+    ip address 198.51.100.1 255.255.255.252 &lt;---- Comes from
+                                                   automated allocation
+    ipv6 address 2001:db8::10:1/64
+    ip access-group STD-PROTECT-IN     &lt;---- Standard SP config
+   !
+   router bgp 100
+    address-family ipv4 vrf Customer1
+     neighbor 198.51.100.2 remote-as 65000   &lt;---- Comes from
+                                                    automated allocation
+     neighbor 198.51.100.2 route-map STD in  &lt;---- Standard SP config
+     neighbor 198.51.100.2 filter-list 10 in &lt;---- Standard SP config
+   !
+    address-family ipv6 vrf Customer1
+     neighbor 2001:db8::0a10:2 remote-as 65000   &lt;---- Comes from
+                                                    automated allocation
+     neighbor 2001:db8::0a10:2 route-map STD in  &lt;---- Standard SP
+                                                          config
+     neighbor 2001:db8::0a10:2 filter-list 10 in &lt;---- Standard SP
+                                                          config
+   !
+   ip route vrf Customer1 192.0.2.1 255.255.255.255 198.51.100.2
+   ! Static route for provider administration of CE
+   !
+
+   As the CE router is not reachable at this stage, the management
+   system can produce a complete CE configuration that can be manually
+   uploaded to the node before sending the CE configuration to the
+   customer premises.  The CE configuration will be built in the same
+   way as the PE would be configured.  Based on the CE type (vendor/
+   model) allocated to the customer as well as the bearer information,
+   the management system knows which interface must be configured on the
+   CE.  PE-CE link configuration is expected to be handled automatically
+   using the SP OSS, as both resources are managed internally.  CE-to-
+   LAN-interface parameters such as IP addressing are derived from the
+   ip-connection container, taking into account how the management
+   system distributes addresses between the PE and CE within the subnet.
+   This will allow a plug-and-play configuration for the CE to be
+   created.
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 119]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Example of generated CE configuration:
+
+   interface Loopback10
+    description "Administration"
+    ip address 192.0.2.1 255.255.255.255
+   !
+   interface FastEthernet10
+    description "WAN"
+    ip address 198.51.100.2 255.255.255.252 &lt;---- Comes from
+                                                   automated allocation
+    ipv6 address 2001:db8::0a10:2/64
+   !
+   interface FastEthernet11
+    description "LAN"
+    ip address 203.0.113.254 255.255.255.0 &lt;---- Comes from the
+                                               ip-connection container
+    ipv6 address 2001:db8::1/64
+   !
+   router bgp 65000
+    address-family ipv4
+     redistribute static route-map STATIC2BGP &lt;---- Standard SP
+                                                       configuration
+     neighbor 198.51.100.1 remote-as 100     &lt;---- Comes from
+                                                 automated allocation
+     neighbor 203.0.113.2 remote-as 500     &lt;---- Comes from the
+                                                 ip-connection container
+    address-family ipv6
+     redistribute static route-map STATIC2BGP &lt;---- Standard SP
+                                                       configuration
+     neighbor 2001:db8::0a10:1 remote-as 100     &lt;---- Comes from
+                                                 automated allocation
+     neighbor 2001:db8::2 remote-as 500     &lt;---- Comes from the
+                                                 ip-connection container
+   !
+   route-map STATIC2BGP permit 10
+    match tag 10
+   !
+
+</pre>

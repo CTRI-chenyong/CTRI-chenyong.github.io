@@ -1,0 +1,65 @@
+---
+title: "RFC 9182 §1 Introduction"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>1.  Introduction
+
+   [RFC8299] defines a YANG Layer 3 Virtual Private Network Service
+   Model (L3SM) that can be used for communication between customers and
+   service providers.  Such a model focuses on describing the customer
+   view of the Virtual Private Network (VPN) services and provides an
+   abstracted view of the customer's requested services.  That approach
+   limits the usage of the L3SM to the role of a customer service model
+   (as per [RFC8309]).
+
+   This document defines a YANG module called the "L3VPN Network Model"
+   (L3NM).  The L3NM is aimed at providing a network-centric view of
+   Layer 3 (L3) VPN services.  This data model can be used to facilitate
+   communication between the service orchestrator and the network
+   controller/orchestrator by allowing more network-centric information
+   to be included.  It enables such additional capabilities as resource
+   management, or it serves as a multi-domain orchestration interface
+   where logical resources (such as route targets or route
+   distinguishers) must be coordinated.
+
+   This document uses the common VPN YANG module defined in [RFC9181].
+
+   This document does not obsolete [RFC8299].  These two modules are
+   used for similar objectives but with different scopes and views.
+
+   The L3NM YANG module was initially built with a "prune and extend"
+   approach, taking as a starting point the YANG module described in
+   [RFC8299].  Nevertheless, the L3NM is not defined as an augment to
+   the L3SM, because a specific structure is required to meet network-
+   oriented L3 needs.
+
+   Some information captured in the L3SM can be passed by the
+   orchestrator in the L3NM (e.g., customer) or be used to feed some
+   L3NM attributes (e.g., actual forwarding policies).  Also, some
+   information captured in the L3SM may be maintained locally within the
+   orchestrator, which is in charge of maintaining the correlation
+   between a customer view and its network instantiation.  Likewise,
+   some information captured and exposed using the L3NM can feed the
+   service layer (e.g., capabilities) to drive VPN service order
+   handling and thus the L3SM.
+
+   Section 5.1 of [RFC8969] illustrates how the L3NM can be used within
+   the network management automation architecture.
+
+   The L3NM does not attempt to address all deployment cases, especially
+   those where L3VPN connectivity is supported through the coordination
+   of different VPNs in different underlying networks.  More complex
+   deployment scenarios involving the coordination of different VPN
+   instances and different technologies to provide end-to-end VPN
+   connectivity are addressed by complementary YANG modules, e.g.,
+   [YANG-Composed-VPN].
+
+   The L3NM focuses on Layer 3 VPNs based on BGP Provider Edges (PEs) as
+   described in [RFC4026], [RFC4110], and [RFC4364]; and Multicast VPNs
+   as described in [RFC6037] and [RFC6513].
+
+   The YANG data model in this document conforms to the Network
+   Management Datastore Architecture (NMDA) defined in [RFC8342].
+
+</pre>

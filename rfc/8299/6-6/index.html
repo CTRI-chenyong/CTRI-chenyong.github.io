@@ -1,0 +1,39 @@
+---
+title: "RFC 8299 §6.6 Deciding Where to Connect the Site"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.  Deciding Where to Connect the Site
+
+   The management system will have to determine where to connect each
+   site-network-access of a particular site to the provider network
+   (e.g., PE, aggregation switch).
+
+   The current model defines parameters and constraints that can
+   influence the meshing of the site-network-access.
+
+   The management system MUST honor all customer constraints, or if a
+   constraint is too strict and cannot be fulfilled, the management
+   system MUST NOT provision the site and MUST provide information to
+   the user about which constraints could not be fulfilled.  How the
+   information is provided is out of scope for this document.  Whether
+   or not to relax the constraint would then be left up to the user.
+
+   Parameters such as site location (see Section 6.6.2) and access type
+   are just hints (see Section 6.6.3) for the management system for
+   service placement.
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 47]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   In addition to parameters and constraints, the management system's
+   decision MAY be based on any other internal constraints that are left
+   up to the SP: least load, distance, etc.
+
+</pre>

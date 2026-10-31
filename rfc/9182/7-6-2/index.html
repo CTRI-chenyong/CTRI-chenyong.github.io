@@ -1,0 +1,164 @@
+---
+title: "RFC 9182 §7.6.2 IP Connection"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.2.  IP Connection
+
+   This container is used to group Layer 3 connectivity information,
+   particularly the IP addressing information, of a VPN network access.
+   The allocated address represents the PE interface address
+   configuration.  Note that a distinct Layer 3 interface other than the
+   interface indicated under the 'connection' container may be needed to
+   terminate the Layer 3 service.  The identifier of such an interface
+   is included in 'l3-termination-point'.  For example, this data node
+   can be used to carry the identifier of a bridge domain interface.
+
+   As shown in Figure 10, the 'ip-connection' container can include
+   IPv4, IPv6, or both if dual-stack is enabled.
+
+   ...
+   +--rw vpn-network-accesses
+      +--rw vpn-network-access* [id]
+         ...
+         +--rw ip-connection
+         |  +--rw l3-termination-point?     string
+         |  +--rw ipv4 {vpn-common:ipv4}?
+         |  |  ...
+         |  +--rw ipv6 {vpn-common:ipv6}?
+         |     ...
+         ...
+
+                 Figure 10: IP Connection Subtree Structure
+
+   For both IPv4 and IPv6, the IP connection supports three IP address
+   assignment modes for customer addresses: provider DHCP, DHCP relay,
+   and static addressing.  Note that for the IPv6 case, Stateless
+   Address Autoconfiguration (SLAAC) [RFC4862] can be used.  For both
+   IPv4 and IPv6, 'address-allocation-type' is used to indicate the IP
+   address allocation mode to activate for a given VPN network access.
+
+   When 'address-allocation-type' is set to 'provider-dhcp', DHCP
+   assignments can be made locally or by an external DHCP server.  Such
+   behavior is controlled by setting 'dhcp-service-type'.
+
+   Figure 11 shows the structure of the dynamic IPv4 address assignment
+   (i.e., by means of DHCP).
+
+   ...
+   +--rw ip-connection
+   |  +--rw l3-termination-point?     string
+   |  +--rw ipv4 {vpn-common:ipv4}?
+   |  |  +--rw local-address?             inet:ipv4-address
+   |  |  +--rw prefix-length?             uint8
+   |  |  +--rw address-allocation-type?   identityref
+   |  |  +--rw (allocation-type)?
+   |  |     +--:(provider-dhcp)
+   |  |     |  +--rw dhcp-service-type?   enumeration
+   |  |     |  +--rw (service-type)?
+   |  |     |     +--:(relay)
+   |  |     |     |  +--rw server-ip-address*
+   |  |     |     |          inet:ipv4-address
+   |  |     |     +--:(server)
+   |  |     |        +--rw (address-assign)?
+   |  |     |           +--:(number)
+   |  |     |           |  +--rw number-of-dynamic-address?
+   |  |     |           |           uint16
+   |  |     |           +--:(explicit)
+   |  |     |              +--rw customer-addresses
+   |  |     |                 +--rw address-pool* [pool-id]
+   |  |     |                    +--rw pool-id          string
+   |  |     |                    +--rw start-address
+   |  |     |                    |           inet:ipv4-address
+   |  |     |                    +--rw end-address?
+   |  |     |                                inet:ipv4-address
+   |  |     +--:(dhcp-relay)
+   |  |     |  +--rw customer-dhcp-servers
+   |  |     |     +--rw server-ip-address*   inet:ipv4-address
+   |  |     +--:(static-addresses)
+   |  |        ...
+   ...
+
+             Figure 11: IP Connection Subtree Structure (IPv4)
+
+   Figure 12 shows the structure of the dynamic IPv6 address assignment
+   (i.e., DHCPv6 and/or SLAAC).  Note that if 'address-allocation-type'
+   is set to 'slaac', the Prefix Information option of Router
+   Advertisements that will be issued for SLAAC purposes will carry the
+   IPv6 prefix that is determined by 'local-address' and 'prefix-
+   length'.  For example, if 'local-address' is set to '2001:db8:0:1::1'
+   and 'prefix-length' is set to '64', the IPv6 prefix that will be used
+   is '2001:db8:0:1::/64'.
+
+   ...
+   +--rw ip-connection
+   |  +--rw l3-termination-point?     string
+   |  +--rw ipv4 {vpn-common:ipv4}?
+   |  |  ...
+   |  +--rw ipv6 {vpn-common:ipv6}?
+   |     +--rw local-address?                 inet:ipv6-address
+   |     +--rw prefix-length?                 uint8
+   |     +--rw address-allocation-type?       identityref
+   |     +--rw (allocation-type)?
+   |        +--:(provider-dhcp)
+   |        |  +--rw provider-dhcp
+   |        |     +--rw dhcp-service-type?
+   |        |     |       enumeration
+   |        |     +--rw (service-type)?
+   |        |        +--:(relay)
+   |        |        |  +--rw server-ip-address*
+   |        |        |          inet:ipv6-address
+   |        |        +--:(server)
+   |        |           +--rw (address-assign)?
+   |        |              +--:(number)
+   |        |              |  +--rw number-of-dynamic-address?
+   |        |              |          uint16
+   |        |              +--:(explicit)
+   |        |                 +--rw customer-addresses
+   |        |                    +--rw address-pool*  [pool-id]
+   |        |                       +--rw pool-id      string
+   |        |                       +--rw start-address
+   |        |                       |       inet:ipv6-address
+   |        |                       +--rw end-address?
+   |        |                               inet:ipv6-address
+   |        +--:(dhcp-relay)
+   |        |  +--rw customer-dhcp-servers
+   |        |     +--rw server-ip-address*
+   |        |             inet:ipv6-address
+   |        +--:(static-addresses)
+   |           ...
+
+             Figure 12: IP Connection Subtree Structure (IPv6)
+
+   In the case of static addressing (Figure 13), the model supports the
+   assignment of several IP addresses in the same 'vpn-network-access'.
+   To identify which of the addresses is the primary address of a
+   connection, the 'primary-address' reference MUST be set with the
+   corresponding 'address-id'.
+
+   ...
+   +--rw ip-connection
+   |  +--rw l3-termination-point?     string
+   |  +--rw ipv4 {vpn-common:ipv4}?
+   |  |  +--rw address-allocation-type?         identityref
+   |  |  +--rw (allocation-type)?
+   |  |     ...
+   |  |     +--:(static-addresses)
+   |  |        +--rw primary-address?        -&gt; ../address/address-id
+   |  |        +--rw address* [address-id]
+   |  |           +--rw address-id          string
+   |  |           +--rw customer-address?   inet:ipv4-address
+   |  +--rw ipv6 {vpn-common:ipv6}?
+   |     +--rw address-allocation-type?         identityref
+   |     +--rw (allocation-type)?
+   |        ...
+   |        +--:(static-addresses)
+   |           +--rw primary-address?     -&gt; ../address/address-id
+   |           +--rw address* [address-id]
+   |              +--rw address-id          string
+   |              +--rw customer-address?   inet:ipv6-address
+   ...
+
+          Figure 13: IP Connection Subtree Structure (Static Mode)
+
+</pre>

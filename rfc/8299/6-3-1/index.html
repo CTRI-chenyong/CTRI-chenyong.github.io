@@ -1,0 +1,52 @@
+---
+title: "RFC 8299 §6.3.1 Devices and Locations"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.1.  Devices and Locations
+
+   A site may be composed of multiple locations.  All the locations will
+   need to be configured as part of the "locations" container and list.
+   A typical example of a multi-location site is a headquarters office
+   in a city composed of multiple buildings.  Those buildings may be
+   located in different parts of the city and may be linked by intra-
+   city fibers (customer metropolitan area network).  In such a case,
+   when connecting to a VPN service, the customer may ask for
+   multihoming based on its distributed locations.
+
+           New York Site
+
+         +------------------+             Site
+         | +--------------+ |-----------------------------------
+         | | Manhattan    | |****** (site-network-access#1) ******
+         | +--------------+ |
+         | +--------------+ |
+         | | Brooklyn     | |****** (site-network-access#2) ******
+         | +--------------+ |
+         |                  |-----------------------------------
+         +------------------+
+
+   A customer may also request some premises equipment entities (CEs)
+   from the SP via the "devices" container.  Requesting a CE implies a
+   provider-managed or co-managed model.  A particular device must be
+   ordered to a particular already-configured location.  This would help
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 33]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   the SP send the device to the appropriate postal address.  In a
+   multi-location site, a customer may, for example, request a CE for
+   each location on the site where multihoming must be implemented.  In
+   the figure above, one device may be requested for the Manhattan
+   location and one other for the Brooklyn location.
+
+   By using devices and locations, the user can influence the
+   multihoming scenario he wants to implement: single CE, dual CE, etc.
+
+</pre>

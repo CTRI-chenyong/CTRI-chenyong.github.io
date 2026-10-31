@@ -1,0 +1,28 @@
+---
+title: "RFC 9182 §6.3 Management of Multicast Services"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.  Management of Multicast Services
+
+   Multicast services over L3VPNs can be implemented using dual PIM
+   MVPNs (also known as the draft-rosen model) [RFC6037] or MVPNs based
+   on Multiprotocol BGP (MP-BGP) [RFC6513] [RFC6514].  Both methods are
+   supported and equally effective, but the main difference is that MP-
+   BGP-based MVPNs do not require multicast configuration on the service
+   provider network.  MP-BGP MVPNs employ the intra-AS BGP control plane
+   and PIM Sparse Mode [RFC7761] as the data plane.  The PIM state
+   information is maintained between PEs using the same architecture
+   that is used for unicast VPNs.
+
+   On the other hand, [RFC6037] has limitations, such as reduced options
+   for transport, control plane scalability, availability, operational
+   inconsistency, and the need to maintain state in the backbone.
+   Because of these limitations, MP-BGP MVPNs provide the architectural
+   model that has been taken as the base for implementing multicast
+   services in L3VPNs.  In this scenario, BGP is used to autodiscover
+   MVPN PE members and the customer PIM signaling is sent across the
+   provider's core through MP-BGP.  The multicast traffic is transported
+   on MPLS Point-to-Multipoint (P2MP) Label Switched Paths (LSPs).
+
+</pre>

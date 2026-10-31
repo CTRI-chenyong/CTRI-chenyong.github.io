@@ -1,0 +1,29 @@
+---
+title: "RFC 8299 §3 Definitions"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>3.  Definitions
+
+   Customer Edge (CE) Device: A CE is equipment dedicated to a
+   particular customer; it is directly connected (at Layer 3) to one or
+   more PE devices via attachment circuits.  A CE is usually located at
+   the customer premises and is usually dedicated to a single VPN,
+   although it may support multiple VPNs if each one has separate
+   attachment circuits.
+
+   Provider Edge (PE) Device: A PE is equipment managed by the SP; it
+   can support multiple VPNs for different customers and is directly
+   connected (at Layer 3) to one or more CE devices via attachment
+   circuits.  A PE is usually located at an SP point of presence (POP)
+   and is managed by the SP.
+
+   PE-Based VPNs: The PE devices know that certain traffic is VPN
+   traffic.  They forward the traffic (through tunnels) based on the
+   destination IP address of the packet and, optionally, based on other
+   information in the IP header of the packet.  The PE devices are
+   themselves the tunnel endpoints.  The tunnels may make use of various
+   encapsulations to send traffic over the SP network (such as, but not
+   restricted to, GRE, IP-in-IP, IPsec, or MPLS tunnels).
+
+</pre>

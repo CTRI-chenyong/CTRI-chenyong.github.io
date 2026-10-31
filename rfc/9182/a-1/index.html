@@ -1,0 +1,247 @@
+---
+title: "RFC 9182 A.1 4G VPN Provisioning Example"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>A.1.  4G VPN Provisioning Example
+
+   L3VPNs are widely used to deploy 3G/4G, fixed, and enterprise
+   services, mainly because several traffic discrimination policies can
+   be applied within the network to deliver to the mobile customers a
+   service that meets the SLA requirements.
+
+   Typically, and as shown in Figure 31, an eNodeB (CE) is directly
+   connected to the access routers of the mobile backhaul and their
+   logical interfaces (one or many, according to the service type) are
+   configured in a VPN that transports the packets to the mobile core
+   platforms.  In this example, a 'vpn-node' is created with two 'vpn-
+   network-accesses'.
+
+           +-------------+                  +------------------+
+           |             |                  | PE               |
+           |             |                  |  198.51.100.1    |
+           |   eNodeB    |&gt;--------/-------&gt;|...........       |
+           |             |          vlan 1  |          |       |
+           |             |&gt;--------/-------&gt;|......    |       |
+           |             |          vlan 2  |     |    |       |
+           |             | Direct           |  +-------------+ |
+           +-------------+ Routing          |  | vpn-node-id | |
+                                            |  | 44          | |
+                                            |  +-------------+ |
+                                            |                  |
+                                            +------------------+
+
+                     Figure 31: Mobile Backhaul Example
+
+   To create an L3VPN service using the L3NM, the following steps can be
+   followed.
+
+   First, create the 4G VPN service (Figure 32).
+
+   POST: /restconf/data/ietf-l3vpn-ntw:l3vpn-ntw/vpn-services
+   Host: example.com
+   Content-Type: application/yang-data+json
+
+   {
+    "ietf-l3vpn-ntw:vpn-services": {
+      "vpn-service": [
+        {
+          "vpn-id": "4G",
+          "vpn-description": "VPN to deploy 4G services",
+          "customer-name": "mycustomer",
+          "vpn-service-topology": "custom",
+          "vpn-instance-profiles": {
+            "vpn-instance-profile": [
+              {
+                "profile-id": "simple-profile",
+                "local-as": 65550,
+                "rd": "0:65550:1",
+                "address-family": [
+                  {
+                    "address-family": "ietf-vpn-common:dual-stack",
+                    "vpn-targets": {
+                      "vpn-target": [
+                        {
+                          "id": 1,
+                          "route-targets": [
+                            {
+                              "route-target": "0:65550:1"
+                            }
+                          ],
+                          "route-target-type": "both"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+   }
+
+                       Figure 32: Create VPN Service
+
+   Second, create a VPN node, as depicted in Figure 33.  In this type of
+   service, the VPN node is equivalent to VRF configured in the physical
+   device ('ne-id'=198.51.100.1).  NOTE: '\' line wrapping in Figures 33
+   and 34 is implemented per [RFC8792].
+
+   POST: /restconf/data/ietf-l3vpn-ntw:l3vpn-ntw/\
+         vpn-services/vpn-service=4G
+   Host: example.com
+   Content-Type: application/yang-data+json
+
+   {
+     "ietf-l3vpn-ntw:vpn-nodes": {
+       "vpn-node": [
+         {
+           "vpn-node-id": "44",
+           "ne-id": "198.51.100.1",
+           "active-vpn-instance-profiles": {
+             "vpn-instance-profile": [
+               {
+                 "profile-id": "simple-profile"
+               }
+             ]
+           }
+         }
+       ]
+     }
+   }
+
+                         Figure 33: Create VPN Node
+
+   Finally, two VPN network accesses are created using the same physical
+   port ('interface-id'=1/1/1).  Each 'vpn-network-access' has a
+   particular VLAN interface (1,2): "SYNC" and "DATA" (Figure 34).
+   These interfaces differentiate the traffic between them.
+
+   POST: /restconf/data/ietf-l3vpn-ntw:l3vpn-ntw/\
+         vpn-services/vpn-service=4G/vpn-nodes/vpn-node=44
+   content-type: application/yang-data+json
+
+   {
+     "ietf-l3vpn-ntw:vpn-network-accesses": {
+       "vpn-network-access": [
+         {
+           "id": "1/1/1.1",
+           "interface-id": "1/1/1",
+           "description": "Interface SYNC to eNODE-B",
+           "vpn-network-access-type": "ietf-vpn-common:point-to-point",
+           "vpn-instance-profile": "simple-profile",
+           "status": {
+             "admin-status": {
+               "status": "ietf-vpn-common:admin-up"
+             }
+           },
+           "connection": {
+             "encapsulation": {
+               "type": "ietf-vpn-common:dot1q",
+               "dot1q": {
+                 "cvlan-id": 1
+               }
+             }
+           },
+           "ip-connection": {
+             "ipv4": {
+               "local-address": "192.0.2.1",
+               "prefix-length": 30,
+               "address-allocation-type": "static-address",
+               "static-addresses": {
+                 "primary-address": "1",
+                 "address": [
+                   {
+                     "address-id": "1",
+                     "customer-address": "192.0.2.2"
+                   }
+                 ]
+               }
+             },
+             "ipv6": {
+               "local-address": "2001:db8::1",
+               "prefix-length": 64,
+               "address-allocation-type": "static-address",
+               "primary-address": "1",
+               "address": [
+                 {
+                   "address-id": "1",
+                   "customer-address": "2001:db8::2"
+                 }
+               ]
+             }
+           },
+           "routing-protocols": {
+             "routing-protocol": [
+               {
+                 "id": "1",
+                 "type": "ietf-vpn-common:direct"
+               }
+             ]
+           }
+         },
+         {
+           "id": "1/1/1.2",
+           "interface-id": "1/1/1",
+           "description": "Interface DATA to eNODE-B",
+           "vpn-network-access-type": "ietf-vpn-common:point-to-point",
+           "vpn-instance-profile": "simple-profile",
+           "status": {
+             "admin-status": {
+               "status": "ietf-vpn-common:admin-up"
+             }
+           },
+           "connection": {
+             "encapsulation": {
+               "type": "ietf-vpn-common:dot1q",
+               "dot1q": {
+                 "cvlan-id": 2
+               }
+             }
+           },
+           "ip-connection": {
+             "ipv4": {
+               "local-address": "192.0.2.1",
+               "prefix-length": 30,
+               "address-allocation-type": "static-address",
+               "static-addresses": {
+                 "primary-address": "1",
+                 "address": [
+                   {
+                     "address-id": "1",
+                     "customer-address": "192.0.2.2"
+                   }
+                 ]
+               }
+             },
+             "ipv6": {
+               "local-address": "2001:db8::1",
+               "prefix-length": 64,
+               "address-allocation-type": "static-address",
+               "primary-address": "1",
+               "address": [
+                 {
+                   "address-id": "1",
+                   "customer-address": "2001:db8::2"
+                 }
+               ]
+             }
+           },
+           "routing-protocols": {
+             "routing-protocol": [
+               {
+                 "id": "1",
+                 "type": "ietf-vpn-common:direct"
+               }
+             ]
+           }
+         }
+       ]
+     }
+   }
+
+                    Figure 34: Create VPN Network Access
+
+</pre>

@@ -1,0 +1,70 @@
+---
+title: "RFC 8299 §10 Security Considerations"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>10.  Security Considerations
+
+   The YANG module specified in this document defines a schema for data
+   that is designed to be accessed via network management protocols such
+   as NETCONF [RFC6241] or RESTCONF [RFC8040].  The lowest NETCONF layer
+   is the secure transport layer, and the mandatory-to-implement secure
+   transport is Secure Shell (SSH) [RFC6242].  The lowest RESTCONF layer
+   is HTTPS, and the mandatory-to-implement secure transport is TLS
+   [RFC5246].
+
+   The NETCONF access control model [RFC6536]provides the means to
+   restrict access for particular NETCONF or RESTCONF users to a
+   preconfigured subset of all available NETCONF or RESTCONF protocol
+   operations and content.
+
+   There are a number of data nodes defined in this YANG module that are
+   writable/creatable/deletable (i.e., config true, which is the
+   default).  These data nodes may be considered sensitive or vulnerable
+   in some network environments.  Write operations (e.g., edit-config)
+   to these data nodes without proper protection can have a negative
+   effect on network operations.  These are the subtrees and data nodes
+   and their sensitivity/vulnerability:
+
+   o  /l3vpn-svc/vpn-services/vpn-service
+
+      The entries in the list above include the whole vpn service
+      configurations which the customer subscribes, and indirectly
+      create or modify the PE and CE device configurations.  Unexpected
+      changes to these entries could lead to service disruption and/or
+      network misbehavior.
+
+   o  /l3vpn-svc/sites/site
+
+      The entries in the list above include the customer site
+      configurations.  As above, unexpected changes to these entries
+      could lead to service disruption and/or network misbehavior.
+
+   Some of the readable data nodes in this YANG module may be considered
+   sensitive or vulnerable in some network environments.  It is thus
+   important to control read access (e.g., via get, get-config, or
+   notification) to these data nodes.  These are the subtrees and data
+   nodes and their sensitivity/vulnerability:
+
+   o  /l3vpn-svc/vpn-services/vpn-service
+
+   o  /l3vpn-svc/sites/site
+
+
+
+
+
+Wu, et al.                   Standards Track                  [Page 184]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The entries in the lists above include customer-proprietary or
+   confidential information, e.g., customer-name, site location, what
+   service the customer subscribes.
+
+   The data model defines some security parameters than can be extended
+   via augmentation as part of the customer service request; those
+   parameters are described in Section 6.9.
+
+</pre>

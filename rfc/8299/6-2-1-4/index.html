@@ -1,0 +1,49 @@
+---
+title: "RFC 8299 §6.2.1.4 Hub and Spoke Disjoint"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.1.4.  Hub and Spoke Disjoint
+
+      +-------------------------------------------------------------+
+      |   Hub_Site1 ------ PE1               PE2 ------ Spoke_Site1 |
+      +--------------------------+  +-------------------------------+
+                                 |  |
+      +--------------------------+  +-------------------------------+
+      |   Hub_Site2 ------ PE3               PE4 ------ Spoke_Site2 |
+      +-------------------------------------------------------------+
+
+                Hub and Spoke Disjoint VPN Service Topology
+
+   In the Hub and Spoke disjoint VPN service topology, all Spoke sites
+   can communicate only with Hub sites but not with each other, and Hubs
+   cannot communicate with each other.  The management system that owns
+   an any-to-any IP VPN service request through this model is expected
+   to assign and then configure the VRF and RTs on the appropriate PEs.
+   In the Hub-and-Spoke case, two RTs are required (one RT for Hub
+   routes and one RT for Spoke routes).  A Hub VRF that connects Hub
+   sites will export Hub routes with the Hub RT and will import Spoke
+   routes through the Spoke RT.  A Spoke VRF that connects Spoke sites
+   will export Spoke routes with the Spoke RT and will import Hub routes
+   through the Hub RT.
+
+   The management system MUST take into account constraints on Hub-and-
+   Spoke connections, as in the previous case.
+
+   Hub and Spoke disjoint can also be seen as multiple Hub-and-Spoke
+   VPNs (one per Hub) that share a common set of Spoke sites.
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 25]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

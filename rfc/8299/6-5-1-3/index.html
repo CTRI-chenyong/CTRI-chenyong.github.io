@@ -1,0 +1,111 @@
+---
+title: "RFC 8299 §6.5.1.3 SubVPN Attachment: site-vpn-flavor-sub"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.1.3.  SubVPN Attachment: site-vpn-flavor-sub
+
+   The figure below describes a subVPN attachment.  The site connects to
+   multiple VPNs, but each logical access is attached to a particular
+   set of VPNs.  A typical use case for a subVPN is a customer site used
+   by multiple affiliates with private resources for each affiliate that
+   cannot be shared (communication between the affiliates is prevented).
+   It is similar to having separate sites, but in the case of a SubVPN,
+   the customer can share some physical components at a single location,
+   while maintaining strong communication isolation between the
+   affiliates.  In this example, site-network-access#1 is attached to
+   VPN B, while site-network-access#2 is attached to VPN A.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 38]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+    +------------------+         Site                      +--------+
+    |                  |----------------------------------/          \
+    |                  |****(site-network-access#1)******|    VPN B   |
+    |  New York Office |                                  \          /
+    |                  |                                   +--------+
+    |                  |                                   +--------+
+    |                  |                                  /          \
+    |                  |****(site-network-access#2)******|    VPN A   |
+    |                  |                                  \          /
+    |                  |                                   +--------+
+    |                  |-----------------------------------
+    +------------------+
+
+   A multiVPN can be implemented in addition to a subVPN; as a
+   consequence, each site-network-access can access multiple VPNs.  In
+   the example below, site-network-access#1 is mapped to VPN B and VPN
+   C, while site-network-access#2 is mapped to VPN A and VPN D.
+
+   +-----------------+         Site                    +------+
+   |                 |--------------------------------/       +-----+
+   |                 |****(site-network-access#1)****| VPN B /       \
+   | New York Office |                                \     |  VPN C  |
+   |                 |                                 +-----\       /
+   |                 |                                        +-----+
+   |                 |
+   |                 |                                 +-------+
+   |                 |                                /        +-----+
+   |                 |****(site-network-access#2)****| VPN A  /       \
+   |                 |                                \      | VPN D   |
+   |                 |                                 +------\       /
+   |                 |---------------------------------        +-----+
+   +-----------------+
+
+   Multihoming is also possible with subVPNs; in this case, site-
+   network-accesses are grouped, and a particular group will have access
+   to the same set of VPNs.  In the example below, site-network-access#1
+   and site-network-access#2 are part of the same group (multihomed
+   together) and are mapped to VPN B and VPN C; in addition, site-
+   network-access#3 and site-network-access#4 are part of the same group
+   (multihomed together) and are mapped to VPN A and VPN D.
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 39]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   +-----------------+         Site                     +------+
+   |                 |---------------------------------/       +-----+
+   |                 |****(site-network-access#1)*****| VPN B /       \
+   | New York Office |****(site-network-access#2)***** \     |  VPN C  |
+   |                 |                                  +-----\       /
+   |                 |                                         +-----+
+   |                 |
+   |                 |                                  +------+
+   |                 |                                 /       +-----+
+   |                 |****(site-network-access#3)*****| VPN A /       \
+   |                 |****(site-network-access#4)***** \     | VPN D   |
+   |                 |                                  +-----\       /
+   |                 |----------------------------------       +-----+
+   +-----------------+
+
+   In terms of service configuration, a subVPN can be achieved by
+   requesting that the site-network-access use the same bearer (see
+   Section 6.6.4 for more details).
+
+</pre>

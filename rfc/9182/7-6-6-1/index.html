@@ -1,0 +1,66 @@
+---
+title: "RFC 9182 §7.6.6.1 Overview"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.6.1.  Overview
+
+   The 'service' container specifies the service parameters to apply for
+   a given VPN network access (Figure 23).
+
+   ...
+   +--rw vpn-network-accesses
+      +--rw vpn-network-access* [id]
+         ...
+         +--rw service
+            +--rw pe-to-ce-bandwidth?   uint64 {vpn-common:inbound-bw}?
+            +--rw ce-to-pe-bandwidth?   uint64 {vpn-common:outbound-bw}?
+            +--rw mtu?                  uint32
+            +--rw qos {vpn-common:qos}?
+            |  ...
+            +--rw carriers-carrier
+            |       {vpn-common:carriers-carrier}?
+            |  +--rw signaling-type?   enumeration
+            +--rw ntp
+            |  +--rw broadcast?        enumeration
+            |  +--rw auth-profile
+            |  |  +--rw profile-id?    string
+            |  +--rw status
+            |     +--rw admin-status
+            |     |  +--rw status?         identityref
+            |     |  +--rw last-change?   yang:date-and-time
+            |     +--ro oper-status
+            |        +--ro status?         identityref
+            |        +--ro last-change?   yang:date-and-time
+            +--rw multicast {vpn-common:multicast}?
+               ...
+
+                   Figure 23: Services Subtree Structure
+
+   The following data nodes are defined:
+
+   'pe-to-ce-bandwidth':  Indicates, in bits per second (bps), the
+      inbound bandwidth of the connection (i.e., the download bandwidth
+      from the service provider to the site).
+
+   'ce-to-pe-bandwidth':  Indicates, in bps, the outbound bandwidth of
+      the connection (i.e., the upload bandwidth from the site to the
+      service provider).
+
+   'mtu':  Indicates the MTU at the service level.
+
+   'qos':  Used to define a set of QoS policies to apply on a given
+      connection (refer to Section 7.6.6.2 for more details).
+
+   'carriers-carrier':  Groups a set of parameters that are used when
+      Carriers' Carriers (CsC) is enabled, such as using BGP for
+      signaling purposes [RFC8277].
+
+   'ntp':  Time synchronization may be needed in some VPNs, such as
+      infrastructure and management VPNs.  This container is used to
+      enable the NTP service [RFC5905].
+
+   'multicast':  Specifies the multicast mode and other data nodes, such
+      as the address family.  Refer to Section 7.7.
+
+</pre>

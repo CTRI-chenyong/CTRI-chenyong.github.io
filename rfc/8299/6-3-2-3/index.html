@@ -1,0 +1,28 @@
+---
+title: "RFC 8299 §6.3.2.3 Inheritance of Parameters Defined at Site Level and Site"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.3.2.3.  Inheritance of Parameters Defined at Site Level and Site
+          Network Access Level
+
+   Some parameters can be configured at both the site level and the
+   site-network-access level, e.g., routing, services, security.
+   Inheritance applies when parameters are defined at the site level.
+   If a parameter is configured at both the site level and the access
+   level, the access-level parameter MUST override the site-level
+   parameter.  Those parameters will be described later in this
+   document.
+
+   In terms of provisioning impact, it will be up to the implementation
+   to decide on the appropriate behavior when modifying existing
+   configurations.  But the SP will need to communicate to the user
+   about the impact of using inheritance.  For example, if we consider
+   that a site has already provisioned three site-network-accesses, what
+   will happen if a customer changes a service parameter at the site
+   level?  An implementation of this model may update the service
+   parameters of all already-provisioned site-network-accesses (with
+   potential impact on live traffic), or it may take into account this
+   new parameter only for the new sites.
+
+</pre>

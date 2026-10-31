@@ -1,0 +1,204 @@
+---
+title: "RFC 9182 §7.6.6.2 QoS"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.6.2.  QoS
+
+   The 'qos' container is used to define a set of QoS policies to apply
+   on a given connection (Figure 24).  A QoS policy may be a
+   classification or an action policy.  For example, a QoS action can be
+   defined to rate-limit inbound/outbound traffic of a given class of
+   service.
+
+   ...
+   +--rw qos {vpn-common:qos}?
+   |  +--rw qos-classification-policy
+   |  |  +--rw rule* [id]
+   |  |     +--rw id             string
+   |  |     +--rw (match-type)?
+   |  |     |  +--:(match-flow)
+   |  |     |  |  +--rw (l3)?
+   |  |     |  |  |  +--:(ipv4)
+   |  |     |  |  |  |  ...
+   |  |     |  |  |  +--:(ipv6)
+   |  |     |  |  |     ...
+   |  |     |  |  +--rw (l4)?
+   |  |     |  |     +--:(tcp)
+   |  |     |  |     |  ...
+   |  |     |  |     +--:(udp)
+   |  |     |  |        ...
+   |  |     |  +--:(match-application)
+   |  |     |     +--rw match-application?
+   |  |     |             identityref
+   |  |     +--rw target-class-id?    string
+   |  +--rw qos-action
+   |  |  +--rw rule* [id]
+   |  |     +--rw id                     string
+   |  |     +--rw target-class-id?       string
+   |  |     +--rw inbound-rate-limit?    decimal64
+   |  |     +--rw outbound-rate-limit?   decimal64
+   |  +--rw qos-profile
+   |     +--rw qos-profile* [profile]
+   |        +--rw profile      leafref
+   |        +--rw direction?   identityref
+   ...
+
+                  Figure 24: Overall QoS Subtree Structure
+
+   QoS classification can be based on many criteria, such as the
+   following:
+
+   Layer 3:  As shown in Figure 25, classification can be based on any
+      IP header field or a combination thereof.  Both IPv4 and IPv6 are
+      supported.
+
+   +--rw qos {vpn-common:qos}?
+   |  +--rw qos-classification-policy
+   |  |  +--rw rule* [id]
+   |  |     +--rw id           string
+   |  |     +--rw (match-type)?
+   |  |     |  +--:(match-flow)
+   |  |     |  |  +--rw (l3)?
+   |  |     |  |  |  +--:(ipv4)
+   |  |     |  |  |  |  +--rw ipv4
+   |  |     |  |  |  |     +--rw dscp?              inet:dscp
+   |  |     |  |  |  |     +--rw ecn?               uint8
+   |  |     |  |  |  |     +--rw length?            uint16
+   |  |     |  |  |  |     +--rw ttl?               uint8
+   |  |     |  |  |  |     +--rw protocol?          uint8
+   |  |     |  |  |  |     +--rw ihl?               uint8
+   |  |     |  |  |  |     +--rw flags?             bits
+   |  |     |  |  |  |     +--rw offset?            uint16
+   |  |     |  |  |  |     +--rw identification?    uint16
+   |  |     |  |  |  |     +--rw (destination-network)?
+   |  |     |  |  |  |     |  +--:(destination-ipv4-network)
+   |  |     |  |  |  |     |     +--rw destination-ipv4-network?
+   |  |     |  |  |  |     |             inet:ipv4-prefix
+   |  |     |  |  |  |     +--rw (source-network)?
+   |  |     |  |  |  |        +--:(source-ipv4-network)
+   |  |     |  |  |  |           +--rw source-ipv4-network?
+   |  |     |  |  |  |  inet:ipv4-prefix
+   |  |     |  |  |  +--:(ipv6)
+   |  |     |  |  |     +--rw ipv6
+   |  |     |  |  |        +--rw dscp?              inet:dscp
+   |  |     |  |  |        +--rw ecn?               uint8
+   |  |     |  |  |        +--rw length?            uint16
+   |  |     |  |  |        +--rw ttl?               uint8
+   |  |     |  |  |        +--rw protocol?          uint8
+   |  |     |  |  |        +--rw (destination-network)?
+   |  |     |  |  |        |  +--:(destination-ipv6-network)
+   |  |     |  |  |        |     +--rw destination-ipv6-network?
+   |  |     |  |  |        |             inet:ipv6-prefix
+   |  |     |  |  |        +--rw (source-network)?
+   |  |     |  |  |        |  +--:(source-ipv6-network)
+   |  |     |  |  |        |     +--rw source-ipv6-network?
+   |  |     |  |  |        |             inet:ipv6-prefix
+   |  |     |  |  |        +--rw flow-label?
+   |  |     |  |  |                   inet:ipv6-flow-label
+   ...
+
+                   Figure 25: QoS Subtree Structure (L3)
+
+   Layer 4:  As discussed in [RFC9181], any Layer 4 protocol can be
+      indicated in the 'protocol' data node under 'l3' (Figure 25), but
+      only TCP- and UDP-specific match criteria are elaborated in this
+      version, as these protocols are widely used in the context of VPN
+      services.  Augmentations can be considered in the future to add
+      other Layer-4-specific data nodes, if needed.
+
+      TCP- or UDP-related match criteria can be specified in the L3NM,
+      as shown in Figure 26.
+
+      As discussed in [RFC9181], some transport protocols use existing
+      protocols (e.g., TCP or UDP) as the substrate.  The match criteria
+      for such protocols may rely upon the 'protocol' setting under
+      'l3', TCP/UDP match criteria as shown in Figure 26, part of the
+      TCP/UDP payload, or a combination thereof.  This version of the
+      module does not support such advanced match criteria.  Future
+      revisions of the VPN common module or augmentations to the L3NM
+      may consider adding match criteria based on the transport protocol
+      payload (e.g., by means of a bitmask match).
+
+   +--rw qos {vpn-common:qos}?
+   |  +--rw qos-classification-policy
+   |  |  +--rw rule* [id]
+   |  |     +--rw id           string
+   |  |     +--rw (match-type)?
+   |  |     |  +--:(match-flow)
+   |  |     |  |  +--rw (l3)?
+   |  |     |  |  |  ...
+   |  |     |  |  +--rw (l4)?
+   |  |     |  |     +--:(tcp)
+   |  |     |  |     |  +--rw tcp
+   |  |     |  |     |     +--rw sequence-number?          uint32
+   |  |     |  |     |     +--rw acknowledgement-number?   uint32
+   |  |     |  |     |     +--rw data-offset?              uint8
+   |  |     |  |     |     +--rw reserved?                 uint8
+   |  |     |  |     |     +--rw flags?                    bits
+   |  |     |  |     |     +--rw window-size?              uint16
+   |  |     |  |     |     +--rw urgent-pointer?           uint16
+   |  |     |  |     |     +--rw options?                  binary
+   |  |     |  |     |     +--rw (source-port)?
+   |  |     |  |     |     |  +--:(source-port-range-or-operator)
+   |  |     |  |     |     |     +--rw source-port-range-or-operator
+   |  |     |  |     |     |        +--rw (port-range-or-operator)?
+   |  |     |  |     |     |           +--:(range)
+   |  |     |  |     |     |           |  +--rw lower-port
+   |  |     |  |     |     |           |  |       inet:port-number
+   |  |     |  |     |     |           |  +--rw upper-port
+   |  |     |  |     |     |           |          inet:port-number
+   |  |     |  |     |     |           +--:(operator)
+   |  |     |  |     |     |              +--rw operator? operator
+   |  |     |  |     |     |              +--rw port
+   |  |     |  |     |     |                      inet:port-number
+   |  |     |  |     |     +--rw (destination-port)?
+   |  |     |  |     |        +--:(destination-port-range-or-operator)
+   |  |     |  |     |          +--rw destination-port-range-or-operator
+   |  |     |  |     |             +--rw (port-range-or-operator)?
+   |  |     |  |     |                +--:(range)
+   |  |     |  |     |                |  +--rw lower-port
+   |  |     |  |     |                |  |       inet:port-number
+   |  |     |  |     |                |  +--rw upper-port
+   |  |     |  |     |                |          inet:port-number
+   |  |     |  |     |                +--:(operator)
+   |  |     |  |     |                   +--rw operator? operator
+   |  |     |  |     |                   +--rw port
+   |  |     |  |     |                           inet:port-number
+   |  |     |  |     +--:(udp)
+   |  |     |  |        +--rw udp
+   |  |     |  |           +--rw length?                    uint16
+   |  |     |  |           +--rw (source-port)?
+   |  |     |  |           |  +--:(source-port-range-or-operator)
+   |  |     |  |           |     +--rw source-port-range-or-operator
+   |  |     |  |           |        +--rw (port-range-or-operator)?
+   |  |     |  |           |           +--:(range)
+   |  |     |  |           |           |  +--rw lower-port
+   |  |     |  |           |           |  |       inet:port-number
+   |  |     |  |           |           |  +--rw upper-port
+   |  |     |  |           |           |          inet:port-number
+   |  |     |  |           |           +--:(operator)
+   |  |     |  |           |              +--rw operator?  operator
+   |  |     |  |           |              +--rw port
+   |  |     |  |           |                      inet:port-number
+   |  |     |  |           +--rw (destination-port)?
+   |  |     |  |              +--:(destination-port-range-or-operator)
+   |  |     |  |                +--rw destination-port-range-or-operator
+   |  |     |  |                    +--rw (port-range-or-operator)?
+   |  |     |  |                       +--:(range)
+   |  |     |  |                       |  +--rw lower-port
+   |  |     |  |                       |  |       inet:port-number
+   |  |     |  |                       |  +--rw upper-port
+   |  |     |  |                       |          inet:port-number
+   |  |     |  |                       +--:(operator)
+   |  |     |  |                          +--rw operator?   operator
+   |  |     |  |                          +--rw port
+   |  |     |  |                                  inet:port-number
+   ...
+
+                   Figure 26: QoS Subtree Structure (L4)
+
+   Application match:  Relies upon application-specific classification
+      (Figure 24).
+
+</pre>

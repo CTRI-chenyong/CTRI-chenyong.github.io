@@ -1,0 +1,222 @@
+---
+title: "RFC 9182 §7.7 Multicast"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.7.  Multicast
+
+   Multicast may be enabled for a particular VPN at the VPN node and VPN
+   network access levels (see Figure 27).  Some data nodes (e.g., max-
+   groups (Figure 28)) can be controlled at various levels: VPN service,
+   VPN node level, or VPN network access.
+
+        ...
+        +--rw vpn-services
+           +--rw vpn-service* [vpn-id]
+              ...
+              +--rw vpn-instance-profiles
+              |  +--rw vpn-instance-profile* [profile-id]
+              |     ....
+              |     +--rw multicast {vpn-common:multicast}?
+              |        ...
+              +--rw vpn-nodes
+                 +--rw vpn-node* [vpn-node-id]
+                    ...
+                    +--rw active-vpn-instance-profiles
+                    |  +--rw vpn-instance-profile* [profile-id]
+                    |     ...
+                    |     +--rw multicast {vpn-common:multicast}?
+                    |        ...
+                    +--rw vpn-network-accesses
+                       +--rw vpn-network-access* [id]
+                          ...
+                          +--rw service
+                             ...
+                             +--rw multicast {vpn-common:multicast}?
+                                ...
+
+               Figure 27: Overall Multicast Subtree Structure
+
+   Multicast-related data nodes at the VPN instance profile level have
+   the structure shown in Figure 28.
+
+   ...
+   +--rw vpn-services
+      +--rw vpn-service* [vpn-id]
+         ...
+         +--rw vpn-instance-profiles
+         |  +--rw vpn-instance-profile* [profile-id]
+         |     ....
+         |     +--rw multicast {vpn-common:multicast}?
+         |        +--rw tree-flavor?   identityref
+         |        +--rw rp
+         |        |  +--rw rp-group-mappings
+         |        |  |  +--rw rp-group-mapping* [id]
+         |        |  |     +--rw id                  uint16
+         |        |  |     +--rw provider-managed
+         |        |  |     |  +--rw enabled?                   boolean
+         |        |  |     |  +--rw rp-redundancy?             boolean
+         |        |  |     |  +--rw optimal-traffic-delivery?  boolean
+         |        |  |     |  +--rw anycast
+         |        |  |     |     +--rw local-address?    inet:ip-address
+         |        |  |     |     +--rw rp-set-address*   inet:ip-address
+         |        |  |     +--rw rp-address          inet:ip-address
+         |        |  |     +--rw groups
+         |        |  |        +--rw group* [id]
+         |        |  |           +--rw id                     uint16
+         |        |  |           +--rw (group-format)
+         |        |  |              +--:(group-prefix)
+         |        |  |              |  +--rw group-address?
+         |        |  |              |          inet:ip-prefix
+         |        |  |              +--:(startend)
+         |        |  |                 +--rw group-start?
+         |        |  |                 |       inet:ip-address
+         |        |  |                 +--rw group-end?
+         |        |  |                 |       inet:ip-address
+         |        |  +--rw rp-discovery
+         |        |     +--rw rp-discovery-type?   identityref
+         |        |     +--rw bsr-candidates
+         |        |        +--rw bsr-candidate-address*
+         |        |        |       inet:ip-address
+         |        +--rw igmp {vpn-common:igmp and vpn-common:ipv4}?
+         |        |  +--rw static-group* [group-addr]
+         |        |  |  +--rw group-addr
+         |        |  |  |       rt-types:ipv4-multicast-group-address
+         |        |  |  +--rw source-addr?
+         |        |  |          rt-types:ipv4-multicast-source-address
+         |        |  +--rw max-groups?     uint32
+         |        |  +--rw max-entries?    uint32
+         |        |  +--rw version?        identityref
+         |        +--rw mld {vpn-common:mld and vpn-common:ipv6}?
+         |        |  +--rw static-group* [group-addr]
+         |        |  |  +--rw group-addr
+         |        |  |  |       rt-types:ipv6-multicast-group-address
+         |        |  |  +--rw source-addr?
+         |        |  |          rt-types:ipv6-multicast-source-address
+         |        |  +--rw max-groups?     uint32
+         |        |  +--rw max-entries?    uint32
+         |        |  +--rw version?        identityref
+         |        +--rw pim {vpn-common:pim}?
+         |           +--rw hello-interval?
+         |           |       rt-types:timer-value-seconds16
+         |           +--rw dr-priority?      uint32
+              ...
+
+    Figure 28: Multicast Subtree Structure (VPN Instance Profile Level)
+
+   The model supports a single type of tree per VPN access ('tree-
+   flavor'): Any-Source Multicast (ASM), Source-Specific Multicast
+   (SSM), or bidirectional.
+
+   When ASM is used, the model supports the configuration of Rendezvous
+   Points (RPs).  RP discovery may be 'static', 'bsr-rp', or 'auto-rp'.
+   When set to 'static', RP-to-multicast-group mappings MUST be
+   configured as part of the 'rp-group-mappings' container.  The RP MAY
+   be a provider node or a customer node.  When the RP is a customer
+   node, the RP address must be configured using the 'rp-address' leaf.
+
+   The model supports RP redundancy through the 'rp-redundancy' leaf.
+   How the redundancy is achieved is out of scope.
+
+   When a particular VPN using ASM requires traffic delivery that is
+   more optimal (e.g., requested per the guidance in [RFC8299]),
+   'optimal-traffic-delivery' can be set.  When set to 'true', the
+   implementation must use any mechanism to provide traffic delivery
+   that is more optimal for the customer.  For example, anycast is one
+   of the mechanisms for enhancing RP redundancy, providing resilience
+   against failures, and recovering from failures quickly.
+
+   When configuring multicast-related parameters at the VPN node level
+   (Figure 29), the same structure as the structure depicted in
+   Figure 30 is used.  When defined at the VPN node level, Internet
+   Group Management Protocol (IGMP) parameters [RFC1112] [RFC2236]
+   [RFC3376], Multicast Listener Discovery (MLD) parameters [RFC2710]
+   [RFC3810], and Protocol Independent Multicast (PIM) parameters
+   [RFC7761] are applicable to all VPN network accesses of that VPN node
+   unless corresponding nodes are overridden at the VPN network access
+   level.
+
+   ...
+   +--rw vpn-nodes
+      +--rw vpn-node* [vpn-node-id]
+         ...
+         +--rw active-vpn-instance-profiles
+         |  +--rw vpn-instance-profile* [profile-id]
+         |     ...
+         |     +--rw multicast {vpn-common:multicast}?
+         |        +--rw tree-flavor*   identityref
+         |        +--rw rp
+         |        |  ...
+         |        +--rw igmp {vpn-common:igmp and vpn-common:ipv4}?
+         |        |  ...
+         |        +--rw mld {vpn-common:mld and vpn-common:ipv6}?
+         |        |  ...
+         |        +--rw pim {vpn-common:pim}?
+         |           ...
+
+          Figure 29: Multicast Subtree Structure (VPN Node Level)
+
+   Multicast-related data nodes at the VPN network access level are
+   shown in Figure 30.  The values configured at the VPN network access
+   level override the values configured for the corresponding data nodes
+   at other levels.
+
+   ...
+   +--rw vpn-network-accesses
+      +--rw vpn-network-access* [id]
+         ...
+         +--rw service
+            ...
+            +--rw multicast {vpn-common:multicast}?
+               +--rw access-type?      enumeration
+               +--rw address-family?   identityref
+               +--rw protocol-type?    enumeration
+               +--rw remote-source?    boolean
+               +--rw igmp  {vpn-common:igmp}?
+               |  +--rw static-group* [group-addr]
+               |  |  +--rw group-addr
+               |  |          rt-types:ipv4-multicast-group-address
+               |  |  +--rw source-addr?
+               |  |          rt-types:ipv4-multicast-source-address
+               |  +--rw max-groups?          uint32
+               |  +--rw max-entries?         uint32
+               |  +--rw max-group-sources?   uint32
+               |  +--rw version?             identityref
+               |  +--rw status
+               |     +--rw admin-status
+               |     |  +--rw status?         identityref
+               |     |  +--rw last-change?   yang:date-and-time
+               |     +--ro oper-status
+               |        +--ro status?         identityref
+               |        +--ro last-change?   yang:date-and-time
+               +--rw mld {vpn-common:mld}?
+               |  +--rw static-group* [group-addr]
+               |  |  +--rw group-addr
+               |  |          rt-types:ipv6-multicast-group-address
+               |  |  +--rw source-addr?
+               |  |          rt-types:ipv6-multicast-source-address
+               |  +--rw max-groups?          uint32
+               |  +--rw max-entries?         uint32
+               |  +--rw max-group-sources?   uint32
+               |  +--rw version?             identityref
+               |  +--rw status
+               |     +--rw admin-status
+               |     |  +--rw status?         identityref
+               |     |  +--rw last-change?   yang:date-and-time
+               |     +--ro oper-status
+               |        +--ro status?         identityref
+               |        +--ro last-change?   yang:date-and-time
+               +--rw pim {vpn-common:pim}?
+                  +--rw hello-interval?   rt-types:timer-value-seconds16
+                  +--rw dr-priority?      uint32
+                  +--rw status
+                     +--rw admin-status
+                     |  +--rw status?         identityref
+                     |  +--rw last-change?   yang:date-and-time
+                     +--ro oper-status
+                        +--ro status?         identityref
+                        +--ro last-change?   yang:date-and-time
+
+     Figure 30: Multicast Subtree Structure (VPN Network Access Level)
+
+</pre>

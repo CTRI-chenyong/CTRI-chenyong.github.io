@@ -1,0 +1,32 @@
+---
+title: "RFC 8299 §6.5.1.2 MultiVPN Attachment: site-vpn-flavor-multi"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.5.1.2.  MultiVPN Attachment: site-vpn-flavor-multi
+
+   The figure below describes a site connected to multiple VPNs.
+
+                                                           +---------+
+                                                      +---/----+      \
+   +------------------+             Site             /   |      \      |
+   |                  |--------------------------------- |       |VPN B|
+   |                  |***(site-network-access#1)******* |       |     |
+   |  New York Office |                             |    |       |     |
+   |                  |***(site-network-access#2)*******  \      |    /
+   |                  |-----------------------------| VPN A+-----|---+
+   +------------------+                              \          /
+                                                      +--------+
+
+
+   In the example above, the New York office is multihomed.  Both
+   logical accesses are using the same VPN attachment rules, and both
+   are connected to VPN A and VPN B.
+
+   Reaching VPN A or VPN B from the New York office will be done via
+   destination-based routing.  Having the same destination reachable
+   from the two VPNs may cause routing troubles.  The customer
+   administration's role in this case would be to ensure the appropriate
+   mapping of its prefixes in each VPN.
+
+</pre>

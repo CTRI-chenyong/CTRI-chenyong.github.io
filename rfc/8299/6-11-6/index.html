@@ -1,0 +1,118 @@
+---
+title: "RFC 8299 §6.11.6 OSPF Routing"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.11.6.  OSPF Routing
+
+   The routing protocol type "ospf" MAY be used when a customer LAN is
+   connected to the provider network through a CE router and must be
+   advertised in the IP VPN.
+
+   It can be used to extend an existing OSPF network and interconnect
+   different areas.  See [RFC4577] for more details.
+
+                             +---------------------+
+                             |                     |
+                     OSPF    |                     | OSPF
+                     area 1  |                     | area 2
+    (OSPF                    |                     |          (OSPF
+    area 1) --- CE ---------- PE               PE ----- CE --- area 2)
+                             |                     |
+                             +---------------------+
+
+   The model also defines an option to create an OSPF sham link between
+   two sites sharing the same area and having a backdoor link.  The sham
+   link is created by referencing the target site sharing the same OSPF
+   area.  The management system will be responsible for checking to see
+   if there is already a sham link configured for this VPN and area
+   between the same pair of PEs.  If there is no existing sham link, the
+   management system will provision one.  This sham link MAY be reused
+   by other sites.
+
+                    +------------------------+
+                    |                        |
+                    |                        |
+                    |  PE (--sham link--)PE  |
+                    |    |                |  |
+                    +----|----------------|--+
+                         | OSPF area 1    | OSPF area 1
+                         |                |
+                         CE1             CE2
+                         |                |
+                   (OSPF area 1)     (OSPF area 1)
+                         |                |
+                         +----------------+
+
+   Regarding dual-stack support, the user MAY specify both IPv4 and IPv6
+   address families, if both protocols should be routed through OSPF.
+   As OSPF uses separate protocol instances for IPv4 and IPv6, the
+   management system will need to configure both OSPF version 2 and OSPF
+   version 3 on the PE-CE link.
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 90]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   Other OSPF parameters, such as timers, are typically set by the SP
+   and communicated to the customer outside the scope of this model.
+
+   Example of a corresponding XML snippet with OSPF routing parameters
+   in the service model:
+
+      &lt;?xml version="1.0"?&gt;
+      &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+        &lt;vpn-services&gt;
+          &lt;vpn-service&gt;
+            &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+          &lt;/vpn-service&gt;
+        &lt;/vpn-services&gt;
+        &lt;sites&gt;
+          &lt;site&gt;
+            &lt;site-id&gt;SITE1&lt;/site-id&gt;
+            &lt;routing-protocols&gt;
+              &lt;routing-protocol&gt;
+                &lt;type&gt;ospf&lt;/type&gt;
+                &lt;ospf&gt;
+                  &lt;area-address&gt;0.0.0.1&lt;/area-address&gt;
+                  &lt;address-family&gt;ipv4&lt;/address-family&gt;
+                  &lt;address-family&gt;ipv6&lt;/address-family&gt;
+                &lt;/ospf&gt;
+              &lt;/routing-protocol&gt;
+            &lt;/routing-protocols&gt;
+          &lt;/site&gt;
+        &lt;/sites&gt;
+      &lt;/l3vpn-svc&gt;
+
+   Example of PE configuration done by the management system:
+
+                          router ospf 10
+                           area 0.0.0.1
+                            interface Ethernet0/0
+                          !
+                          router ospfv3 10
+                           area 0.0.0.1
+                            interface Ethernet0/0
+                           !
+
+
+
+
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 91]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+</pre>

@@ -1,0 +1,75 @@
+---
+title: "RFC 8299 §6.6.2 Constraint/Parameter: Site Location"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.6.2.  Constraint/Parameter: Site Location
+
+   The location information provided in this model MAY be used by a
+   management system to determine the target PE to mesh the site (SP
+   side).  A particular location must be associated with each site
+   network access when configuring it.  The SP MUST honor the
+   termination of the access on the location associated with the site
+   network access (customer side).  The "country-code" in the site
+   location SHOULD be expressed as an ISO ALPHA-2 code.
+
+   The site-network-access location is determined by the "location-
+   flavor".  In the case of a provider-managed or co-managed site, the
+   user is expected to configure a "device-reference" (device case) that
+   will bind the site-network-access to a particular device that the
+   customer ordered.  As each device is already associated with a
+   particular location, in such a case the location information is
+   retrieved from the device location.  In the case of a customer-
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 48]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   managed site, the user is expected to configure a "location-
+   reference" (location case); this provides a reference to an existing
+   configured location and will help with placement.
+
+                                        POP#1 (New York)
+                                     +---------+
+                                     |   PE1   |
+                Site #1 ---...       |   PE2   |
+               (Atlantic City)       |   PE3   |
+                                     +---------+
+
+                                        POP#2 (Washington)
+                                     +---------+
+                                     |   PE4   |
+                                     |   PE5   |
+                                     |   PE6   |
+                                     +---------+
+
+                                        POP#3 (Philadelphia)
+                                     +---------+
+                                     |   PE7   |
+                Site #2 CE#1---...   |   PE8   |
+               (Reston)              |   PE9   |
+                                     +---------+
+
+
+   In the example above, Site #1 is a customer-managed site with a
+   location L1, while Site #2 is a provider-managed site for which a CE
+   (CE#1) was ordered.  Site #2 is configured with L2 as its location.
+   When configuring a site-network-access for Site #1, the user will
+   need to reference location L1 so that the management system will know
+   that the access will need to terminate on this location.  Then, for
+   distance reasons, this management system may mesh Site #1 on a PE in
+   the Philadelphia POP.  It may also take into account resources
+   available on PEs to determine the exact target PE (e.g., least
+   loaded).  For Site #2, the user is expected to configure the site-
+   network-access with a device-reference to CE#1 so that the management
+   system will know that the access must terminate on the location of
+   CE#1 and must be connected to CE#1.  For placement of the SP side of
+   the access connection, in the case of the nearest PE used, it may
+   mesh Site #2 on the Washington POP.
+
+</pre>

@@ -1,0 +1,27 @@
+---
+title: "RFC 8299 §6.4 Site Role"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.4.  Site Role
+
+   A VPN has a particular service topology, as described in
+   Section 6.2.1.  As a consequence, each site belonging to a VPN is
+   assigned with a particular role in this topology.  The site-role leaf
+   defines the role of the site in a particular VPN topology.
+
+   In the any-to-any VPN service topology, all sites MUST have the same
+   role, which will be "any-to-any-role".
+
+
+
+Wu, et al.                   Standards Track                   [Page 36]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   In the Hub-and-Spoke VPN service topology or the Hub and Spoke
+   disjoint VPN service topology, sites MUST have a Hub role or a Spoke
+   role.
+
+</pre>

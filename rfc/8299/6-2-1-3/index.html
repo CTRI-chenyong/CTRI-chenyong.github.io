@@ -1,0 +1,55 @@
+---
+title: "RFC 8299 §6.2.1.3 Hub and Spoke"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.2.1.3.  Hub and Spoke
+
+      +-------------------------------------------------------------+
+      |   Hub_Site1 ------ PE1               PE2 ------ Spoke_Site1 |
+      |                          +----------------------------------+
+      |                          |
+      |                          +----------------------------------+
+      |   Hub_Site2 ------ PE3               PE4 ------ Spoke_Site2 |
+      +-------------------------------------------------------------+
+
+                      Hub-and-Spoke VPN Service Topology
+
+   In the Hub-and-Spoke VPN service topology, all Spoke sites can
+   communicate only with Hub sites but not with each other, and Hubs can
+   also communicate with each other.  The management system that owns an
+   any-to-any IP VPN service request through this model is expected to
+   assign and then configure the VRF and RTs on the appropriate PEs.  In
+   the Hub-and-Spoke case, two RTs are generally required (one RT for
+   Hub routes and one RT for Spoke routes).  A Hub VRF that connects Hub
+   sites will export Hub routes with the Hub RT and will import Spoke
+   routes through the Spoke RT.  It will also import the Hub RT to allow
+   Hub-to-Hub communication.  A Spoke VRF that connects Spoke sites will
+   export Spoke routes with the Spoke RT and will import Hub routes
+   through the Hub RT.
+
+
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 24]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   The management system MUST take into account constraints on Hub-and-
+   Spoke connections.  For example, if a management system decides to
+   mesh a Spoke site and a Hub site on the same PE, it needs to mesh
+   connections in different VRFs, as shown in the figure below.
+
+                    Hub_Site ------- (VRF_Hub)  PE1
+                                               (VRF_Spoke)
+                                                 /  |
+                 Spoke_Site1 -------------------+   |
+                                                    |
+                 Spoke_Site2 -----------------------+
+
+
+</pre>

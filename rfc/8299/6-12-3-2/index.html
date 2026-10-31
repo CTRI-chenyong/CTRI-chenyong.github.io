@@ -1,0 +1,339 @@
+---
+title: "RFC 8299 §6.12.3.2 QoS Profile"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>6.12.3.2.  QoS Profile
+
+   The user can choose either a standard profile provided by the
+   operator or a custom profile.  The "qos-profile" container defines
+   the traffic-scheduling policy to be used by the SP.
+
+                                           Provider network
+                                      +-----------------------+
+            192.0.2.0/24
+            198.51.100.0/24 ---- CE --------- PE
+                                    \       /
+                                   qos-profile
+
+   A custom QoS profile is defined as a list of classes of services and
+   associated properties.  The properties are as follows:
+
+   o  direction: used to specify the direction to which the QoS profile
+      is applied.  This model supports three direction settings: "Site-
+      to-WAN", "WAN-to-Site", and "both".  By default, the "both"
+      direction value is used.  If the direction is "both", the provider
+      should ensure scheduling according to the requested policy in both
+      traffic directions (SP to customer and customer to SP).  As an
+      example, a device-scheduling policy may be implemented on both the
+      PE side and the CE side of the WAN link.  If the direction is
+      "WAN-to-Site", the provider should ensure scheduling from the SP
+      network to the customer site.  As an example, a device-scheduling
+      policy may be implemented only on the PE side of the WAN link
+      towards the customer.
+
+   o  rate-limit: used to rate-limit the class of service.  The value is
+      expressed as a percentage of the global service bandwidth.  When
+      the qos-profile container is implemented on the CE side,
+      svc-output-bandwidth is taken into account as a reference.  When
+      it is implemented on the PE side, svc-input-bandwidth is used.
+
+
+
+
+
+Wu, et al.                   Standards Track                   [Page 97]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   o  latency: used to define the latency constraint of the class.  The
+      latency constraint can be expressed as the lowest possible latency
+      or a latency boundary expressed in milliseconds.  How this latency
+      constraint will be fulfilled is up to the SP's implementation of
+      the service: a strict priority queuing may be used on the access
+      and in the core network, and/or a low-latency routing
+      configuration may be created for this traffic class.
+
+   o  jitter: used to define the jitter constraint of the class.  The
+      jitter constraint can be expressed as the lowest possible jitter
+      or a jitter boundary expressed in microseconds.  How this jitter
+      constraint will be fulfilled is up to the SP's implementation of
+      the service: a strict priority queuing may be used on the access
+      and in the core network, and/or a jitter-aware routing
+      configuration may be created for this traffic class.
+
+   o  bandwidth: used to define a guaranteed amount of bandwidth for the
+      class of service.  It is expressed as a percentage.  The
+      "guaranteed-bw-percent" parameter uses available bandwidth as a
+      reference.  When the qos-profile container is implemented on the
+      CE side, svc-output-bandwidth is taken into account as a
+      reference.  When it is implemented on the PE side, svc-input-
+      bandwidth is used.  By default, the bandwidth reservation is only
+      guaranteed at the access level.  The user can use the "end-to-end"
+      leaf to request an end-to-end bandwidth reservation, including
+      across the MPLS transport network.  (In other words, the SP will
+      activate something in the MPLS core to ensure that the bandwidth
+      request from the customer will be fulfilled by the MPLS core as
+      well.)  How this is done (e.g., RSVP reservation, controller
+      reservation) is out of scope for this document.
+
+   In addition, due to network conditions, some constraints may not be
+   completely fulfilled by the SP; in this case, the SP should advise
+   the customer about the limitations.  How this communication is done
+   is out of scope for this document.
+
+   Example of service configuration using a standard QoS profile with
+   the following corresponding XML snippet:
+
+&lt;?xml version="1.0"?&gt;
+&lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+ &lt;vpn-profiles&gt;
+  &lt;valid-provider-identifiers&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;GOLD&lt;/id&gt;
+   &lt;/qos-profile-identifier&gt;
+   &lt;qos-profile-identifier&gt;
+    &lt;id&gt;PLATINUM&lt;/id&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 98]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   &lt;/qos-profile-identifier&gt;
+  &lt;/valid-provider-identifiers&gt;
+ &lt;/vpn-profiles&gt;
+ &lt;vpn-services&gt;
+  &lt;vpn-service&gt;
+   &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+  &lt;/vpn-service&gt;
+ &lt;/vpn-services&gt;
+ &lt;sites&gt;
+  &lt;site&gt;
+   &lt;site-id&gt;SITE1&lt;/site-id&gt;
+   &lt;locations&gt;
+    &lt;location&gt;
+     &lt;location-id&gt;L1&lt;/location-id&gt;
+    &lt;/location&gt;
+   &lt;/locations&gt;
+   &lt;site-network-accesses&gt;
+    &lt;site-network-access&gt;
+     &lt;site-network-access-id&gt;1245HRTFGJGJ154654&lt;/site-network-access-id&gt;
+     &lt;vpn-attachment&gt;
+      &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+      &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+     &lt;/vpn-attachment&gt;
+     &lt;ip-connection&gt;
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv4&gt;
+      &lt;ipv6&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv6&gt;
+     &lt;/ip-connection&gt;
+     &lt;security&gt;
+      &lt;encryption&gt;
+       &lt;layer&gt;layer3&lt;/layer&gt;
+      &lt;/encryption&gt;
+     &lt;/security&gt;
+     &lt;location-reference&gt;L1&lt;/location-reference&gt;
+     &lt;service&gt;
+      &lt;svc-input-bandwidth&gt;100000000&lt;/svc-input-bandwidth&gt;
+      &lt;svc-output-bandwidth&gt;100000000&lt;/svc-output-bandwidth&gt;
+      &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+      &lt;qos&gt;
+       &lt;qos-profile&gt;
+        &lt;profile&gt;PLATINUM&lt;/profile&gt;
+       &lt;/qos-profile&gt;
+      &lt;/qos&gt;
+     &lt;/service&gt;
+    &lt;/site-network-access&gt;
+
+
+
+Wu, et al.                   Standards Track                   [Page 99]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+    &lt;site-network-access&gt;
+     &lt;site-network-access-id&gt;555555AAAA2344&lt;/site-network-access-id&gt;
+     &lt;vpn-attachment&gt;
+      &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+      &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+     &lt;/vpn-attachment&gt;
+     &lt;ip-connection&gt;
+      &lt;ipv4&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv4&gt;
+      &lt;ipv6&gt;
+       &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+      &lt;/ipv6&gt;
+     &lt;/ip-connection&gt;
+     &lt;security&gt;
+      &lt;encryption&gt;
+       &lt;layer&gt;layer3&lt;/layer&gt;
+      &lt;/encryption&gt;
+     &lt;/security&gt;
+     &lt;location-reference&gt;L1&lt;/location-reference&gt;
+     &lt;service&gt;
+      &lt;svc-input-bandwidth&gt;2000000&lt;/svc-input-bandwidth&gt;
+      &lt;svc-output-bandwidth&gt;2000000&lt;/svc-output-bandwidth&gt;
+      &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+      &lt;qos&gt;
+       &lt;qos-profile&gt;
+        &lt;profile&gt;GOLD&lt;/profile&gt;
+       &lt;/qos-profile&gt;
+      &lt;/qos&gt;
+     &lt;/service&gt;
+    &lt;/site-network-access&gt;
+   &lt;/site-network-accesses&gt;
+  &lt;/site&gt;
+ &lt;/sites&gt;
+&lt;/l3vpn-svc&gt;
+
+   Example of service configuration using a custom QoS profile with the
+   following corresponding XML snippet:
+
+ &lt;?xml version="1.0"?&gt;
+ &lt;l3vpn-svc xmlns="urn:ietf:params:xml:ns:yang:ietf-l3vpn-svc"&gt;
+  &lt;vpn-profiles&gt;
+   &lt;valid-provider-identifiers&gt;
+    &lt;qos-profile-identifier&gt;
+     &lt;id&gt;GOLD&lt;/id&gt;
+    &lt;/qos-profile-identifier&gt;
+    &lt;qos-profile-identifier&gt;
+     &lt;id&gt;PLATINUM&lt;/id&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 100]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+    &lt;/qos-profile-identifier&gt;
+   &lt;/valid-provider-identifiers&gt;
+  &lt;/vpn-profiles&gt;
+  &lt;vpn-services&gt;
+   &lt;vpn-service&gt;
+    &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+   &lt;/vpn-service&gt;
+  &lt;/vpn-services&gt;
+  &lt;sites&gt;
+   &lt;site&gt;
+    &lt;site-id&gt;SITE1&lt;/site-id&gt;
+    &lt;locations&gt;
+     &lt;location&gt;
+      &lt;location-id&gt;L1&lt;/location-id&gt;
+     &lt;/location&gt;
+    &lt;/locations&gt;
+    &lt;site-network-accesses&gt;
+     &lt;site-network-access&gt;
+      &lt;site-network-access-id&gt;Site1&lt;/site-network-access-id&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;ip-connection&gt;
+       &lt;ipv4&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv4&gt;
+       &lt;ipv6&gt;
+        &lt;address-allocation-type&gt;provider-dhcp&lt;/address-allocation-type&gt;
+       &lt;/ipv6&gt;
+      &lt;/ip-connection&gt;
+      &lt;service&gt;
+       &lt;svc-mtu&gt;1514&lt;/svc-mtu&gt;
+       &lt;svc-input-bandwidth&gt;10000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;10000000&lt;/svc-output-bandwidth&gt;
+      &lt;/service&gt;
+      &lt;security&gt;
+       &lt;encryption&gt;
+        &lt;layer&gt;layer3&lt;/layer&gt;
+       &lt;/encryption&gt;
+      &lt;/security&gt;
+      &lt;location-reference&gt;L1&lt;/location-reference&gt;
+      &lt;vpn-attachment&gt;
+       &lt;vpn-id&gt;VPNA&lt;/vpn-id&gt;
+       &lt;site-role&gt;spoke-role&lt;/site-role&gt;
+      &lt;/vpn-attachment&gt;
+      &lt;service&gt;
+       &lt;svc-input-bandwidth&gt;100000000&lt;/svc-input-bandwidth&gt;
+       &lt;svc-output-bandwidth&gt;100000000&lt;/svc-output-bandwidth&gt;
+       &lt;qos&gt;
+        &lt;qos-profile&gt;
+
+
+
+Wu, et al.                   Standards Track                  [Page 101]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+         &lt;classes&gt;
+          &lt;class&gt;
+           &lt;class-id&gt;REAL_TIME&lt;/class-id&gt;
+           &lt;direction&gt;both&lt;/direction&gt;
+           &lt;rate-limit&gt;10&lt;/rate-limit&gt;
+           &lt;latency&gt;
+            &lt;use-lowest-latency/&gt;
+           &lt;/latency&gt;
+           &lt;bandwidth&gt;
+            &lt;guaranteed-bw-percent&gt;80&lt;/guaranteed-bw-percent&gt;
+           &lt;/bandwidth&gt;
+          &lt;/class&gt;
+          &lt;class&gt;
+           &lt;class-id&gt;DATA1&lt;/class-id&gt;
+           &lt;latency&gt;
+            &lt;latency-boundary&gt;70&lt;/latency-boundary&gt;
+           &lt;/latency&gt;
+           &lt;bandwidth&gt;
+            &lt;guaranteed-bw-percent&gt;80&lt;/guaranteed-bw-percent&gt;
+           &lt;/bandwidth&gt;
+          &lt;/class&gt;
+          &lt;class&gt;
+           &lt;class-id&gt;DATA2&lt;/class-id&gt;
+           &lt;latency&gt;
+            &lt;latency-boundary&gt;200&lt;/latency-boundary&gt;
+           &lt;/latency&gt;
+           &lt;bandwidth&gt;
+            &lt;guaranteed-bw-percent&gt;5&lt;/guaranteed-bw-percent&gt;
+            &lt;end-to-end/&gt;
+           &lt;/bandwidth&gt;
+          &lt;/class&gt;
+         &lt;/classes&gt;
+        &lt;/qos-profile&gt;
+       &lt;/qos&gt;
+      &lt;/service&gt;
+     &lt;/site-network-access&gt;
+    &lt;/site-network-accesses&gt;
+   &lt;/site&gt;
+  &lt;/sites&gt;
+ &lt;/l3vpn-svc&gt;
+
+   The custom QoS profile for Site1 defines a REAL_TIME class with a
+   latency constraint expressed as the lowest possible latency.  It also
+   defines two data classes -- DATA1 and DATA2.  The two classes express
+   a latency boundary constraint as well as a bandwidth reservation, as
+   the REAL_TIME class is rate-limited to 10% of the service bandwidth
+   (10% of 100 Mbps = 10 Mbps).  In cases where congestion occurs, the
+   REAL_TIME traffic can go up to 10 Mbps (let's assume that only 5 Mbps
+
+
+
+Wu, et al.                   Standards Track                  [Page 102]
+&#12;
+RFC 8299       YANG Data Model for L3VPN Service Delivery   January 2018
+
+
+   are consumed).  DATA1 and DATA2 will share the remaining bandwidth
+   (95 Mbps) according to their percentage.  So, the DATA1 class will be
+   served with at least 76 Mbps of bandwidth, while the DATA2 class will
+   be served with at least 4.75 Mbps.  The latency boundary information
+   of the data class may help the SP define a specific buffer tuning or
+   a specific routing within the network.  The maximum percentage to be
+   used is not limited by this model but MUST be limited by the
+   management system according to the policies authorized by the SP.
+
+</pre>

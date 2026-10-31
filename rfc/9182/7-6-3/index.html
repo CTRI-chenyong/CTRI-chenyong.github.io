@@ -1,0 +1,79 @@
+---
+title: "RFC 9182 §7.6.3 CE-PE Routing Protocols"
+layout: rfc-page
+nav_exclude: true
+---
+<pre>7.6.3.  CE-PE Routing Protocols
+
+   A VPN service provider can configure one or more routing protocols
+   associated with a particular 'vpn-network-access'.  Such routing
+   protocols are enabled between the PE and the CE.  Each instance is
+   uniquely identified to accommodate scenarios where multiple instances
+   of the same routing protocol have to be configured on the same link.
+
+   The subtree of the 'routing-protocols' is shown in Figure 14.
+
+     ...
+     +--rw vpn-network-accesses
+        +--rw vpn-network-access* [id]
+           ...
+           +--rw routing-protocols
+           |  +--rw routing-protocol* [id]
+           |     +--rw id   string
+           |     +--rw type?               identityref
+           |     +--rw routing-profiles* [id]
+           |     |  +--rw id      leafref
+           |     |  +--rw type?   identityref
+           |     +--rw static
+           |     |  ...
+           |     +--rw bgp
+           |     |  ...
+           |     +--rw ospf
+           |     |  ...
+           |     +--rw isis
+           |     |  ...
+           |     +--rw rip
+           |     |  ...
+           |     +--rw vrrp
+           |        ...
+           +--rw security
+               ...
+
+                    Figure 14: Routing Subtree Structure
+
+   Multiple routing instances can be defined, each uniquely identified
+   by an 'id'.  The type of routing instance is indicated in 'type'.
+   The values of these attributes are those defined in [RFC9181] (the
+   'routing-protocol-type' identity).
+
+   Configuring multiple instances of the same routing protocol does not
+   automatically imply that, from a device configuration perspective,
+   there will be parallel instances (e.g., multiple processes) running
+   on the PE-CE link.  It is up to each implementation (typically,
+   network orchestration, as shown in Figure 1) to decide on the
+   appropriate configuration as a function of underlying capabilities
+   and service provider operational guidelines.  As an example, when
+   multiple BGP peers need to be implemented, multiple instances of BGP
+   must be configured as part of this model.  However, from a device
+   configuration point of view, this could be implemented as:
+
+   *  Multiple BGP processes with a single neighbor running in each
+      process.
+
+   *  A single BGP process with multiple neighbors running.
+
+   *  A combination thereof.
+
+   Routing configuration does not include low-level policies.  Such
+   policies are handled at the device configuration level.  Local
+   policies of a service provider (e.g., filtering) are implemented as
+   part of the device configuration; these are not captured in the L3NM,
+   but the model allows local profiles to be associated with routing
+   instances ('routing-profiles').  Note that these routing profiles can
+   be scoped to capture parameters that are globally applied to all
+   L3VPN services within a service provider network, while customized
+   L3VPN parameters are captured by means of the L3NM.  The provisioning
+   of an L3VPN service will thus rely upon the instantiation of these
+   global routing profiles and the customized L3NM.
+
+</pre>
