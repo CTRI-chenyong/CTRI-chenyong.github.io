@@ -1,11 +1,12 @@
 title: IETF ONSEN workgroup POC
-description: A POC project for IETF ONSEN workgroup
+description: A browser-local prototype of the L3SM (RFC 8299) to L3NM (RFC 9182) mapping, for the IETF ONSEN working group
 theme: just-the-docs
 
 url: https://CTRI-chenyong.github.io
 
 aux_links:
-  Template Repository: https://github.com/just-the-docs/just-the-docs-template
+  Repository: https://github.com/CTRI-chenyong/CTRI-chenyong.github.io
+  IETF ONSEN WG: https://datatracker.ietf.org/wg/onsen/about/
 
 # Files without front matter are copied to the site verbatim, so the
 # development-time tooling and the planning directory have to be named here.
