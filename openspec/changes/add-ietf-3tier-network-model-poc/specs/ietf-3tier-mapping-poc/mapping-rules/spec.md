@@ -30,18 +30,20 @@
 | 4 | `sites/site/site-id` | `vpn-services/vpn-service/vpn-nodes/vpn-node/vpn-node-id` | SPLIT | §6.3 → §7.5 |
 | 5 | `.../site-network-access/site-network-access-id` | `.../vpn-node/vpn-network-accesses/vpn-network-access/id` | COPY | §6.3.2 → §7.6 |
 | 6 | `.../site-network-access/ip-connection/ipv4/addresses/provider-address` | `.../vpn-network-access/ip-connection/ipv4/local-address` | COPY | §6.3.2.2 → §7.6.2 |
-| 7 | `.../site-network-access/ip-connection/ipv4/addresses/customer-address` | `.../ip-connection/ipv4/address/customer-address` | COPY | §6.3.2.2 → §7.6.2 |
+| 7 | `.../site-network-access/ip-connection/ipv4/addresses/customer-address` | `.../ip-connection/ipv4/static-addresses/address/customer-address` | COPY | §6.3.2.2 → §7.6.2 |
 | 8 | `.../site-network-access/ip-connection/ipv4/addresses/prefix-length` | `.../ip-connection/ipv4/prefix-length` | COPY | §6.3.2.2 → §7.6.2 |
 | 9 | `.../site-network-access/vpn-attachment/site-role` | `.../vpn-instance-profile/role` | COPY | §6.4 → §7.4 |
 | 10 | `.../site-network-access/vpn-attachment/vpn-id` | （决定该 access 归属哪个 `vpn-service`） | SPLIT | §6.5.2 → §7.5 |
 | 11 | `.../routing-protocols/routing-protocol/bgp/autonomous-system` | `.../routing-protocols/routing-protocol/bgp/peer-as` | COPY | §6.11.7 → §7.6.3.2 |
 | 12 | —（L3SM 无对应节点） | `vpn-services/vpn-service/vpn-type` | DERIVE | — → §7.3 |
-| 13 | —（由管理系统分配） | `.../vpn-instance-profile/(rd-choice)/rd` | DERIVE | §6.6.7 → §7.4 |
-| 14 | —（由 RT 实现拓扑） | `.../vpn-instance-profile/address-family/vpn-targets/vpn-target/route-targets/route-target` | DERIVE | §6.2.1 → §7.4 |
+| 13 | —（由管理系统分配） | `.../vpn-instance-profile/rd` | DERIVE | §6.6.7 → §7.4 |
+| 14 | —（由 RT 实现拓扑） | `.../vpn-instance-profile/address-family/vpn-targets/vpn-target/route-targets/route-target` | DERIVE | §6.2.1 + §6.2.1.1 → §7.4 |
 | 15 | —（Provider 侧 AS） | `.../routing-protocols/routing-protocol/bgp/local-as` | DERIVE | — → §7.6.3.2 |
 | 16 | —（网络侧标识分配） | `.../vpn-node/vpn-network-accesses/vpn-network-access/interface-id` | DERIVE | — → §7.6 |
 | 17 | `sites/site/locations/location/{address,postal-code,state,city,country-code}` | 无 | DROP | §6.3.1 → §7.5 |
 | 18 | `sites/site/requested-site-start` / `requested-site-stop` | 无 | DROP | §6.3 → §7.5 |
+
+表中目标路径省略 YANG `choice`/`case` 层名（如 #13 的原文位置是 `vpn-instance-profile/(rd-choice)/(directly-assigned)/rd`）；规则表在 UI 上以 `pathNote` 逐条给出原文位置，因此省略不构成路径失真。
 
 #### Scenario: 客户 AS 的重命名与类型变化被如实呈现
 - **WHEN** 访客查看规则 #11
