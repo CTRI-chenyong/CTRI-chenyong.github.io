@@ -18,6 +18,9 @@
   --i3t-line-height: 1.5;
   --i3t-radius: 0.375rem;
   --i3t-gap: 1rem;
+  /* Horizontal air between the L3SM and L3NM cards; wide enough that the two
+     entities never read as one panel. */
+  --i3t-board-gap: 3rem;
 
   --i3t-fg: #1b1f24;
   --i3t-fg-muted: #57606a;
@@ -229,7 +232,7 @@
 .ietf-3tier-poc .i3t-board {
   align-items: start;
   display: grid;
-  gap: var(--i3t-gap);
+  gap: var(--i3t-gap) var(--i3t-board-gap);
   grid-template-columns: minmax(0, 1fr);
   margin-bottom: var(--i3t-gap);
 }

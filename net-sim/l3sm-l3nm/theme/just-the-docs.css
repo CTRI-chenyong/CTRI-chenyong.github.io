@@ -13,17 +13,23 @@
      sidebar, which just-the-docs stacks at z-index 100 and above. */
   --i3t-z-overlay: 90;
 
-  /* Same value as $content-width in _sass/custom/setup.scss; used only to
-     cap the board's own width so it never exceeds the theme's text column. */
-  --i3t-content-max-width: 62rem;
-
   /* Inherit the theme's typography instead of shipping our own. */
   --i3t-font-family: inherit;
   --i3t-code-font-family: inherit;
 }
 
-/* The theme wraps page content in .main-content; nothing in app/ may assume
-   that, so the coupling is expressed here instead. */
-.main-content .ietf-3tier-poc {
-  max-width: var(--i3t-content-max-width);
+/* The board is a two-column drawing surface, not a prose column, so on the
+   page that hosts it the theme's centred reading column is released: the
+   sidebar stops growing past its 16.5rem minimum and .main stops capping at
+   $content-width, letting the board use the whole viewport. 16.5rem is the
+   theme's own $nav-width and the min-width of .side-bar. Both rules are inert
+   on every other page, and on browsers without :has() the layout simply stays
+   as the theme ships it. */
+.side-bar:has(+ .main .ietf-3tier-poc) {
+  width: 16.5rem;
+}
+
+.side-bar:has(+ .main .ietf-3tier-poc) + .main {
+  margin-left: 16.5rem;
+  max-width: none;
 }

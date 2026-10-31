@@ -87,7 +87,14 @@ breaks fixed positioning.
    (`--i3t-z-overlay`, `--i3t-content-max-width`, `--i3t-font-family`,
    `--i3t-code-font-family`, the four propagation colours) plus, if the new
    theme needs it, selectors that scope those values to the theme's content
-   container.
+   container. One further kind of rule belongs here and nowhere else: releasing
+   a host theme's centred reading column on the page that hosts the board (the
+   current adapter does this with a `:has()` rule keyed to the board, applied to
+   the theme's sidebar and main wrappers), because a two-column drawing surface
+   needs the viewport width that a prose column deliberately gives up. Such
+   rules must be keyed to the board with `:has()` so every other page keeps the
+   theme's own layout, and they must degrade to the theme default where
+   `:has()` is unsupported.
 3. **Flip `connectorLayer` if the connectors drift.** If the new template puts
    the page content inside a transformed or separately scrolling container, set
    `window.IETF3TIER_MOUNT = { connectorLayer: 'inline' }` in the shell page
