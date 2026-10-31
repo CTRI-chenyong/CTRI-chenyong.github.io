@@ -7,6 +7,10 @@
  * app/ and standalone/ must be template-agnostic, offline-capable and
  * path-relative, and must not read the site's _data/ export.
  *
+ * rfc/, at the repository root, is registered as a site content area: the board
+ * may not reference it, and everything in it that knows about the template is
+ * the two _layouts/rfc-*.html files plus rfc/notices/index.md.
+ *
  * Run: node tools/check-decoupling.mjs
  */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
@@ -271,6 +275,81 @@ for (const file of files) {
   }
 }
 
+/* The RFC document area sits at the repository root, outside the contract
+ * above, and is registered here so that the half of it the board must never
+ * learn about is machine-checked. rfc/ is a site content area: its pages are
+ * generated, may carry front matter and Liquid on purpose, and their links to
+ * the RFC Editor are absolute by design. The four assertions below therefore
+ * bind the kernel, the two layouts and the one hand-written notice page — never
+ * the copied text itself. */
+const rfcRoot = join(repoRoot, 'rfc');
+const rfcFiles = existsSync(rfcRoot) ? walk(rfcRoot) : [];
+if (rfcFiles.length === 0) {
+  fail(rfcRoot, 0, 'the RFC document area is missing; the site publishes its text and the rules cite it');
+}
+
+/* 1. Nothing the board loads may know the document area exists. */
+for (const file of appFiles.concat(standaloneFiles)) {
+  if (/\brfc\/|rfc-sources/.test(readFileSync(file, 'utf8'))) {
+    fail(file, 1, 'the kernel must not reference the RFC document area or its data export');
+  }
+}
+
+/* 2. All of the document area's theme knowledge is the two layouts, and each of
+ *    them only chains to the site template and reads the generated index. */
+for (const name of ['rfc-page', 'rfc-landing']) {
+  const path = join(repoRoot, '_layouts', `${name}.html`);
+  if (!existsSync(path)) {
+    fail(path, 0, 'the compliance shell of every RFC page lives in this layout');
+    continue;
+  }
+  const layout = splitFrontMatter(readFileSync(path, 'utf8'));
+  if (!/^layout:\s*default\s*$/m.test(layout.frontMatter)) {
+    fail(path, 1, 'an RFC layout must chain to the site template, never reimplement it');
+  }
+  if (!/site\.data\['rfc-sources'\]/.test(layout.body)) {
+    fail(path, 1, 'the shell must render from the generated index, not from metadata typed into the layout');
+  }
+}
+
+/* 3. The copying notices page is a site page and the only hand-written file in
+ *    the area; what it copied is read from the index, not restated. */
+const noticesFile = join(rfcRoot, 'notices', 'index.md');
+if (!existsSync(noticesFile)) {
+  fail(noticesFile, 0, 'the extent of copying, the grant relied on and the licence boundary are recorded here');
+} else {
+  const notices = splitFrontMatter(readFileSync(noticesFile, 'utf8'));
+  if (!/^layout:\s*page\s*$/m.test(notices.frontMatter)) {
+    fail(noticesFile, 1, 'front matter must keep layout: page');
+  }
+  if (!/^nav_exclude:\s*true\s*$/m.test(notices.frontMatter)) {
+    fail(noticesFile, 1, 'the notices page stays out of the sidebar; every RFC page links to it');
+  }
+  if (/permalink\s*:/.test(notices.frontMatter)) {
+    fail(noticesFile, 1, 'permalink pins the URL to this template; the directory path is the contract');
+  }
+  if (!/site\.data\['rfc-sources'\]/.test(notices.body)) {
+    fail(noticesFile, 1, 'the notices page must list the copied documents from the generated index');
+  }
+  for (const link of [...notices.body.matchAll(/\]\(([^)#\s][^)\s]*?)(?:#[^)]*)?\)/g)].map((m) => m[1])) {
+    if (/^https?:|^<|^#/.test(link) || link.includes('{{')) { continue; }
+    const target = join(dirname(noticesFile), link);
+    const resolved = existsSync(target) || existsSync(join(target, 'index.html'))
+      || existsSync(join(target, 'index.md'));
+    if (!resolved) {
+      fail(noticesFile, 1, `link ${link} does not resolve from the notices page`);
+    }
+  }
+}
+
+/* 4. The document area does not depend on the board: no file in it names the
+ *    kernel, and no page there is reached through a path the kernel owns. */
+for (const file of rfcFiles) {
+  if (/l3sm-l3nm\/(?:app|standalone|theme)\//.test(readFileSync(file, 'utf8'))) {
+    fail(file, 1, 'the RFC document area must not depend on the board');
+  }
+}
+
 if (appFiles.length < 3) {
   fail(netSim, 0, `expected the three classic scripts under app/, found ${appFiles.length} file(s)`);
 }
@@ -284,4 +363,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(`check-decoupling: ${files.length} file(s) under net-sim/, ` +
-  `${appFiles.length} template-agnostic, ${themeFiles.length} theme-aware, 0 violations`);
+  `${appFiles.length} template-agnostic, ${themeFiles.length} theme-aware, ` +
+  `${rfcFiles.length} file(s) in the rfc/ site content area, 0 violations`);
