@@ -1,0 +1,97 @@
+// Styles for the RFC document area (_layouts/rfc-page.html, _layouts/rfc-landing.html).
+// Deliberately free of theme SCSS variables and colour tokens: the RFC body is quoted
+// text and its presentation must not depend on which colour scheme is in use, and a
+// missing variable here would break the Pages build rather than degrade gracefully.
+
+.rfc-text pre {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  white-space: pre;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  background: rgba(128, 128, 128, 0.06);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  tab-size: 4;
+}
+
+.rfc-provenance {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid rgba(128, 128, 128, 0.5);
+  background: rgba(128, 128, 128, 0.08);
+  font-size: 0.78rem;
+}
+
+.rfc-provenance p {
+  margin-bottom: 0.5rem;
+}
+
+.rfc-provenance > p:last-child {
+  margin-bottom: 0;
+}
+
+.rfc-legend {
+  margin: 0.5rem 0;
+}
+
+.rfc-legend summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rfc-legend pre {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  overflow-x: auto;
+  white-space: pre;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  background: rgba(128, 128, 128, 0.06);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.rfc-checksum code {
+  font-size: 0.7rem;
+  word-break: break-all;
+}
+
+.rfc-trail {
+  margin: 1rem 0;
+  font-size: 0.8rem;
+}
+
+.rfc-trail a {
+  margin-right: 0.35rem;
+}
+
+.rfc-toc-note {
+  font-size: 0.8rem;
+}
+
+.rfc-toc a {
+  display: block;
+  padding: 0.1rem 0;
+}
+
+.rfc-toc-l2 {
+  padding-left: 1.25rem;
+}
+
+.rfc-toc-l3 {
+  padding-left: 2.5rem;
+}
+
+.rfc-toc-l4 {
+  padding-left: 3.75rem;
+}
+
+.rfc-toc-l5 {
+  padding-left: 5rem;
+}
+
+.rfc-toc-num {
+  display: inline-block;
+  min-width: 4.5rem;
+  font-variant-numeric: tabular-nums;
+}

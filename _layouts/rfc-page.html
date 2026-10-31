@@ -1,0 +1,96 @@
+---
+layout: default
+---
+{%- assign sources = site.data['rfc-sources'] -%}
+{%- assign doc = nil -%}
+{%- assign current = nil -%}
+{%- assign previous = nil -%}
+{%- assign following = nil -%}
+{%- for candidate in sources.docs -%}
+  {%- assign found = false -%}
+  {%- assign before = nil -%}
+  {%- assign after = nil -%}
+  {%- assign pending = false -%}
+  {%- for section in candidate.sections -%}
+    {%- if pending -%}
+      {%- assign after = section -%}
+      {%- assign pending = false -%}
+    {%- elsif section.pageUrl == page.url -%}
+      {%- assign found = true -%}
+      {%- assign pending = true -%}
+      {%- assign this_section = section -%}
+    {%- else -%}
+      {%- unless found -%}{%- assign before = section -%}{%- endunless -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if found -%}
+    {%- assign doc = candidate -%}
+    {%- assign current = this_section -%}
+    {%- assign previous = before -%}
+    {%- assign following = after -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign notices_url = '/rfc/notices/' | relative_url -%}
+{%- assign source_url = '/' | append: doc.sourceFile | relative_url -%}
+
+<nav class="rfc-trail" aria-label="Document navigation">
+  <a href="{{ doc.landingUrl | relative_url }}">RFC {{ doc.rfc }} contents</a>
+  {%- if previous %}
+  <span aria-hidden="true">·</span>
+  <a href="{{ previous.pageUrl | relative_url }}" rel="prev">&#8249; &#167;{{ previous.num }}</a>
+  {%- endif -%}
+  {%- if following %}
+  <span aria-hidden="true">·</span>
+  <a href="{{ following.pageUrl | relative_url }}" rel="next">&#167;{{ following.num }} &#8250;</a>
+  {%- endif -%}
+  <span aria-hidden="true">·</span>
+  <a href="{{ notices_url }}">How this copy is licensed</a>
+</nav>
+
+<aside class="rfc-provenance">
+  <p><strong>Text of RFC {{ doc.rfc }}, Section {{ current.num }}</strong> — {{ current.title }}.
+    The section below is copied verbatim from <a href="{{ doc.url }}">{{ doc.title }}</a>, an
+    IETF (Internet Engineering Task Force) document published by the IETF Trust, and is
+    reproduced under BCP 78 and the IETF Trust Legal Provisions. The text is unmodified; the
+    line breaks, the page separators and the table dots are those of the published plain-text
+    original.</p>
+  <details class="rfc-legend">
+    <summary>Copyright notice of the original document (verbatim)</summary>
+<pre>{{ doc.notice.html }}</pre>
+    <p>The notice above is quoted from the document itself, bytes {{ doc.notice.start }} to
+      {{ doc.notice.end }} of the copy at <a href="{{ source_url }}">rfc/source/rfc{{ doc.rfc }}.txt</a>.
+      BCP 78: <a href="https://www.rfc-editor.org/info/bcp78">https://www.rfc-editor.org/info/bcp78</a>.
+      IETF Trust Legal Provisions: <a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a>.</p>
+  </details>
+  <p><strong>This is not the authoritative version.</strong> The authoritative versions of
+    RFC {{ doc.rfc }} are published by the RFC Editor at
+    <a href="{{ doc.infoUrl }}">{{ doc.infoUrl }}</a>, and this page reproduces none of their
+    status, errata or supersession information. This document area is copied and maintained by
+    the IETF team at the Research Institute of China Telecom Co., Ltd.; it is not an IETF,
+    RFC Editor or working group publication and carries no endorsement by them.</p>
+  <p class="rfc-checksum">Copy: <a href="{{ doc.url }}">{{ doc.url }}</a>, retrieved
+    {{ doc.retrieved }}, SHA-256 <code>{{ doc.sha256 }}</code> ({{ doc.bytes }} bytes).
+    Whole-document copy: <a href="{{ source_url }}">rfc/source/rfc{{ doc.rfc }}.txt</a>.
+    Code components in the original, such as its YANG modules, stay under the terms of that
+    document's own notice; they are not placed under this repository's software licence by this
+    copy. See <a href="{{ notices_url }}">the copying notice</a>.</p>
+</aside>
+
+<div class="rfc-text">
+{{ content }}
+</div>
+
+<nav class="rfc-trail" aria-label="Document navigation">
+  <a href="{{ doc.landingUrl | relative_url }}">RFC {{ doc.rfc }} contents</a>
+  {%- if previous %}
+  <span aria-hidden="true">·</span>
+  <a href="{{ previous.pageUrl | relative_url }}" rel="prev">&#8249; &#167;{{ previous.num }}</a>
+  {%- endif -%}
+  {%- if following %}
+  <span aria-hidden="true">·</span>
+  <a href="{{ following.pageUrl | relative_url }}" rel="next">&#167;{{ following.num }} &#8250;</a>
+  {%- endif -%}
+  <span aria-hidden="true">·</span>
+  <a href="{{ notices_url }}">How this copy is licensed</a>
+</nav>
