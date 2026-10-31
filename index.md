@@ -10,6 +10,10 @@ calculation runs in the page: no backend, no runtime network requests.
 * [IETF 3-Tier Network Model Mapping POC](net-sim/l3sm-l3nm/) — the interactive board.
 * [L3SM to L3NM Mapping Rules](net-sim/l3sm-l3nm/rules/) — the same rule table in
   document form, one section and one anchor per rule, found through the site's search box.
+* [RFC 8299](rfc/8299/) and [RFC 9182](rfc/9182/) — the two modelled RFCs in full, one page
+  per numbered section, copied verbatim from the published plain text, which the search box
+  also reaches. [Copying notices](rfc/notices/) state what was copied, how far, and under
+  which grant.
 * [README](README.md) — what the prototype provides, what it does not cover, and how to
   run it. [中文](README_zh.md).
 * [`net-sim/README.md`](net-sim/README.md) — the directory contract that keeps the

@@ -30,7 +30,10 @@ net-sim/
 
 Outside this directory sits `_data/ietf-3tier-rules.json`, an export of
 `app/rules.js` for the site build to read. It is a generated file, not part of
-the kernel, and nothing under `app/` or `standalone/` reads it.
+the kernel, and nothing under `app/` or `standalone/` reads it. The same holds
+for `rfc/`: it is a site content area of its own — the verbatim text of the two
+RFCs the rules cite and the pages built from it — and it neither reads nor is
+read by the kernel.
 
 `app/` is loaded as three classic scripts in the order
 `rules.js → engine.js → poc.js`. They are deliberately not ES modules, so the
@@ -55,6 +58,7 @@ the same `app/` assets and references nothing under `theme/`.
 | Board styling | `l3sm-l3nm/app/poc.css` | No |
 | Theme-less proof page | `l3sm-l3nm/standalone/preview.html` | No |
 | Export of the rule table for the site build | `_data/ietf-3tier-rules.json`, at the repository root | Not applicable — generated, never hand-edited, never read by `app/` |
+| Verbatim text of the two cited RFCs and the pages built from it | `rfc/source/*.txt` and `rfc/*/**`, at the repository root | Not applicable — a site content area; the `.txt` files are byte-for-byte copies of the rfc-editor originals, never hand-edited, never read by `app/` |
 
 Files in the "No" rows must not contain theme class names, theme SCSS
 variables, Liquid, root-relative references (an `href`, `src` or `action`
@@ -128,6 +132,16 @@ breaks fixed positioning.
    together — the board keeps working, because it reads its rules from
    `app/rules.js`, not from the export.
 
-After those four steps, run `node tools/check-decoupling.mjs` and open
+5. **Move or drop the RFC document area with the layouts.** `rfc/` is a site content area
+   and not part of the kernel: each section page is a generated file whose front matter names
+   a layout, `_layouts/rfc-page.html` and `_layouts/rfc-landing.html` provide the compliance
+   shell and the contents list, and both read `_data/rfc-sources.json`. Regenerate with
+   `node tools/build-rfc-pages.mjs`, prove the result with `node tools/check-rfc-fidelity.mjs`.
+   Under a host that is not Jekyll there is no `_data` to read, no Liquid to run and no layout
+   to attach the notices to, so the pages, the two layouts and the export move or go away
+   together. The board is unaffected either way: it reads nothing from any of them, and the
+   rule citations keep resolving because `app/rules.js` carries the section numbers itself.
+
+After those five steps, run `node tools/check-decoupling.mjs` and open
 `standalone/preview.html` — if the standalone page still renders, `app/` never
 learned anything about the new template.

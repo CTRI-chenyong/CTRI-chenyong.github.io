@@ -33,6 +33,11 @@ L3SM、L3NM 属于 IETF ONSEN 工作组（Operationalizing Network & SErvice abs
   <https://ctri-chenyong.github.io/net-sim/l3sm-l3nm/rules/> 为每条规则给出一个小节和一个
   锚点（例如 `#R13`），单条规则可被直接链接，站点头部搜索也能命中规则正文。该页由画板
   规则表的导出件渲染，而不是另抄一份。
+* 两篇被建模 RFC 的全文也在本站：RFC 8299 与 RFC 9182 逐字复制，按编号小节一节一页，见
+  <https://ctri-chenyong.github.io/rfc/8299/> 与
+  <https://ctri-chenyong.github.io/rfc/9182/>。小节页的地址由小节号组成，整篇纯文本可作为
+  单个文件下载，头部搜索也能命中 RFC 原文，于是规则的依据能一路点到它引用的那段话。
+  <https://ctri-chenyong.github.io/rfc/notices/> 写明复制范围与所依据的授权条款。
 
 ## 4. 本期不覆盖什么
 
@@ -56,6 +61,10 @@ net-sim/l3sm-l3nm/rules/       规则参考页，在站点构建期渲染
 net-sim/l3sm-l3nm/theme/       单一主题适配样式表
 net-sim/l3sm-l3nm/standalone/  无主题的预览页
 _data/                         规则表的导出件，供站点构建读取
+rfc/source/                    两篇 RFC 的逐字副本，不得手工编辑
+rfc/8299/、rfc/9182/           落地页与每小节一页，由上述副本生成
+rfc/notices/                   复制声明：范围、依据的授权条款、许可边界
+_sass/custom/                  RFC 页面样式与主题变量补丁
 tools/                         开发期核对脚本（不发布）
 openspec/                      变更提案与规格（不发布）
 ```
@@ -70,11 +79,16 @@ Jekyll 站点。
 
 * `build-rules-data.mjs` —— 把规则表导出为 `_data/ietf-3tier-rules.json`，规则参考页据此
   渲染；加 `--check` 时，若该文件与内核不一致即失败，所以改完规则要跑一次。
+* `build-rfc-pages.mjs` —— 把 `rfc/source/` 里的副本按其自身的编号标题切开，写出落地页、
+  小节页与 `_data/rfc-sources.json` 里的小节索引；加 `--check` 时若这些文件与副本不一致即
+  失败。它只读仓库内的文件，从不联网取源。
 * `check-decoupling.mjs` —— 强制执行第 6 节描述的边界。
 * `check-rules-shape.mjs` —— 每条规则、声明子集里每个字段都带有引擎与页面所要求的属性。
-* `check-rfc-citations.mjs` —— 对照 rfc-editor 的 RFC 8299/9182 文本（首次运行后缓存），
-  核对被引章节号与标题、路径中每个节点名是否在对应 YANG 模块中声明、以及页面报告
-  「不存在」的节点名是否确实不存在。
+* `check-rfc-fidelity.mjs` —— 证明发布的页面仍是原文：记录的小节区间无缝且无重叠地覆盖整份
+  副本，且每个页面解 HTML 实体后与它的字节区间逐字节相等。
+* `check-rfc-citations.mjs` —— 对照 `rfc/source/` 里的 RFC 副本（脚本不下载，人工一次性取源，
+  取源记录写在 `rfc/notices/`），核对被引章节号与标题、路径中每个节点名是否在对应 YANG
+  模块中声明、以及页面报告「不存在」的节点名是否确实不存在。
 * `engine.test.mjs` —— 无界面运行映射、反演与指标计算。
 
 ## 8. 后续迭代
@@ -100,5 +114,8 @@ Jekyll 站点。
 * IETF ONSEN 工作组：<https://datatracker.ietf.org/wg/onsen/about/>。
 * 代码按 MIT 许可发布（见 `LICENSE`，其版权行仍写着模板作者；任务书要求改为 Apache-2.0，
   该变更尚未执行）。
+* RFC 正文不是本站代码，也不受该许可约束：它按 BCP 78 与 IETF Trust 法律条款逐字复制，版权
+  仍属 IETF Trust 与文档作者，本站副本并非权威版本，复制它不附带任何专利许可。
+  <https://ctri-chenyong.github.io/rfc/notices/> 记录复制范围与所依据的条款。
 * `draft-ietf-onsen-l3sm-l3nm-mapping` 是给规则表起的占位名 —— 并不存在这份 IETF 文档。
   页面为其标注 PLACEHOLDER 徽标并写明同样的免责说明。

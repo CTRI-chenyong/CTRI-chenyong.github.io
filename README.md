@@ -40,6 +40,12 @@ resulting inference list is the output intended for working-group discussion.
   section and anchor (for example `#R13`), so a single rule can be linked directly and
   the site's search box finds rule prose. The page renders from an export of the board's
   rule table rather than from a second copy of it.
+* The full text of the two modelled RFCs, on this site: RFC 8299 and RFC 9182 are copied
+  verbatim, one page per numbered section, at
+  <https://ctri-chenyong.github.io/rfc/8299/> and
+  <https://ctri-chenyong.github.io/rfc/9182/>, reachable by a section-number address and by
+  the search box, so a rule's citation leads to the paragraph behind it.
+  <https://ctri-chenyong.github.io/rfc/notices/> states the extent and the grant.
 
 ## 4. What it does not cover
 
@@ -63,6 +69,10 @@ net-sim/l3sm-l3nm/rules/       rule reference page, rendered at site build time
 net-sim/l3sm-l3nm/theme/       single theme adapter stylesheet
 net-sim/l3sm-l3nm/standalone/  theme-less preview page
 _data/                         export of the rule table, for the site build
+rfc/source/                    verbatim copies of the two RFC texts; never hand-edited
+rfc/8299/, rfc/9182/           landing page and one page per section, generated from the copies
+rfc/notices/                   copying notices: extent, grant relied on, licence boundary
+_sass/custom/                  RFC page styles and the theme variable patch
 tools/                         development-time checks (not published)
 openspec/                      change proposals and specs (not published)
 ```
@@ -78,12 +88,19 @@ GitHub Actions workflow only builds the Jekyll site.
 * `build-rules-data.mjs` — exports the rule table to `_data/ietf-3tier-rules.json`, which
   the rule reference page renders from; `--check` fails when that file no longer matches
   the kernel, so run it after editing a rule.
+* `build-rfc-pages.mjs` — cuts the copies in `rfc/source/` at their own numbered headings and
+  writes the landing pages, the section pages and the index in `_data/rfc-sources.json`;
+  `--check` fails when those no longer match the copies. It reads only the repository.
 * `check-decoupling.mjs` — enforces the boundary described in section 6.
 * `check-rules-shape.mjs` — every rule and declared field carries the attributes the
   engine and the page require.
-* `check-rfc-citations.mjs` — against the rfc-editor text of RFC 8299/9182 (cached after
-  the first run), checks cited headings and titles, that every path node is declared in
-  the matching YANG module, and that nodes reported as absent really are.
+* `check-rfc-fidelity.mjs` — proves the published pages are still the source: the recorded
+  section ranges cover each copy with no gap and no overlap, and every page decodes back to
+  its byte range byte for byte.
+* `check-rfc-citations.mjs` — against the RFC copies in `rfc/source/` (no script downloads
+  them; the one-time manual fetch is recorded in `rfc/notices/`), checks cited headings and
+  titles, that every path node is declared in the matching YANG module, and that nodes
+  reported as absent really are.
 * `engine.test.mjs` — mapping, inversion and metrics, headless.
 
 ## 8. Next iterations
@@ -110,5 +127,9 @@ IETF ONSEN working group. Feedback: open an issue in this repository.
   cited for later iterations. ONSEN charter: <https://datatracker.ietf.org/wg/onsen/about/>.
 * Code is MIT-licensed (`LICENSE` still names the template author as copyright holder; the
   tasking document calls for Apache-2.0 and that change is not made).
+* The RFC text is not that code and is not under that licence. It is reproduced verbatim under
+  BCP 78 and the IETF Trust Legal Provisions; its copyright stays with the IETF Trust and the
+  document authors, the copies here are not the authoritative versions, and reproducing them
+  conveys no patent licence — see <https://ctri-chenyong.github.io/rfc/notices/>.
 * `draft-ietf-onsen-l3sm-l3nm-mapping` labels the rule table as a placeholder — no such
   IETF document exists, and the page badges it PLACEHOLDER.
