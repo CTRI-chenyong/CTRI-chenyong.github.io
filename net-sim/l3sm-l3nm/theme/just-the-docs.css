@@ -1,0 +1,29 @@
+/* Theme adapter — just-the-docs 0.12.0.
+ *
+ * This is the ONLY file under net-sim/ that is allowed to mention the host
+ * theme. Emptying it must leave the board fully functional: app/poc.css
+ * carries its own defaults for every custom property used below.
+ *
+ * When the site moves to another template, rewrite or delete this file and
+ * leave app/ untouched. See net-sim/README.md.
+ */
+
+.ietf-3tier-poc {
+  /* Keep the fixed connector overlay under the theme's sticky header and
+     sidebar, which just-the-docs stacks at z-index 100 and above. */
+  --i3t-z-overlay: 90;
+
+  /* Same value as $content-width in _sass/custom/setup.scss; used only to
+     cap the board's own width so it never exceeds the theme's text column. */
+  --i3t-content-max-width: 62rem;
+
+  /* Inherit the theme's typography instead of shipping our own. */
+  --i3t-font-family: inherit;
+  --i3t-code-font-family: inherit;
+}
+
+/* The theme wraps page content in .main-content; nothing in app/ may assume
+   that, so the coupling is expressed here instead. */
+.main-content .ietf-3tier-poc {
+  max-width: var(--i3t-content-max-width);
+}

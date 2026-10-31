@@ -1,0 +1,675 @@
+/* Board styles. Every selector is prefixed with .ietf-3tier-poc (or
+ * .ietf-3tier-connector for the fixed overlay, which lives outside the mount
+ * point) so that nothing here can leak into the site template and nothing in
+ * the template can be assumed to exist.
+ *
+ * The values below are the standalone defaults. theme/just-the-docs.css is
+ * allowed to override any --i3t-* custom property; emptying that file must
+ * leave this stylesheet self-sufficient.
+ */
+
+.ietf-3tier-poc,
+.ietf-3tier-connector {
+  --i3t-z-overlay: 2147483000;
+  --i3t-content-max-width: none;
+  --i3t-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --i3t-code-font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --i3t-font-size: 0.9375rem;
+  --i3t-line-height: 1.5;
+  --i3t-radius: 0.375rem;
+  --i3t-gap: 1rem;
+
+  --i3t-fg: #1b1f24;
+  --i3t-fg-muted: #57606a;
+  --i3t-bg: #ffffff;
+  --i3t-bg-sunken: #f6f8fa;
+  --i3t-border: #d0d7de;
+  --i3t-border-strong: #8c959f;
+
+  /* One colour per propagation category. The category name is always printed
+     next to the colour, so the encoding does not rely on colour alone. */
+  --i3t-copy: #1a7f4b;
+  --i3t-copy-bg: #e6f4ec;
+  --i3t-derive: #9a6700;
+  --i3t-derive-bg: #fff5d6;
+  --i3t-split: #1f5fa8;
+  --i3t-split-bg: #e7f0fb;
+  --i3t-drop: #a3282d;
+  --i3t-drop-bg: #fdecec;
+
+  --i3t-batch-bg: #fff3c4;
+  --i3t-batch-border: #d4a72c;
+  --i3t-focus-ring: #0969da;
+  --i3t-anomaly-bg: #ffe2e0;
+  --i3t-anomaly-border: #a3282d;
+
+  --i3t-board-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.ietf-3tier-poc {
+  box-sizing: border-box;
+  color: var(--i3t-fg);
+  font-family: var(--i3t-font-family);
+  font-size: var(--i3t-font-size);
+  line-height: var(--i3t-line-height);
+  max-width: var(--i3t-content-max-width);
+  /* Containing block for the inline connector layer, which is appended inside
+   * the mount rather than to <body>. */
+  position: relative;
+}
+
+.ietf-3tier-poc *,
+.ietf-3tier-poc *::before,
+.ietf-3tier-poc *::after {
+  box-sizing: inherit;
+}
+
+.ietf-3tier-poc code,
+.ietf-3tier-poc .i3t-mono {
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.875em;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.ietf-3tier-poc .i3t-title {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin: 0 0 0.25rem;
+}
+
+.ietf-3tier-poc .i3t-subtitle {
+  color: var(--i3t-fg-muted);
+  margin: 0 0 1rem;
+}
+
+.ietf-3tier-poc .i3t-badge {
+  border: 1px solid currentColor;
+  border-radius: var(--i3t-radius);
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 0.25rem 0.375rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.ietf-3tier-poc .i3t-badge-placeholder {
+  background: var(--i3t-derive-bg);
+  color: var(--i3t-derive);
+  margin-left: 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-disclaimer {
+  color: var(--i3t-fg-muted);
+  font-size: 0.8125rem;
+  margin: 0 0 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-panel {
+  border: 1px solid var(--i3t-border);
+  border-radius: var(--i3t-radius);
+  margin: 0 0 var(--i3t-gap);
+  padding: 0.875rem 1rem;
+}
+
+.ietf-3tier-poc .i3t-panel-title {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-draft-name {
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.ietf-3tier-poc .i3t-panel-note {
+  color: var(--i3t-fg-muted);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.ietf-3tier-poc details.i3t-panel > summary {
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ietf-3tier-poc details.i3t-panel[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.ietf-3tier-poc .i3t-list li {
+  margin-bottom: 0.375rem;
+}
+
+.ietf-3tier-poc .i3t-cite {
+  color: var(--i3t-fg-muted);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- toolbar */
+
+.ietf-3tier-poc .i3t-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: var(--i3t-gap);
+}
+
+.ietf-3tier-poc .i3t-button {
+  background: var(--i3t-bg);
+  border: 1px solid var(--i3t-border-strong);
+  border-radius: var(--i3t-radius);
+  color: var(--i3t-fg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.3125rem 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-button:hover {
+  background: var(--i3t-bg-sunken);
+}
+
+.ietf-3tier-poc .i3t-button:focus-visible,
+.ietf-3tier-poc .i3t-field-control:focus-visible,
+.ietf-3tier-poc .i3t-rule-row:focus-visible,
+.ietf-3tier-poc .i3t-causal:focus-visible,
+.ietf-3tier-poc .i3t-value:focus-visible {
+  outline: 2px solid var(--i3t-focus-ring);
+  outline-offset: 1px;
+}
+
+.ietf-3tier-poc .i3t-button[aria-pressed="true"] {
+  background: var(--i3t-split-bg);
+  border-color: var(--i3t-split);
+  color: var(--i3t-split);
+}
+
+.ietf-3tier-poc .i3t-legend {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.ietf-3tier-poc .i3t-legend-item {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.3125rem;
+  font-size: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-swatch {
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  display: inline-block;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-swatch-copy { background: var(--i3t-copy-bg); color: var(--i3t-copy); }
+.ietf-3tier-poc .i3t-swatch-derive { background: var(--i3t-derive-bg); color: var(--i3t-derive); }
+.ietf-3tier-poc .i3t-swatch-split { background: var(--i3t-split-bg); color: var(--i3t-split); }
+.ietf-3tier-poc .i3t-swatch-drop { background: var(--i3t-drop-bg); color: var(--i3t-drop); }
+
+/* ------------------------------------------------------------------ board */
+
+.ietf-3tier-poc .i3t-board {
+  align-items: start;
+  display: grid;
+  gap: var(--i3t-gap);
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: var(--i3t-gap);
+}
+
+.ietf-3tier-poc .i3t-entity {
+  border: 1px solid var(--i3t-border);
+  border-radius: var(--i3t-radius);
+  min-width: 0;
+  padding: 0.875rem 1rem;
+}
+
+.ietf-3tier-poc .i3t-entity-l3sm { background: var(--i3t-bg-sunken); }
+.ietf-3tier-poc .i3t-entity-l3nm { background: var(--i3t-bg); }
+
+.ietf-3tier-poc .i3t-entity-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-entity-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ietf-3tier-poc .i3t-entity-source {
+  color: var(--i3t-fg-muted);
+  font-size: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-group {
+  border-top: 1px solid var(--i3t-border);
+  margin-top: 0.75rem;
+  padding-top: 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-group:first-of-type {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.ietf-3tier-poc .i3t-group-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.ietf-3tier-poc .i3t-entry {
+  border: 1px dashed var(--i3t-border);
+  border-radius: var(--i3t-radius);
+  margin-bottom: 0.625rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-entry-head {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+}
+
+.ietf-3tier-poc .i3t-entry-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ietf-3tier-poc .i3t-entry-remove {
+  margin-left: auto;
+}
+
+/* ------------------------------------------------------------------ fields */
+
+.ietf-3tier-poc .i3t-field {
+  align-items: baseline;
+  display: grid;
+  gap: 0.25rem 0.5rem;
+  grid-template-columns: minmax(9rem, 1fr) minmax(8rem, 1.2fr);
+  margin-bottom: 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-field-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.ietf-3tier-poc .i3t-field-required::after {
+  color: var(--i3t-drop);
+  content: " *";
+}
+
+.ietf-3tier-poc .i3t-field-path {
+  color: var(--i3t-fg-muted);
+  display: block;
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  word-break: break-all;
+}
+
+.ietf-3tier-poc .i3t-field-control {
+  border: 1px solid var(--i3t-border-strong);
+  border-radius: var(--i3t-radius);
+  font: inherit;
+  font-size: 0.8125rem;
+  max-width: 100%;
+  padding: 0.25rem 0.375rem;
+  width: 100%;
+}
+
+.ietf-3tier-poc .i3t-field-control[aria-invalid="true"] {
+  border-color: var(--i3t-anomaly-border);
+  background: var(--i3t-anomaly-bg);
+}
+
+.ietf-3tier-poc .i3t-field-meta {
+  color: var(--i3t-fg-muted);
+  font-size: 0.6875rem;
+  grid-column: 1 / -1;
+}
+
+.ietf-3tier-poc .i3t-error {
+  color: var(--i3t-anomaly-border);
+  font-size: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+.ietf-3tier-poc .i3t-drop-note {
+  color: var(--i3t-drop);
+  font-size: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+.ietf-3tier-poc .i3t-field.i3t-focused {
+  background: var(--i3t-batch-bg);
+  border-radius: var(--i3t-radius);
+  outline: 1px solid var(--i3t-batch-border);
+}
+
+/* ------------------------------------------------------------ L3NM output */
+
+.ietf-3tier-poc .i3t-tree {
+  max-height: 40rem;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.ietf-3tier-poc .i3t-node {
+  border-left: 1px solid var(--i3t-border);
+  margin-left: 0.375rem;
+  padding-left: 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-node-name {
+  color: var(--i3t-fg-muted);
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-node-key {
+  color: var(--i3t-fg);
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ietf-3tier-poc .i3t-leaf {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.125rem 0.25rem;
+}
+
+.ietf-3tier-poc .i3t-leaf-name {
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+}
+
+.ietf-3tier-poc .i3t-value {
+  border: 1px solid transparent;
+  border-radius: var(--i3t-radius);
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.ietf-3tier-poc .i3t-value-copy { background: var(--i3t-copy-bg); border-color: var(--i3t-copy); color: var(--i3t-copy); }
+.ietf-3tier-poc .i3t-value-derive { background: var(--i3t-derive-bg); border-color: var(--i3t-derive); color: var(--i3t-derive); }
+.ietf-3tier-poc .i3t-value-split { background: var(--i3t-split-bg); border-color: var(--i3t-split); color: var(--i3t-split); }
+.ietf-3tier-poc .i3t-value-drop { background: var(--i3t-drop-bg); border-color: var(--i3t-drop); color: var(--i3t-drop); }
+
+.ietf-3tier-poc .i3t-value[aria-readonly="true"] {
+  cursor: not-allowed;
+}
+
+.ietf-3tier-poc .i3t-causal {
+  background: var(--i3t-bg);
+  border: 1px solid var(--i3t-border-strong);
+  border-radius: 999px;
+  color: var(--i3t-fg-muted);
+  cursor: pointer;
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  min-width: 1.5rem;
+  padding: 0 0.25rem;
+  text-align: center;
+}
+
+.ietf-3tier-poc .i3t-causal-copy { border-color: var(--i3t-copy); color: var(--i3t-copy); }
+.ietf-3tier-poc .i3t-causal-derive { border-color: var(--i3t-derive); color: var(--i3t-derive); }
+.ietf-3tier-poc .i3t-causal-split { border-color: var(--i3t-split); color: var(--i3t-split); }
+.ietf-3tier-poc .i3t-causal-drop { border-color: var(--i3t-drop); color: var(--i3t-drop); }
+
+.ietf-3tier-poc .i3t-leaf.i3t-batch,
+.ietf-3tier-poc .i3t-field.i3t-batch {
+  background: var(--i3t-batch-bg);
+  box-shadow: inset 0 0 0 1px var(--i3t-batch-border);
+}
+
+.ietf-3tier-poc .i3t-leaf.i3t-focused {
+  background: var(--i3t-split-bg);
+  box-shadow: inset 0 0 0 1px var(--i3t-split);
+}
+
+.ietf-3tier-poc .i3t-leaf.i3t-anomaly {
+  background: var(--i3t-anomaly-bg);
+  box-shadow: inset 0 0 0 1px var(--i3t-anomaly-border);
+}
+
+.ietf-3tier-poc .i3t-explain {
+  border-left: 3px solid var(--i3t-derive);
+  background: var(--i3t-derive-bg);
+  font-size: 0.8125rem;
+  margin: 0.375rem 0 0.375rem 0.25rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-empty {
+  color: var(--i3t-fg-muted);
+  font-size: 0.8125rem;
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------- metrics */
+
+.ietf-3tier-poc .i3t-metrics {
+  display: grid;
+  gap: var(--i3t-gap);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ietf-3tier-poc .i3t-metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ietf-3tier-poc .i3t-metric-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ietf-3tier-poc .i3t-metric-denominator {
+  color: var(--i3t-fg-muted);
+  font-size: 0.75rem;
+  margin: 0.125rem 0 0;
+}
+
+.ietf-3tier-poc .i3t-metric.i3t-anomaly .i3t-metric-value {
+  color: var(--i3t-anomaly-border);
+}
+
+/* ------------------------------------------------------------------ rules */
+
+.ietf-3tier-poc .i3t-rule-row {
+  border: 1px solid var(--i3t-border);
+  border-left-width: 4px;
+  border-radius: var(--i3t-radius);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.ietf-3tier-poc .i3t-rule-row[data-category="COPY"] { border-left-color: var(--i3t-copy); }
+.ietf-3tier-poc .i3t-rule-row[data-category="DERIVE"] { border-left-color: var(--i3t-derive); }
+.ietf-3tier-poc .i3t-rule-row[data-category="SPLIT"] { border-left-color: var(--i3t-split); }
+.ietf-3tier-poc .i3t-rule-row[data-category="DROP"] { border-left-color: var(--i3t-drop); }
+
+.ietf-3tier-poc .i3t-rule-row.i3t-row-focus {
+  background: var(--i3t-split-bg);
+  border-color: var(--i3t-split);
+}
+
+.ietf-3tier-poc .i3t-rule-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ietf-3tier-poc .i3t-rule-id {
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ietf-3tier-poc .i3t-rule-category {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.125rem 0.3125rem;
+  border-radius: var(--i3t-radius);
+}
+
+.ietf-3tier-poc .i3t-rule-category-copy { background: var(--i3t-copy-bg); color: var(--i3t-copy); }
+.ietf-3tier-poc .i3t-rule-category-derive { background: var(--i3t-derive-bg); color: var(--i3t-derive); }
+.ietf-3tier-poc .i3t-rule-category-split { background: var(--i3t-split-bg); color: var(--i3t-split); }
+.ietf-3tier-poc .i3t-rule-category-drop { background: var(--i3t-drop-bg); color: var(--i3t-drop); }
+
+.ietf-3tier-poc .i3t-rule-confidence {
+  font-size: 0.6875rem;
+  color: var(--i3t-fg-muted);
+}
+
+.ietf-3tier-poc .i3t-rule-confidence[data-confidence="engineering-inference"] {
+  color: var(--i3t-derive);
+  font-weight: 700;
+}
+
+.ietf-3tier-poc .i3t-rule-paths {
+  display: grid;
+  gap: 0.125rem;
+  margin-top: 0.375rem;
+}
+
+.ietf-3tier-poc .i3t-rule-path {
+  font-family: var(--i3t-code-font-family);
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.ietf-3tier-poc .i3t-rule-path-label {
+  color: var(--i3t-fg-muted);
+  font-family: var(--i3t-font-family);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.375rem;
+}
+
+.ietf-3tier-poc .i3t-rule-note {
+  font-size: 0.8125rem;
+  margin: 0.375rem 0 0;
+}
+
+.ietf-3tier-poc .i3t-rule-citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.375rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+}
+
+/* ------------------------------------------------------- connector overlay */
+
+.ietf-3tier-connector {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: var(--i3t-z-overlay);
+}
+
+/* An SVG root clips to its own viewport, so the inline layer has to span the
+ * whole mount; a short box would hide every connector that leaves it. */
+.ietf-3tier-connector.i3t-inline {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.ietf-3tier-connector .i3t-link {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.ietf-3tier-connector .i3t-link-copy { stroke: var(--i3t-copy); }
+.ietf-3tier-connector .i3t-link-derive { stroke: var(--i3t-derive); }
+.ietf-3tier-connector .i3t-link-split { stroke: var(--i3t-split); }
+.ietf-3tier-connector .i3t-link-drop { stroke: var(--i3t-drop); stroke-dasharray: 4 3; }
+
+.ietf-3tier-connector .i3t-link-direction {
+  stroke: var(--i3t-border-strong);
+  stroke-width: 2;
+}
+
+.ietf-3tier-connector .i3t-link-label {
+  fill: var(--i3t-fg-muted);
+  font-family: var(--i3t-font-family);
+  font-size: 11px;
+}
+
+/* ------------------------------------------------------------- breakpoints */
+
+@media (min-width: 60rem) {
+  .ietf-3tier-poc {
+    --i3t-board-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ietf-3tier-poc .i3t-board {
+    grid-template-columns: var(--i3t-board-columns);
+  }
+
+  .ietf-3tier-poc .i3t-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80rem) {
+  .ietf-3tier-poc {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ietf-3tier-poc .i3t-leaf,
+  .ietf-3tier-poc .i3t-field {
+    transition: none;
+  }
+}
