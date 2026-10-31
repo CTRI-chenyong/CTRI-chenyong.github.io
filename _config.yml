@@ -5,7 +5,7 @@ theme: just-the-docs
 url: https://CTRI-chenyong.github.io
 
 aux_links:
-  Repository: https://github.com/CTRI-chenyong/CTRI-chenyong.github.io
+  POC repository: https://github.com/CTRI-chenyong/CTRI-chenyong.github.io
   IETF ONSEN WG: https://datatracker.ietf.org/wg/onsen/about/
 
 # Files without front matter are copied to the site verbatim, so the
