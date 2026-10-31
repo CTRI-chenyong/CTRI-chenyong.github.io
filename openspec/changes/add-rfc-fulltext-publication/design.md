@@ -132,6 +132,12 @@ HTML 实体转义。转义集合固定为 `<`→`&lt;`、`>`→`&gt;`、`&`→`&
 先把两节超 100 KB 的(9182 §8、8299 §9)从默认索引里去掉(页面保留,落地页目录标注"本节不入索引"),
 再考虑降低 `heading_level`。回退只在实测超限时启用,不预先做。
 
+线上实测(5.4,数据见 tasks.md):505.6 KiB / 111.1 KiB gzip / 建索引 129–150 ms / 查询 ≤1.9 ms,
+四项全在上限之内,**回退路径未启用**。两条与预估不同的地方值得记下:一是实际索引比 D7 预估的 670 KiB
+小 164 KiB(主题的 `strip_html` 去掉了 `<pre>` 标签、`strip_newlines` 去掉了换行,正文的 72 列空白被
+压掉一部分);二是建索引耗时的测量方法很脆——在 DevTools `evaluate` 上下文里同一份代码量出 567–971 ms,
+注入页面 `<script>` 后才是 129–150 ms,并与浏览器 `longtask`(139 ms)相互印证;若只信前者会误触发回退。
+
 ### D8 生成与校验分工:`build-rfc-pages.mjs` 造,`check-rfc-fidelity.mjs` 判
 
 - `tools/build-rfc-pages.mjs`:从 `rfc/source/*.txt` 生成全部页面与 `_data/rfc-sources.json`;
@@ -158,6 +164,13 @@ HTML 实体转义。转义集合固定为 `<`→`&lt;`、`>`→`&gt;`、`&`→`&
 既有导航项顺序与标题不动。集中合规说明放独立一页 `/rfc/notices/`(站点自撰、`nav_exclude`),落地页与
 小节页外壳都指向它。`tools/check-decoupling.mjs` 需要把 `rfc/` 登记为站点内容区,并继续断言
 `app/` 与 `standalone/` 不出现 `_data` 或 `rfc-sources` 引用。
+
+线上实测发现本节的假设不成立:Home 与 POC 的 front matter 过去**没有** `nav_order`,而主题把无
+`nav_order` 的页面排在有编号的页面**之后**,于是落地页一上线侧栏就变成"RFC 8299、RFC 9182、Home、
+POC",两个新条目跑到了既有两条之前,违反"既有导航项顺序不动"。修法是给 `index.md` 补 `nav_order: 1`、
+给 POC 外壳补 `nav_order: 2`,顺序回到 Home、POC、RFC 8299、RFC 9182;数值 3、4 本身不必改。
+POC 外壳加这个字段不越界:front matter 正是它唯一的主题契约,`check-decoupling` 对它的断言(标题、
+`layout: page`、不得有 `permalink`、正文六条相对引用)全部不受影响。
 
 ## Risks / Trade-offs
 
