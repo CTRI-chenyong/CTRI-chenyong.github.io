@@ -1,9 +1,11 @@
 /* Dev-time decoupling guard for net-sim/. Not part of the site runtime.
  *
  * The board has to survive a site-template change, so the only files allowed
- * to know anything about just-the-docs are net-sim/l3sm-l3nm/index.html (its
- * front matter) and net-sim/l3sm-l3nm/theme/*.css. Everything under app/ and
- * standalone/ must be template-agnostic, offline-capable and path-relative.
+ * to know anything about just-the-docs are the two site pages
+ * (net-sim/l3sm-l3nm/index.html and net-sim/l3sm-l3nm/rules/index.md, front
+ * matter and Liquid only) and net-sim/l3sm-l3nm/theme/*.css. Everything under
+ * app/ and standalone/ must be template-agnostic, offline-capable and
+ * path-relative, and must not read the site's _data/ export.
  *
  * Run: node tools/check-decoupling.mjs
  */
@@ -131,18 +133,22 @@ const appFiles = files.filter((file) => relative(netSim, file).split('/')[1] ===
 const themeFiles = files.filter((file) => relative(netSim, file).startsWith('l3sm-l3nm/theme/'));
 const standaloneFiles = files.filter((file) => relative(netSim, file).startsWith('l3sm-l3nm/standalone/'));
 const shellFile = join(netSim, 'l3sm-l3nm', 'index.html');
+const rulesFile = join(netSim, 'l3sm-l3nm', 'rules', 'index.md');
+/* Site pages are the Jekyll-facing half of the directory: front matter and
+ * Liquid belong here and nowhere else. */
+const sitePages = [shellFile, rulesFile];
 
 for (const file of files) {
   const text = readFileSync(file, 'utf8');
   const rel = relative(netSim, file);
-  const isThemeAware = themeFiles.includes(file) || file === shellFile;
+  const isThemeAware = themeFiles.includes(file) || sitePages.includes(file);
 
   /* Liquid only ever runs on a file with front matter, so a stray {{ }} under
      app/ would be published verbatim and is a sign of a misplaced template. */
   if (!isThemeAware) {
     const parts = splitFrontMatter(text);
-    if (parts.frontMatter && file !== shellFile) {
-      fail(file, 1, 'only the shell page may carry front matter');
+    if (parts.frontMatter) {
+      fail(file, 1, 'only a site page may carry front matter');
     }
     scanTokens(file, parts.body, THEME_STRUCTURAL_TOKENS, 'theme token');
     if (rel.endsWith('.js')) {
@@ -176,7 +182,8 @@ for (const file of files) {
 }
 
 /* The shell page: front matter is the whole theme contract, the body carries
- * nothing but the mount point and its own relative references. */
+ * nothing but the mount point, one link to the rule page and its own relative
+ * references. */
 const shell = splitFrontMatter(readFileSync(shellFile, 'utf8'));
 if (/permalink\s*:/.test(shell.frontMatter)) {
   fail(shellFile, 1, 'permalink pins the URL to this template; the directory path is the contract');
@@ -191,16 +198,54 @@ if (/\{\{|\{%/.test(shell.body)) {
   fail(shellFile, 1, 'the shell body must carry no Liquid; the front matter is the whole theme contract');
 }
 const shellRefs = [...shell.body.matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]);
-if (shellRefs.length !== 5) {
-  fail(shellFile, 1, `expected 5 relative references, found ${shellRefs.length}: ${shellRefs.join(', ')}`);
+if (shellRefs.length !== 6) {
+  fail(shellFile, 1, `expected 6 relative references, found ${shellRefs.length}: ${shellRefs.join(', ')}`);
 }
 for (const ref of shellRefs) {
   if (!existsSync(join(netSim, 'l3sm-l3nm', ref))) {
     fail(shellFile, 1, `reference ${ref} does not resolve to a file in the repo`);
   }
 }
-if (/<(?!\/?(?:div|link|script|p|br)\b)/.test(shell.body.replace(/<!--[\s\S]*?-->/g, ''))) {
+if (/<(?!\/?(?:div|link|script|p|br|a)\b)/.test(shell.body.replace(/<!--[\s\S]*?-->/g, ''))) {
   fail(shellFile, 1, 'the shell body must stay empty of business markup; the board renders itself');
+}
+
+/* The rule reference page: the other site page, and the only place the rule
+ * table is rendered by the build instead of by the board. */
+const rulesPage = splitFrontMatter(readFileSync(rulesFile, 'utf8'));
+if (!rulesPage.frontMatter) {
+  fail(rulesFile, 1, 'the rule page needs front matter, or the site search never sees it');
+}
+if (!/^title:\s*L3SM to L3NM Mapping Rules\s*$/m.test(rulesPage.frontMatter)) {
+  fail(rulesFile, 1, 'front matter title must be exactly "L3SM to L3NM Mapping Rules"');
+}
+if (!/^layout:\s*page\s*$/m.test(rulesPage.frontMatter)) {
+  fail(rulesFile, 1, 'front matter must keep layout: page');
+}
+if (!/^nav_exclude:\s*true\s*$/m.test(rulesPage.frontMatter)) {
+  fail(rulesFile, 1, 'the rule page stays out of the sidebar; the board and the search box reach it');
+}
+if (/permalink\s*:/.test(rulesPage.frontMatter)) {
+  fail(rulesFile, 1, 'permalink pins the URL to this template; the directory path is the contract');
+}
+if (!/site\.data\['ietf-3tier-rules'\]/.test(rulesPage.body)) {
+  fail(rulesFile, 1, 'the rule page must render from the export, not from rule text copied into the page');
+}
+for (const link of [...rulesPage.body.matchAll(/\]\(([^)\s#][^)\s]*)\)/g)].map((m) => m[1])) {
+  if (link.startsWith('/') || /^https?:\/\//.test(link)) {
+    fail(rulesFile, 1, `link ${link} is absolute; a site page keeps to relative paths`);
+  }
+  if (!existsSync(join(dirname(rulesFile), link))) {
+    fail(rulesFile, 1, `link ${link} does not resolve next to the rule page`);
+  }
+}
+
+/* Data flows one way: kernel -> _data export -> rule page. Nothing the board
+ * loads may name the export, or net-sim/ stops being portable. */
+for (const file of appFiles.concat(standaloneFiles)) {
+  if (/_data|ietf-3tier-rules/.test(readFileSync(file, 'utf8'))) {
+    fail(file, 1, 'the kernel must not read the site data export');
+  }
 }
 
 /* The standalone page proves the theme is optional. */
