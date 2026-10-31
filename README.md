@@ -35,6 +35,11 @@ resulting inference list is the output intended for working-group discussion.
 * Three machine-checked metrics, recomputed live: coverage within the declared subset,
   round-trip difference (L3SM to L3NM and inverted back), and the share of L3NM leaves
   with traceable provenance.
+* The same eighteen rules in document form: the rule reference page,
+  <https://ctri-chenyong.github.io/net-sim/l3sm-l3nm/rules/>, gives each rule its own
+  section and anchor (for example `#R13`), so a single rule can be linked directly and
+  the site's search box finds rule prose. The page renders from an export of the board's
+  rule table rather than from a second copy of it.
 
 ## 4. What it does not cover
 
@@ -52,10 +57,12 @@ engine, same board, no site theme attached.
 ## 6. Repository layout
 
 ```
-net-sim/l3sm-l3nm/index.html   shell page (the only theme-aware file)
+net-sim/l3sm-l3nm/index.html   shell page of the board (theme-aware)
 net-sim/l3sm-l3nm/app/         rules, engine, board — no theme, no network
+net-sim/l3sm-l3nm/rules/       rule reference page, rendered at site build time
 net-sim/l3sm-l3nm/theme/       single theme adapter stylesheet
 net-sim/l3sm-l3nm/standalone/  theme-less preview page
+_data/                         export of the rule table, for the site build
 tools/                         development-time checks (not published)
 openspec/                      change proposals and specs (not published)
 ```
@@ -68,6 +75,9 @@ theme, and how to move the prototype to a different template.
 Run with Node from the repository root; these are not part of the published site, and the
 GitHub Actions workflow only builds the Jekyll site.
 
+* `build-rules-data.mjs` — exports the rule table to `_data/ietf-3tier-rules.json`, which
+  the rule reference page renders from; `--check` fails when that file no longer matches
+  the kernel, so run it after editing a rule.
 * `check-decoupling.mjs` — enforces the boundary described in section 6.
 * `check-rules-shape.mjs` — every rule and declared field carries the attributes the
   engine and the page require.

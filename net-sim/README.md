@@ -14,17 +14,23 @@ documents the directory for anyone reading the deployed site.
 net-sim/
 ├── README.md                     this file
 └── l3sm-l3nm/                    iteration 1: L3SM (RFC 8299) → L3NM (RFC 9182)
-    ├── index.html                the shell page — the only theme-aware file
+    ├── index.html                shell page of the board — theme-aware
     ├── app/                      the prototype itself, template-agnostic
     │   ├── rules.js              field definitions, the 18-rule table, RFC citations
     │   ├── engine.js             mapping, inversion, validation, metrics (no DOM)
     │   ├── poc.js                board rendering and interaction (DOM, no theme)
     │   └── poc.css               every selector prefixed with .ietf-3tier-*
+    ├── rules/
+    │   └── index.md              rule reference page — theme-aware, rendered at build time
     ├── theme/
     │   └── just-the-docs.css     the only place host-theme selectors may appear
     └── standalone/
         └── preview.html          the same app/ assets with no theme at all
 ```
+
+Outside this directory sits `_data/ietf-3tier-rules.json`, an export of
+`app/rules.js` for the site build to read. It is a generated file, not part of
+the kernel, and nothing under `app/` or `standalone/` reads it.
 
 `app/` is loaded as three classic scripts in the order
 `rules.js → engine.js → poc.js`. They are deliberately not ES modules, so the
@@ -41,12 +47,14 @@ the same `app/` assets and references nothing under `theme/`.
 | Concern | Lives in | May mention the host theme? |
 | --- | --- | --- |
 | Navigation entry, page title, layout selection | `l3sm-l3nm/index.html` front matter | Yes — front matter only |
+| Rule reference page: its title, layout, and the Liquid that renders each rule | `l3sm-l3nm/rules/index.md` | Yes — front matter and Liquid only |
 | Content width, font inheritance, `z-index` against the theme's header and sidebar | `l3sm-l3nm/theme/*.css` | Yes — this is the only such file |
 | Field definitions, rule table, RFC citations | `l3sm-l3nm/app/rules.js` | No |
 | Mapping, inversion, validation, metrics | `l3sm-l3nm/app/engine.js` | No |
 | Board DOM, connector overlay, panels | `l3sm-l3nm/app/poc.js` | No |
 | Board styling | `l3sm-l3nm/app/poc.css` | No |
 | Theme-less proof page | `l3sm-l3nm/standalone/preview.html` | No |
+| Export of the rule table for the site build | `_data/ietf-3tier-rules.json`, at the repository root | Not applicable — generated, never hand-edited, never read by `app/` |
 
 Files in the "No" rows must not contain theme class names, theme SCSS
 variables, Liquid, root-relative references (an `href`, `src` or `action`
@@ -54,6 +62,18 @@ value, or a CSS `url()`, that begins with a single slash), network APIs
 (`fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `sendBeacon`), absolute
 `http(s)` URLs, or ES module syntax. All references between them are relative,
 so the directory keeps working under any `baseurl`.
+
+Rule data flows one way. `l3sm-l3nm/app/rules.js` is the only place a rule is
+edited; what the site build renders from is its export:
+
+```
+node tools/build-rules-data.mjs          # rewrite _data/ietf-3tier-rules.json
+node tools/build-rules-data.mjs --check  # fail if that file no longer matches
+```
+
+Run `--check` after any rule change and before committing. The export is
+byte-stable, so re-running it over unchanged rules produces no diff, and it
+belongs to the development phase: the board never reads it, `file://` included.
 
 `node tools/check-decoupling.mjs` enforces this table. It is a development-time
 script and is excluded from the built site.
@@ -76,10 +96,10 @@ breaks fixed positioning.
 
 1. **Rewrite the front matter** in `l3sm-l3nm/index.html` to the new theme's
    field names — page title, layout, navigation order, parent page. Keep the
-   body exactly as it is: one `<div id="ietf-3tier-poc"></div>` plus the five
-   relative `link`/`script` references. Do not add a `permalink`; the URL is
-   the directory path, which is what keeps the page independent of routing
-   configuration.
+   body exactly as it is: one `<div id="ietf-3tier-poc"></div>`, the one link to
+   `rules/`, and the five relative `link`/`script` references. Do not add a
+   `permalink`; the URL is the directory path, which is what keeps the page
+   independent of routing configuration.
 2. **Replace `theme/*.css`.** Delete `just-the-docs.css` and write an adapter
    for the new theme, or delete the directory and the `<link>` to it entirely —
    the board is fully functional without it. The adapter may only set the
@@ -100,6 +120,14 @@ breaks fixed positioning.
    `window.IETF3TIER_MOUNT = { connectorLayer: 'inline' }` in the shell page
    before `app/poc.js` loads. Nothing under `app/` changes.
 
-After those three steps, run `node tools/check-decoupling.mjs` and open
+4. **Re-point or drop the rule page.** `l3sm-l3nm/rules/index.md` is a Jekyll
+   page: its front matter names the new theme's layout, and its body renders
+   `site.data['ietf-3tier-rules']` with Liquid. Under a different Jekyll theme
+   only the front matter changes. Under a host that is not Jekyll there is no
+   `_data` to read and no Liquid to run, so the page and the export go away
+   together — the board keeps working, because it reads its rules from
+   `app/rules.js`, not from the export.
+
+After those four steps, run `node tools/check-decoupling.mjs` and open
 `standalone/preview.html` — if the standalone page still renders, `app/` never
 learned anything about the new template.

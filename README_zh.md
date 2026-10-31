@@ -29,6 +29,10 @@ L3SM、L3NM 属于 IETF ONSEN 工作组（Operationalizing Network & SErvice abs
   字段旁给出生成算法。
 * 三项可机器校验的指标实时重算：声明子集内的覆盖率、往返差异（L3SM → L3NM 再反演回
   L3SM）、L3NM 叶子节点可溯源的比例。
+* 同一批规则的文档形态：规则参考页
+  <https://ctri-chenyong.github.io/net-sim/l3sm-l3nm/rules/> 为每条规则给出一个小节和一个
+  锚点（例如 `#R13`），单条规则可被直接链接，站点头部搜索也能命中规则正文。该页由画板
+  规则表的导出件渲染，而不是另抄一份。
 
 ## 4. 本期不覆盖什么
 
@@ -46,10 +50,12 @@ L3SM、L3NM 属于 IETF ONSEN 工作组（Operationalizing Network & SErvice abs
 ## 6. 仓库结构
 
 ```
-net-sim/l3sm-l3nm/index.html   外壳页面（唯一感知主题的文件）
+net-sim/l3sm-l3nm/index.html   画板的外壳页面（感知主题）
 net-sim/l3sm-l3nm/app/         规则、引擎、画板 —— 无主题、无网络
+net-sim/l3sm-l3nm/rules/       规则参考页，在站点构建期渲染
 net-sim/l3sm-l3nm/theme/       单一主题适配样式表
 net-sim/l3sm-l3nm/standalone/  无主题的预览页
+_data/                         规则表的导出件，供站点构建读取
 tools/                         开发期核对脚本（不发布）
 openspec/                      变更提案与规格（不发布）
 ```
@@ -62,6 +68,8 @@ openspec/                      变更提案与规格（不发布）
 在仓库根用 Node 运行；这些脚本都不属于发布的站点，GitHub Actions 工作流只负责构建
 Jekyll 站点。
 
+* `build-rules-data.mjs` —— 把规则表导出为 `_data/ietf-3tier-rules.json`，规则参考页据此
+  渲染；加 `--check` 时，若该文件与内核不一致即失败，所以改完规则要跑一次。
 * `check-decoupling.mjs` —— 强制执行第 6 节描述的边界。
 * `check-rules-shape.mjs` —— 每条规则、声明子集里每个字段都带有引擎与页面所要求的属性。
 * `check-rfc-citations.mjs` —— 对照 rfc-editor 的 RFC 8299/9182 文本（首次运行后缓存），
