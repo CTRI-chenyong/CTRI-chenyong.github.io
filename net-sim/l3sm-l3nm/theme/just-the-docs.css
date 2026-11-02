@@ -9,8 +9,9 @@
  */
 
 .ietf-3tier-poc {
-  /* Keep the fixed connector overlay under the theme's sticky header and
-     sidebar, which just-the-docs stacks at z-index 100 and above. */
+  /* Keep the fixed connector overlay under the theme's chrome: the drawer
+     below stacks the sidebar at z-index 100, and a mapping line must never be
+     drawn across the navigation. */
   --i3t-z-overlay: 90;
 
   /* Inherit the theme's typography instead of shipping our own. */
@@ -19,24 +20,73 @@
 }
 
 /* The board is a two-column drawing surface, not a prose column, so on the page
-   that hosts it the theme's centred reading column is released: the sidebar
-   stops growing past its 16.5rem minimum and .main stops capping at
-   $content-width, letting the board use the whole viewport. 16.5rem is the
-   theme's own $nav-width and the min-width of .side-bar. Both rules are inert
-   on every other page, and on browsers without :has() the layout simply stays
-   as the theme ships it.
-   They are confined to the breakpoint where the theme docks its sidebar, and to
-   screen: below 62rem the theme turns the sidebar into a static top band and
-   gives .main the whole viewport itself, so a sidebar-width margin-left there
-   only squeezes the content column, and the print stylesheet reflows the
-   sidebar the same way. */
+   that hosts it the theme's centred reading column is released.  Below 62rem
+   the theme already docks the sidebar into a top band and gives .main the whole
+   viewport, so nothing here is needed and any of it would be harmful: the rules
+   below assume a fixed sidebar.  They are screen-only for the same reason — the
+   print stylesheet reflows the sidebar into a static band, and a drawer has no
+   meaning on paper. */
 @media screen and (min-width: 62rem) {
+  /* The sidebar costs 16.5rem of the viewport on every other page.  Here it
+     collapses to a 3.5rem rail carrying the theme's own menu button, which
+     just-the-docs.js binds at any width, so the rail opens as an overlay drawer
+     without a line of script of our own.  The drawer overlays instead of
+     pushing, so the board never reflows and the connector overlay keeps the
+     coordinates it measured.  min-width is reset because the theme sets
+     min-width: 16.5rem from 78.5rem and min-width always beats width. */
   .side-bar:has(+ .main .ietf-3tier-poc) {
-    width: 16.5rem;
+    align-items: stretch;
+    min-width: 0;
+    overflow: hidden;
+    width: 3.5rem;
+    z-index: 100;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc) .site-header {
+    /* The theme fixes the header to 3.75rem, which fits the site title only
+       while the button is hidden; sharing the rail's width with the button
+       makes the title wrap to a third line, so the header has to grow. */
+    height: auto;
+    max-height: none;
+    min-height: 3.75rem;
+    width: 100%;
+  }
+
+  /* The theme hides the menu button from 62rem because its sidebar is always
+     open there; the rail needs it back. */
+  .side-bar:has(+ .main .ietf-3tier-poc) .site-header .site-button {
+    display: flex;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc) .site-title,
+  .side-bar:has(+ .main .ietf-3tier-poc) .site-nav {
+    display: none;
+  }
+
+  /* The footer carries the theme's own .d-md-block utility, which is
+     !important, so the rail has to answer it in kind. */
+  .side-bar:has(+ .main .ietf-3tier-poc) .site-footer {
+    display: none !important;
   }
 
   .side-bar:has(+ .main .ietf-3tier-poc) + .main {
-    margin-left: 16.5rem;
+    margin-left: 3.5rem;
     max-width: none;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc):has(.site-nav.nav-open) {
+    width: 16.5rem;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc):has(.site-nav.nav-open) .site-title {
+    display: flex;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc):has(.site-nav.nav-open) .site-nav {
+    display: block;
+  }
+
+  .side-bar:has(+ .main .ietf-3tier-poc):has(.site-nav.nav-open) .site-footer {
+    display: block !important;
   }
 }

@@ -108,17 +108,21 @@ breaks fixed positioning.
    for the new theme, or delete the directory and the `<link>` to it entirely —
    the board is fully functional without it. The adapter may only set the
    `--i3t-*` custom properties that `app/poc.css` already defines defaults for
-   (`--i3t-z-overlay`, `--i3t-content-max-width`, `--i3t-font-family`,
-   `--i3t-code-font-family`, the four propagation colours) plus, if the new
-   theme needs it, selectors that scope those values to the theme's content
-   container. One further kind of rule belongs here and nowhere else: releasing
-   a host theme's centred reading column on the page that hosts the board (the
-   current adapter does this with a `:has()` rule keyed to the board, applied to
-   the theme's sidebar and main wrappers), because a two-column drawing surface
-   needs the viewport width that a prose column deliberately gives up. Such
-   rules must be keyed to the board with `:has()` so every other page keeps the
-   theme's own layout, and they must degrade to the theme default where
-   `:has()` is unsupported.
+   (`--i3t-z-overlay`, `--i3t-content-max-width`, `--i3t-prose-max-width`,
+   `--i3t-font-family`, `--i3t-code-font-family`, the four propagation colours)
+   plus, if the new theme needs it, selectors that scope those values to the
+   theme's content container. One further kind of rule belongs here and nowhere
+   else: taking the host theme's reading-column geometry off the page that hosts
+   the board, because a two-column drawing surface needs the viewport width that
+   a prose column deliberately gives up. The current adapter does this with
+   `:has()` rules keyed to the board, inside the media query where the theme
+   fixes its sidebar: it releases `.main`'s cap and folds the sidebar into a
+   narrow rail that opens the theme's own navigation as an overlay drawer, so
+   the site's entries stay one click away without costing the board their width.
+   Such rules must be keyed to the board with `:has()` so every other page keeps
+   the theme's own layout, must stay inside the breakpoint where the theme's
+   geometry assumes a fixed sidebar (and off `print`), and must degrade to the
+   theme default where `:has()` is unsupported.
 3. **Flip `connectorLayer` if the connectors drift.** If the new template puts
    the page content inside a transformed or separately scrolling container, set
    `window.IETF3TIER_MOUNT = { connectorLayer: 'inline' }` in the shell page
