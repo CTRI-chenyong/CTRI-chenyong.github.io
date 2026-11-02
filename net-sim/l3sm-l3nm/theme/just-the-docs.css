@@ -18,18 +18,25 @@
   --i3t-code-font-family: inherit;
 }
 
-/* The board is a two-column drawing surface, not a prose column, so on the
-   page that hosts it the theme's centred reading column is released: the
-   sidebar stops growing past its 16.5rem minimum and .main stops capping at
+/* The board is a two-column drawing surface, not a prose column, so on the page
+   that hosts it the theme's centred reading column is released: the sidebar
+   stops growing past its 16.5rem minimum and .main stops capping at
    $content-width, letting the board use the whole viewport. 16.5rem is the
    theme's own $nav-width and the min-width of .side-bar. Both rules are inert
    on every other page, and on browsers without :has() the layout simply stays
-   as the theme ships it. */
-.side-bar:has(+ .main .ietf-3tier-poc) {
-  width: 16.5rem;
-}
+   as the theme ships it.
+   They are confined to the breakpoint where the theme docks its sidebar, and to
+   screen: below 62rem the theme turns the sidebar into a static top band and
+   gives .main the whole viewport itself, so a sidebar-width margin-left there
+   only squeezes the content column, and the print stylesheet reflows the
+   sidebar the same way. */
+@media screen and (min-width: 62rem) {
+  .side-bar:has(+ .main .ietf-3tier-poc) {
+    width: 16.5rem;
+  }
 
-.side-bar:has(+ .main .ietf-3tier-poc) + .main {
-  margin-left: 16.5rem;
-  max-width: none;
+  .side-bar:has(+ .main .ietf-3tier-poc) + .main {
+    margin-left: 16.5rem;
+    max-width: none;
+  }
 }
